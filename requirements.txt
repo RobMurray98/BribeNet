@@ -1,0 +1,4 @@
+networkit == 5.0.1
+networkx == 2.4
+numpy
+pandas == 0.25.3
