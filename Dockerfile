@@ -1,4 +1,4 @@
-FROM python:3.8-alpine3.10
+FROM python:3.7.5-alpine3.10
 MAINTAINER Robert Murray
 
 COPY requirements.txt /
@@ -16,7 +16,8 @@ RUN apk del scipy-build
 RUN apk add --virtual scipy-runtime freetype libgfortran libgcc libpng  libstdc++ musl openblas tcl tk 
 RUN rm -rf /var/cache/apk/*
 
-RUN apk add cmake gcc g++ make cython
+# install other requirements (networkx, networkit...)
+RUN apk add cmake gcc g++ make cython python3-tkinter linux-headers libexecinfo-dev
 RUN pip install -r /requirements.txt
 
 WORKDIR src
