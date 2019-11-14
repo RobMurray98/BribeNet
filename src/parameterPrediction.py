@@ -19,15 +19,10 @@ def predictSmallWorld(graph):
     k = sum([len(graph.adj[i]) for i in graph.nodes]) // n
     probs = logspace(-5, 0, 256, False, 10)
     (lvs, cvs, l0, c0) = generateExampleGraphs(n, k, probs)
-    plt.plot(probs, lvs)
-    plt.show()
-    plt.plot(probs, cvs)
-    plt.show()
     lp = average_shortest_path_length(graph)
     l_ratio = lp / l0
     cp = average_clustering(graph)
     c_ratio = cp / c0
-    print(l_ratio, c_ratio)
 
     # Find the p according to l and c ratios
     # The lookup is currently borked, investigate!
@@ -36,7 +31,6 @@ def predictSmallWorld(graph):
     index_c = closestIndex(cvs, c_ratio)
     prob_l = probs[index_l]
     prob_c = probs[index_c]
-    print(prob_l, prob_c)
 
     p = (prob_l + prob_c) / 2
     return (n, k, p)
