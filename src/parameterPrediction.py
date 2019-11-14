@@ -17,7 +17,7 @@ p: the probability of rewiring
 def predictSmallWorld(graph):
     n = len(graph.nodes)
     k = sum([len(graph.adj[i]) for i in graph.nodes]) // n
-    probs = logspace(-5, 0, 256, False, 10)
+    probs = logspace(-5, 0, 64, False, 10)
     (lvs, cvs, l0, c0) = generateExampleGraphs(n, k, probs)
     lp = average_shortest_path_length(graph)
     l_ratio = lp / l0
