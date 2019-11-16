@@ -25,8 +25,6 @@ def predictSmallWorld(graph):
     c_ratio = cp / c0
 
     # Find the p according to l and c ratios
-    # The lookup is currently borked, investigate!
-    # (looking at the graph, the values it predicts are correct but it's not getting them)
     index_l = closestIndex(lvs, l_ratio)
     index_c = closestIndex(cvs, c_ratio)
     prob_l = probs[index_l]
