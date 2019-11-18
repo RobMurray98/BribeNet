@@ -1,5 +1,4 @@
 from graphGenerator import ratingGraph
-import networkx as nx
 from abc import ABC
 import random
 
