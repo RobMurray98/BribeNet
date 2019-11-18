@@ -24,6 +24,16 @@ class ratingGraph:
             return 0
         return sum(self.getRating(n) for n in nds) / len(nds)
 
+    def medianPRating(self, id):
+        ns = [n for n in self.__g.neighbors(id) if self.getRating(n)]
+        ns = sorted(ns, key = lambda x: self.getRating(x))
+        return self.getRating(ns[len(ns) // 2])
+
+    def samplePRating(self, id):
+        ns = [n for n in self.__g.neighbors(id) if self.getRating(n)]
+        sub = random.sample(ns, random.randint(1, len(ns)))
+        return sum(self.getRating(n) for n in sub) / len(sub)
+
     #mean of rating for all nodes
     def oRating(self):
         nds = [n for n in self.__g.nodes() if self.getRating(n)]
