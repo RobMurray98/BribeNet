@@ -14,9 +14,9 @@ class RatingGraph:
         self.__g = generator.generate()
         # noinspection PyTypeChecker
         self.ratings = np.repeat(None, len(self.__g.nodes()))
-        self.maxRating = 1
+        self.max_rating = 1
         for n in self.__g.nodes():
-            rating = random.uniform(-0.25, self.maxRating)
+            rating = random.uniform(-0.25, self.max_rating)
             if rating >= 0:
                 self.ratings[n] = rating
 
@@ -58,9 +58,9 @@ class RatingGraph:
     # increase rating by bribe (up to max 5.0)
     def bribe(self, idx, b):
         if self.get_rating(idx):
-            self.ratings[idx] = min(self.maxRating, self.get_rating(idx) + b)
+            self.ratings[idx] = min(self.max_rating, self.get_rating(idx) + b)
         else:
-            self.ratings[idx] = min(self.maxRating, b)
+            self.ratings[idx] = min(self.max_rating, b)
 
     # evaluates reward of graph by summing P-ratings
     def eval_graph(self):
@@ -73,7 +73,7 @@ class RatingGraph:
         # noinspection PyTypeChecker
         new_rg = RatingGraph(generator)
         new_rg.ratings = self.ratings.copy()
-        new_rg.maxRating = self.maxRating
+        new_rg.max_rating = self.max_rating
         return new_rg
 
     def __copy_graph(self):

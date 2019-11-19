@@ -6,7 +6,7 @@ class Briber(ABC):
     def __init__(self, g, u0):
         self.u = u0  # resources of briber to spend
         self.g = g  # network for agent
-        self.maxRating = self.g.maxRating
+        self.max_rating = self.g.max_rating
 
     def bribe(self, bribe_id, amount):
         if amount <= self.u:

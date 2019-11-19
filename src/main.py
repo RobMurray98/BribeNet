@@ -2,24 +2,23 @@ from bribery.influentialNode import InfluentialNodeBriber
 from bribery.mostInfluencialNode import MostInfluentialNodeBriber
 from bribery.random import RandomBriber
 from graphGenerator import RatingGraph
-from parameterPrediction import testParameterPrediction
-# from parameterPrediction import predictSmallWorld
+from parameterPrediction import test_parameter_prediction
 # from snapImport import facebook
 
 
 # briber: function that takes a graph and returns a briber
 def graph_and_test(briber_setup, graph):
-    print(graph.evalGraph())
+    print(graph.eval_graph())
     print("Bribing!")
     briber = briber_setup(graph)
-    briber.nextBribe()
-    print(graph.evalGraph())
+    briber.next_bribe()
+    print(graph.eval_graph())
     print("")
 
 
 if __name__ == "__main__":
     print("Testing parameter prediction!")
-    testParameterPrediction()
+    test_parameter_prediction()
     print("")
     rating_graph = RatingGraph()
     print("Testing random bribery on a graph!")

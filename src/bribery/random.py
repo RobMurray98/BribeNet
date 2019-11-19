@@ -6,7 +6,7 @@ from bribery.briber import Briber
 class RandomBriber(Briber):
 
     def next_bribe(self):
-        customers = self.g.getCustomers()
+        customers = self.g.get_customers()
         # array of random bribes
         brbs = [random.uniform(0.0, 1.0) for _ in customers]
         brbs = [b * self.u / sum(brbs) for b in brbs]
