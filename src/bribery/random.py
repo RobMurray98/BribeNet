@@ -1,9 +1,9 @@
-# randomly assigns utility to bribes
 import random
 
 from bribery.briber import Briber
 
 
+# randomly assigns utility to bribes
 class RandomBriber(Briber):
 
     def next_bribe(self):
