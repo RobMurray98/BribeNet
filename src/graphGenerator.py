@@ -1,6 +1,7 @@
 import networkit as nk
 import random
 import numpy as np
+from types import SimpleNamespace
 
 ws_gen = nk.generators.WattsStrogatzGenerator(30, 5, 0.3)
 
@@ -9,13 +10,16 @@ class ratingGraph:
 
     def __init__(self, generator=ws_gen):
         # Generate random ratings network
-        self.__g = generator()
+        self.__g = generator.generate()
         self.ratings = np.repeat(None, len(self.__g.nodes()))
         self.maxRating = 1
         for n in self.__g.nodes():
             rating = random.uniform(-0.25, self.maxRating)
             if(rating >= 0):
                 self.ratings[n] = rating
+
+    def graph(self):
+        return self.__g
 
     #mean of neighbouring nodes for id
     def pRating(self, id):
@@ -42,6 +46,9 @@ class ratingGraph:
     #returns customer ids without knowledge of edges or ratings
     def getCustomers(self):
         return list(self.__g.nodes())
+    
+    def customerCount(self):
+        return len(self.__g.nodes())
 
     def getRating(self, id):
         return self.ratings[id]
@@ -53,6 +60,20 @@ class ratingGraph:
         else:
             self.ratings[id] = min(self.maxRating, b)
 
-    # evaluates reward of graph by suming P-ratings
+    # evaluates reward of graph by summing P-ratings
     def evalGraph(self):
         return sum(self.pRating(n) for n in self.__g.nodes())
+    
+    def copy(self):
+        newGraph = copyGraph(self.graph())
+        generator = SimpleNamespace()
+        generator.generate = lambda: newGraph
+        newRG = ratingGraph(generator)
+        newRG.ratings = self.ratings.copy()
+        newRG.maxRating = self.maxRating
+        return newRG
+
+def copyGraph(g):
+    newGraph = nk.graph.Graph()
+    newGraph.append(g)
+    return newGraph

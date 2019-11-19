@@ -32,10 +32,10 @@ class randomBriber(briber):
 # Can see P-rating, can't see graph
 class influentialNodeBriber(briber):
     def __init__(self, g, u0, k=0.2):
-        super(self, g, u0)
+        super().__init__(g, u0)
         # Make sure that k is set such that there are enough resources left to
         # actually bribe people.
-        k = min(0.5 * (u0 / len(g.nodes())), k)
+        k = min(0.5 * (u0 / g.customerCount()), k)
         self.k = k
 
     def nextBribe(self):
@@ -54,10 +54,10 @@ class influentialNodeBriber(briber):
 # of effectiveness (rather than bribing anyone that does better than 0)
 class mostInfluentialNodeBriber(briber):
     def __init__(self, g, u0, k=0.2):
-        super(self, g, u0)
+        super().__init__(g, u0)
         # Make sure that k is set such that there are enough resources left to
         # actually bribe people.
-        k = min(0.5 * (u0 / len(g.nodes())), k)
+        k = min(0.5 * (u0 / g.customerCount()), k)
         self.k = k
 
     def nextBribe(self):
@@ -72,7 +72,7 @@ class mostInfluentialNodeBriber(briber):
                     influencers.append((reward, c))
 
         # Sort based on highest reward
-        influencers = sorted(influencers, lambda x: -x[0])
+        influencers = sorted(influencers, key = lambda x: -x[0])
         for (_, c) in influencers:
             self.bribe(c, self.maxRating - self.g.getRating(c))
 
