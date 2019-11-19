@@ -7,6 +7,8 @@ from networkit.distance import APSP
 trials = 5
 inf = float("inf")
 
+# TODO: Implement for scale-free.
+
 '''
 Finds the clustering coefficient of a given graph.
 '''
@@ -90,7 +92,10 @@ def generateExampleGraphs(n, k, ps):
         result[1].append(cp/c0)
     return result
 
-if __name__ == '__main__':
-    print("Testing with obviously Watts-Strogatz Graph (50,6,0.1)")
+def testParameterPrediction():
+    print("Testing small world prediction with obviously Watts-Strogatz Graph (50,6,0.1)")
     generator = WattsStrogatzGenerator(50, 6, 0.1)
     print(predictSmallWorld(generator.generate()))
+
+if __name__ == '__main__':
+    testParameterPrediction()
