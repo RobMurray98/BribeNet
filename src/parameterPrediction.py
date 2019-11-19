@@ -1,11 +1,33 @@
-import networkx as nx
+from networkit.generators import WattsStrogatzGenerator
 from numpy import logspace
-from networkx.algorithms import average_shortest_path_length, average_clustering
-
-import matplotlib.pyplot as plt
+from numpy import sum as npsum
+from networkit.centrality import LocalClusteringCoefficient
+from networkit.distance import APSP
 
 trials = 5
 inf = float("inf")
+
+'''
+Finds the clustering coefficient of a given graph.
+'''
+def average_clustering(graph, turbo=True):
+    # If graphs get too large, turn off Turbo mode (which requires more memory)
+    lcc = LocalClusteringCoefficient(graph, turbo)
+    lcc.run()
+    scores = lcc.scores()
+    return sum(scores) / len(scores)
+
+'''
+Finds the average shortest path length of a given graph.
+'''
+def average_shortest_path_length(graph):
+    apsp = APSP(graph)
+    apsp.run()
+    n = len(graph.nodes())
+    # npsum needed as we are summing values in a matrix
+    # Note! The matrix returned by getDistances is n*n, but we divide by n*n-1
+    # since the central diagonal represents distances from a node to itself.
+    return npsum(apsp.getDistances()) / (n*(n-1))
 
 '''
 Given an existing graph (from networkx), predict the parameters that should be used given.
@@ -15,8 +37,8 @@ k: the degree of nodes of the starting regular graph (that we rewire)
 p: the probability of rewiring
 '''
 def predictSmallWorld(graph):
-    n = len(graph.nodes)
-    k = sum([len(graph.adj[i]) for i in graph.nodes]) // n
+    n = len(graph.nodes())
+    k = sum([len(graph.neighbors(i)) for i in graph.nodes()]) // (2*n)
     probs = logspace(-5, 0, 64, False, 10)
     (lvs, cvs, l0, c0) = generateExampleGraphs(n, k, probs)
     lp = average_shortest_path_length(graph)
@@ -25,8 +47,6 @@ def predictSmallWorld(graph):
     c_ratio = cp / c0
 
     # Find the p according to l and c ratios
-    # The lookup is currently borked, investigate!
-    # (looking at the graph, the values it predicts are correct but it's not getting them)
     index_l = closestIndex(lvs, l_ratio)
     index_c = closestIndex(cvs, c_ratio)
     prob_l = probs[index_l]
@@ -51,15 +71,17 @@ For a set of p-values, generate existing WS graphs and get the values of L(p)/L(
 Returns (lvals, cvals, l0, c0)
 '''
 def generateExampleGraphs(n, k, ps):
-    graph0 = nx.watts_strogatz_graph(n, k, 0)
+    generator0 = WattsStrogatzGenerator(n, k, 0)
+    graph0 = generator0.generate()
     l0 = average_shortest_path_length(graph0)
     c0 = average_clustering(graph0)
     result = ([], [], l0, c0)
     for p in ps:
         l_tot = 0
         c_tot = 0
+        generator = WattsStrogatzGenerator(n, k, p)
         for i in range(trials):
-            graph = nx.watts_strogatz_graph(n, k, p)
+            graph = generator.generate()
             l_tot += average_shortest_path_length(graph)
             c_tot += average_clustering(graph)
         lp = l_tot / trials
@@ -70,4 +92,5 @@ def generateExampleGraphs(n, k, ps):
 
 if __name__ == '__main__':
     print("Testing with obviously Watts-Strogatz Graph (50,6,0.1)")
-    print(predictSmallWorld(nx.watts_strogatz_graph(50,6,0.1)))
+    generator = WattsStrogatzGenerator(50, 6, 0.1)
+    print(predictSmallWorld(generator.generate()))
