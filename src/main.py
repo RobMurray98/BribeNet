@@ -1,25 +1,30 @@
-from graphGenerator import ratingGraph
-from staticBribingAgent import randomBriber, influentialNodeBriber, mostInfluentialNodeBriber
-from parameterPrediction import predictSmallWorld, testParameterPrediction
-from snapImport import facebook
+from bribery.influentialNode import InfluentialNodeBriber
+from bribery.mostInfluencialNode import MostInfluentialNodeBriber
+from bribery.random import RandomBriber
+from graphGenerator import RatingGraph
+from parameterPrediction import testParameterPrediction
+# from parameterPrediction import predictSmallWorld
+# from snapImport import facebook
+
 
 # briber: function that takes a graph and returns a briber
-def graphAndTest(briberSetup, graph):
+def graph_and_test(briber_setup, graph):
     print(graph.evalGraph())
     print("Bribing!")
-    briber = briberSetup(graph)
+    briber = briber_setup(graph)
     briber.nextBribe()
     print(graph.evalGraph())
     print("")
+
 
 if __name__ == "__main__":
     print("Testing parameter prediction!")
     testParameterPrediction()
     print("")
-    graph = ratingGraph()
+    rating_graph = RatingGraph()
     print("Testing random bribery on a graph!")
-    graphAndTest(lambda g: randomBriber(g, 10), graph.copy())
+    graph_and_test(lambda g: RandomBriber(g, 10), rating_graph.copy())
     print("Testing influential node bribery on a graph!")
-    graphAndTest(lambda g: influentialNodeBriber(g, 10, 0.2), graph.copy())
+    graph_and_test(lambda g: InfluentialNodeBriber(g, 10, 0.2), rating_graph.copy())
     print("Testing most influential node bribery on a graph!")
-    graphAndTest(lambda g: mostInfluentialNodeBriber(g, 10, 0.2), graph.copy())
+    graph_and_test(lambda g: MostInfluentialNodeBriber(g, 10, 0.2), rating_graph.copy())
