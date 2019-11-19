@@ -1,9 +1,9 @@
 from bribery.influentialNode import InfluentialNodeBriber
-from graphGenerator import ratingGraph
+from graphGenerator import RatingGraph
 
 
 def main():
-    g = ratingGraph()
+    g = RatingGraph()
     inb = InfluentialNodeBriber(g, 100.0)
     print(inb.u)
     for _ in range(20):

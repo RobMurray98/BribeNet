@@ -1,5 +1,4 @@
 import random
-
 from bribery.briber import Briber
 
 
