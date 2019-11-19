@@ -108,3 +108,7 @@ venv.bak/
 
 # Large SNAP data files
 data
+
+# VSCode doesn't like subpackage imports. These files are needed on my machine to fix it.
+.vscode
+.env
