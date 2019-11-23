@@ -1,4 +1,4 @@
-from networkit.generators import WattsStrogatzGenerator
+from networkit.generators import WattsStrogatzGenerator, BarabasiAlbertGenerator
 from numpy import logspace
 from numpy import sum as npsum
 from networkit.centrality import LocalClusteringCoefficient
@@ -8,6 +8,28 @@ trials = 5
 inf = float("inf")
 
 # TODO: Implement for scale-free.
+
+#barabasi-albert has 4 parameters (k,nMax,n0,batagelj)
+#nMax is the number of nodes in the final graph
+#n0 is the number of unlinked nodes used as a seed/start point (usually 0)
+#batagelj is a bool flag to denote whether or not to use a more efficient
+#variant of the generator or not (usually True)
+#K IS THE INTERESTING/DIFFICULT/IMPORTANT ONE
+#ostensibly determines the number of edges added with each node 
+#(since they're added sequentially)
+#so it's definitely related to minimum degree of all nodes
+#however, it's not just that simple
+#clearly there's some kind of probability being used here
+#my current best guess is a dynamic probability (equivalent for all nodes)
+#such that the expected number of edges added when the node joins the graph =k
+#hence greater than (roughly double?) the minimum degree of the final graph
+
+#I did find in the paper linked to on the networkit documentation, a probability
+#https://kops.uni-konstanz.de/bitstream/handle/123456789/5799/random.pdf?sequence=1
+#Section IV
+#may be irrelevant though
+def predict_barabasi_albert(graph):
+    return
 
 '''
 Finds the clustering coefficient of a given graph.

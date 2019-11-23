@@ -16,7 +16,17 @@ import networkit as nk
 
 rating_graph = RatingGraph()
 ba_gen = nk.generators.BarabasiAlbertGenerator(5,30,0,True)
-rating_graph2 = RatingGraph()
+rating_graph2 = RatingGraph(ba_gen)
+
+#we need to find k in BA generator (here set to 5)
+#it's definitely related to minimum degree of all nodes
+#however, it's not just that simple
+#clearly there's some kind of probability being used here
+#my current best guess is a dynamic probability (equivalent for all nodes)
+#such that the expected number of edges added when the node joins the graph =k
+#hence greater than (roughly double?) the minimum degree of the final graph
+for n in rating_graph2.graph().nodes():
+    print(n, ":",rating_graph2.graph().degree(n))
 
 def buttonFunc(gtype, btype):
     # print(gtype)
