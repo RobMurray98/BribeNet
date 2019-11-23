@@ -12,15 +12,19 @@ from bribery.random import RandomBriber
 from graphGenerator import RatingGraph
 from parameterPrediction import test_parameter_prediction
 import tkinter as tk
+import networkit as nk
 
 rating_graph = RatingGraph()
-
+ba_gen = nk.generators.BarabasiAlbertGenerator(5,30,0,True)
+rating_graph2 = RatingGraph()
 
 def buttonFunc(gtype, btype):
     # print(gtype)
     # print(btype)
     if gtype == "ba":
-        print("not officially supported yet")
+        briber_setup = switch_briber(btype)
+        print("Testing selected bribery method on chosen graph type!")
+        graph_and_test(briber_setup, rating_graph2.copy())
         return
     briber_setup = switch_briber(btype)
     print("Testing selected bribery method on chosen graph type!")
