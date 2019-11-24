@@ -3,6 +3,7 @@ from numpy import logspace
 from numpy import sum as npsum
 from networkit.centrality import LocalClusteringCoefficient
 from networkit.distance import APSP
+import random
 
 trials = 5
 inf = float("inf")
@@ -28,8 +29,31 @@ inf = float("inf")
 #https://kops.uni-konstanz.de/bitstream/handle/123456789/5799/random.pdf?sequence=1
 #Section IV
 #may be irrelevant though
-def predict_barabasi_albert(graph):
+def test_predict_barabasi_albert():
+    sumk = 0
+    sumpredk=0
+    for i in range(1000):
+        nmax = random.randint(101,1000)
+        k = random.randint(5,100)
+        n0 = random.randint(0,0)
+        print(nmax,k,n0)
+        generator = BarabasiAlbertGenerator(k,nmax,n0,True)
+        graph = generator.generate()
+        predk = (len(graph.edges())/(nmax-n0))/0.7
+        print("k: ",k)
+        print("predk:",predk)
+        sumk+=k
+        sumpredk+=predk
+    print("ratio: ",sumpredk/sumk)
     return
+
+#test_predict_barabasi_albert()
+
+def predict_barabasi_albert(graph, batagelj=True):
+    nmax = len(graph.nodes())
+    predk = (len(graph.edges())/(nmax))//0.7
+    n0 = nmax%predk
+    return (nmax,predk,n0,batagelj)
 
 '''
 Finds the clustering coefficient of a given graph.
