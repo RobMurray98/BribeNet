@@ -6,13 +6,13 @@ from graphGenerator import RatingGraph
 
 # Returns list of scores over the time of run
 # Inputs A and B should be the class of agent used
-def run_agents(A, B, init_u=10, moves=20):
+def run_agents(a, b, init_u=10, moves=20):
     # Two identical graphs
     g1 = RatingGraph()
     g2 = g1.copy()
     # Agents running on identical graphs
-    agent_a = A(g1, init_u)
-    agent_b = B(g2, init_u)
+    agent_a = a(g1, init_u)
+    agent_b = b(g2, init_u)
     # scores over time
     scores_a = [g1.eval_graph()]
     scores_b = [g2.eval_graph()]

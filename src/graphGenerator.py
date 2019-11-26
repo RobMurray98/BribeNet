@@ -70,7 +70,6 @@ class RatingGraph:
         new_graph = self.__copy_graph()
         generator = SimpleNamespace()
         generator.generate = lambda: new_graph
-        # noinspection PyTypeChecker
         new_rg = RatingGraph(generator)
         new_rg.ratings = self.ratings.copy()
         new_rg.max_rating = self.max_rating
