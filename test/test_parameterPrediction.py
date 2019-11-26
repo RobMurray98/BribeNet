@@ -3,7 +3,7 @@ from unittest import TestCase
 from networkit.generators import WattsStrogatzGenerator
 from numpy import logspace
 
-from parameterPrediction import ParameterPrediction, TRIALS, INFINITY
+from parameterPrediction import ParameterPrediction
 
 
 class TestParameterPrediction(TestCase):
