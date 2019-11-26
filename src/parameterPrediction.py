@@ -4,8 +4,8 @@ from numpy import sum as npsum
 from networkit.centrality import LocalClusteringCoefficient
 from networkit.distance import APSP
 
-trials = 5
-inf = float("inf")
+TRIALS = 5
+INFINITY = float("inf")
 
 # TODO: Implement for scale-free.
 
@@ -37,7 +37,8 @@ class ParameterPrediction(object):
         # npsum needed as we are summing values in a matrix
         # Note! The matrix returned by getDistances is n*n, but we divide by n*n-1
         # since the central diagonal represents distances from a node to itself.
-        return npsum(apsp.getDistances()) / (n * (n - 1))
+        distances = apsp.getDistances()
+        return npsum(distances) / (n * (n - 1))
 
     '''
     Given an existing graph (from networkx), predict the parameters that should be used given.
@@ -68,7 +69,7 @@ class ParameterPrediction(object):
 
     @staticmethod
     def closest_index(values, target):
-        min_diff = inf
+        min_diff = INFINITY
         best = 0
         for i in range(len(values)):
             lv = values[i]
@@ -80,7 +81,7 @@ class ParameterPrediction(object):
 
     '''
     For a set of p-values, generate existing WS graphs and get the values of L(p)/L(0) and C(p)/C(0).
-    Returns (lvals, cvals, l0, c0)
+    Returns (l_values, c_values, l0, c0)
     '''
 
     @staticmethod
@@ -95,13 +96,13 @@ class ParameterPrediction(object):
             l_tot = 0
             c_tot = 0
             generator = WattsStrogatzGenerator(n, k, p)
-            for i in range(trials):
+            for i in range(TRIALS):
                 graph = generator.generate()
                 pred_i = ParameterPrediction(graph)
                 l_tot += pred_i.average_shortest_path_length()
                 c_tot += pred_i.average_clustering()
-            lp = l_tot / trials
-            cp = c_tot / trials
+            lp = l_tot / TRIALS
+            cp = c_tot / TRIALS
             result[0].append(lp / l0)
             result[1].append(cp / c0)
         return result
