@@ -1,4 +1,4 @@
-import unittest
+from unittest import TestCase
 
 from bribery.influentialNode import InfluentialNodeBriber
 from bribery.mostInfluencialNode import MostInfluentialNodeBriber
@@ -7,7 +7,7 @@ from graphGenerator import RatingGraph
 from parameterPrediction import test_parameter_prediction
 
 
-class TestMain(unittest.TestCase):
+class TestMain(TestCase):
 
     def setUp(self) -> None:
         self.rating_graph = RatingGraph()
