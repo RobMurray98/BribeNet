@@ -52,6 +52,18 @@ class RatingGraph:
     def get_customers(self):
         return list(self.__g.nodes())
 
+    # returns list of influential nodes, k is cost of info
+    def is_influential(self, c, k=0.2):
+        g_ = self.copy()
+        prev_p = g_.eval_graph()
+        if g_.get_rating(c) and g_.get_rating(c) < 1 - k:
+            g_.bribe(c, k)  # bribe for information
+            reward = g_.eval_graph() - prev_p - k
+            if reward > 0:
+                return True
+        return False
+
+
     def customer_count(self):
         return len(self.__g.nodes())
 
