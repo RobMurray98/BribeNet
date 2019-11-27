@@ -24,10 +24,12 @@ class OneMoveINB(Briber):
         # Sort based on highest reward
         self.influencers = sorted(self.influencers, key=lambda x: -x[0])
 
+    #returns node bribed number
     def next_bribe(self):
         self.get_influencers()
         (r, c) = self.influencers[0]
         self.bribe(c, self.max_rating - self.g.get_rating(c))
+        return c
 
 def main():
     rg = RatingGraph()
