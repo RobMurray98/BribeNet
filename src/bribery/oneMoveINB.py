@@ -1,6 +1,7 @@
 from bribery.briber import Briber
 from graphGenerator import RatingGraph
 
+
 # On each move will bribe the most influential node
 class OneMoveINB(Briber):
     def __init__(self, g, u0, k=0.2):
@@ -11,7 +12,7 @@ class OneMoveINB(Briber):
         self.k = k
         self.influencers = []
 
-    # sets influencers to oredered list of most influential nodes
+    # sets influencers to ordered list of most influential nodes
     def get_influencers(self):
         for c in self.g.get_customers():
             prev_p = self.g.eval_graph()
@@ -29,11 +30,13 @@ class OneMoveINB(Briber):
         (r, c) = self.influencers[0]
         self.bribe(c, self.max_rating - self.g.get_rating(c))
 
+
 def main():
     rg = RatingGraph()
     inb = OneMoveINB(rg, 10)
     inb.get_influencers()
     inb.next_bribe()
+
 
 if __name__ == '__main__':
     main()
