@@ -11,8 +11,9 @@ class OneMoveINB(Briber):
         self.k = k
         self.influencers = []
 
-    # sets influencers to oredered list of most influential nodes
+    # sets influencers to ordered list of most influential nodes
     def get_influencers(self):
+        self.influencers = []
         for c in self.g.get_customers():
             prev_p = self.g.eval_graph()
             # if voted and less that cost of info

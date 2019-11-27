@@ -127,6 +127,7 @@ class GraphFrame(tk.Frame):
 
     def to_results(self):
         self.controller.plot_results(self.results)
+        self.results = []
         self.controller.show_frame("ResultsFrame")
 
     def display_graph(self, last=-1):
@@ -141,6 +142,7 @@ class GraphFrame(tk.Frame):
         # labels = {c: round(self.graph.p_rating(c), 2) for c in self.graph.get_customers()}
 
         self.ax.clear()
+
         drawGraph(self.graph.graph(), node_size=400, node_color=colors, ax=self.ax, pos=self.pos)
         for c in self.graph.get_customers():
             rating = ""
@@ -171,10 +173,14 @@ class GraphFrame(tk.Frame):
         self.display_graph(last=c)
         avp = self.graph.eval_graph()
         self.results.append(avp)
-        self.ax.text(0, 1,
+        self.ax.annotate(
             "Average P-Rating: " + str(avp) + "\n" +
-            "Last bribed " + str(c)
+            "Last bribed " + str(c),
+            xy = (-0.5, 1.2),
+            bbox=dict(boxstyle="round", fc="w", ec="0.5", alpha=0.9),
+            clip_on=False
         )
+        self.canvas.draw()
 
 
     def show_influential(self):
@@ -215,7 +221,7 @@ class ResultsFrame(tk.Frame):
         self.ax = self.fig.add_subplot(111)
         self.canvas = FigureCanvasTkAgg(self.fig, master=self)
         self.canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
-        button1 = tk.Button(self, text="Exit", command=lambda: self.controller.show_frame("StartPage"))
+        button1 = tk.Button(self, text="Exit", command=lambda: self.exit())
         button1.pack()
 
     def plot_results(self, results):
@@ -225,6 +231,10 @@ class ResultsFrame(tk.Frame):
         self.ax.set_xlabel("Moves over time")
         self.ax.set_ylabel("Average P-rating")
         self.canvas.draw()
+
+    def exit(self):
+        self.results = []
+        self.controller.show_frame("StartPage")
 
 
 
