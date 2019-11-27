@@ -118,6 +118,12 @@ class GraphFrame(tk.Frame):
         button4 = tk.Button(self, text="Results", command=lambda: self.to_results())
         button4.pack()
 
+        self.txt = tk.StringVar()
+        lbl = tk.Label(self, textvariable=self.txt)
+        lbl.pack()
+        self.txt.set("Average P-Rating: -- \nLast Briber: --")
+
+
     def set_graph(self, graph, briber):
         self.graph = graph
         self.pos = spring_layout(nk2nx(self.graph.graph()))
@@ -166,21 +172,19 @@ class GraphFrame(tk.Frame):
                 linewidth = 3.0
             ))
         self.canvas.draw()
+        avp = str(round(self.graph.eval_graph(), 2))
+        if(last < 0):
+            self.txt.set("Average P-Rating: " + avp + " \nLast Bribed: --")
+        else:
+            self.txt.set("Average P-Rating: " + avp + " \nLast Bribed: " + str(last))
 
     def next_bribe(self):
         c = self.briber.next_bribe()
-        print(c)
         self.display_graph(last=c)
         avp = self.graph.eval_graph()
         self.results.append(avp)
-        self.ax.annotate(
-            "Average P-Rating: " + str(avp) + "\n" +
-            "Last bribed " + str(c),
-            xy = (-0.5, 1.2),
-            bbox=dict(boxstyle="round", fc="w", ec="0.5", alpha=0.9),
-            clip_on=False
-        )
         self.canvas.draw()
+
 
 
     def show_influential(self):
