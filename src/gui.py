@@ -105,8 +105,9 @@ class GraphFrame(tk.Frame):
         self.canvas = FigureCanvasTkAgg(self.fig, master=self)
         self.canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
         self.results = []
+        self.labels = True
 
-        button1 = tk.Button(self, text="Exit", command=lambda: self.controller.show_frame("StartPage"))
+        button1 = tk.Button(self, text="Exit", command=lambda: self.exit)
         button1.pack()
 
         button2 = tk.Button(self, text="Show Influential Nodes", command=lambda: self.show_influential())
@@ -118,11 +119,17 @@ class GraphFrame(tk.Frame):
         button4 = tk.Button(self, text="Results", command=lambda: self.to_results())
         button4.pack()
 
+        button5 = tk.Button(self, text="Toggle Labels", command=lambda: self.toggle_labels())
+        button5.pack()
+
         self.txt = tk.StringVar()
         lbl = tk.Label(self, textvariable=self.txt)
         lbl.pack()
         self.txt.set("Average P-Rating: -- \nLast Briber: --")
 
+    def exit(self):
+        self.results = []
+        self.controller.show_frame("StartPage")
 
     def set_graph(self, graph, briber):
         self.graph = graph
@@ -130,6 +137,18 @@ class GraphFrame(tk.Frame):
         self.briber=briber
         self.results.append(self.graph.eval_graph())
         self.display_graph()
+
+    def toggle_labels(self):
+        if self.labels:
+            for a in self.anns:
+                a.set_visible(False)
+        else:
+            for a in self.anns:
+                a.set_visible(True)
+
+
+        self.labels = not(self.labels)
+        self.canvas.draw()
 
     def to_results(self):
         self.controller.plot_results(self.results)
@@ -141,29 +160,29 @@ class GraphFrame(tk.Frame):
         cmap = plt.get_cmap("Purples")
         colors = []
         for c in self.graph.get_customers():
-            if not self.graph.get_rating(c):
-                colors.append("gray")
-            else:
-                colors.append(rgb2hex(cmap(self.graph.get_rating(c))[:3]))
-        # labels = {c: round(self.graph.p_rating(c), 2) for c in self.graph.get_customers()}
-
+            colors.append(rgb2hex(cmap(self.graph.p_rating(c))[:3]))
         self.ax.clear()
 
         drawGraph(self.graph.graph(), node_size=400, node_color=colors, ax=self.ax, pos=self.pos)
+        self.anns = []
         for c in self.graph.get_customers():
             rating = ""
             if not self.graph.get_rating(c):
                 rating = "None"
             else:
                 rating = round(self.graph.get_rating(c), 2)
-
-            self.ax.annotate(
+            ann = self.ax.annotate(
                 str(c) + ":\n" +
                 "Rating: " + str(rating) + "\n" +
                 "PRating: " + str(round(self.graph.p_rating(c), 2)),
                 xy = (self.pos[c][0], self.pos[c][1]),
                 bbox=dict(boxstyle="round", fc="w", ec="0.5", alpha=0.9)
             )
+            self.anns.append(ann)
+        if not self.labels:
+            for a in self.anns:
+                a.set_visible(False)
+
         if last >= 0:
             self.ax.add_artist(plt.Circle(
                 (self.pos[last][0], self.pos[last][1]), 0.1,
@@ -185,8 +204,6 @@ class GraphFrame(tk.Frame):
         self.results.append(avp)
         self.canvas.draw()
 
-
-
     def show_influential(self):
         cmap = plt.get_cmap("Purples")
         colors = []
@@ -194,12 +211,10 @@ class GraphFrame(tk.Frame):
         for c in self.graph.get_customers():
             if self.graph.is_influential(c):
                 colors.append("yellow")
-            elif not self.graph.get_rating(c):
-                colors.append("gray")
             else:
-                colors.append(rgb2hex(cmap(self.graph.get_rating(c))[:3]))
+                colors.append(rgb2hex(cmap(self.graph.p_rating(c))[:3]))
         self.ax.clear()
-
+        self.anns = []
         for c in self.graph.get_customers():
             rating = ""
             if not self.graph.get_rating(c):
@@ -207,13 +222,18 @@ class GraphFrame(tk.Frame):
             else:
                 rating = round(self.graph.get_rating(c), 2)
 
-            self.ax.annotate(
+            ann = self.ax.annotate(
                 str(c) + ":\n" +
                 "Rating: " + str(rating) + "\n" +
                 "PRating: " + str(round(self.graph.p_rating(c), 2)),
                 xy = (self.pos[c][0], self.pos[c][1]),
                 bbox=dict(boxstyle="round", fc="w", ec="0.5", alpha=0.9)
             )
+            self.anns.append(ann)
+        if not self.labels:
+            for a in self.anns:
+                a.set_visible(False)
+
         drawGraph(self.graph.graph(), node_size=500, node_color=colors, ax=self.ax, pos=self.pos)
         self.canvas.draw()
 
@@ -228,7 +248,7 @@ class ResultsFrame(tk.Frame):
         button1 = tk.Button(self, text="Exit", command=lambda: self.exit())
         button1.pack()
 
-    def plot_results(self, results):
+    def plot_results(self, results():
         xs = [i for i in range(0, len(results))]
         self.ax.clear()
         self.ax.plot(xs, results)

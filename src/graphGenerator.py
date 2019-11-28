@@ -3,7 +3,7 @@ import random
 import numpy as np
 from types import SimpleNamespace
 
-ws_gen = nk.generators.WattsStrogatzGenerator(30, 5, 0.3)
+ws_gen = nk.generators.WattsStrogatzGenerator(30, 3, 0.3)
 
 
 # provides view of rating graph for briber

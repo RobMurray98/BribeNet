@@ -12,6 +12,10 @@ class OneMoveRandom(Briber):
         c = random.choice(customers)
         if not self.g.get_rating(c):
             self.bribe(c, self.max_rating)
+            self.spent.append(self.max_rating)
+
         else:
-            self.bribe(c, self.max_rating - self.g.get_rating(c))
+            cost = self.max_rating - self.g.get_rating(c)
+            self.bribe(c, cost)
+            self.spent.append(cost)
         return c

@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 from bribery.oneMoveRandom import OneMoveRandom
 from bribery.oneMoveINB import OneMoveINB
 from graphGenerator import RatingGraph
+from numpy import cumsum
 
 # Returns list of scores over the time of run
 # Inputs A and B should be the class of agent used
@@ -24,14 +25,11 @@ def run_agents(A, B, init_u=10, moves=20):
         agentB.next_bribe()
         scoresB.append(g2.eval_graph())
 
-    return scoresA, scoresB
+    return scoresA, scoresB, agentA.get_spent(), agentB.get_spent()
 
 # plots two lists of scores on a graph, saved to filename
 def plot_scores(scoresA, scoresB, labelA, labelB, filename="graphrun.png"):
-    print(scoresA)
-    print(scoresB)
-    print(labelA)
-    print(labelB)
+
     xs = [i for i in range(0, len(scoresA))]
     plt.plot(xs, scoresA, color="red", label=labelA)
     plt.plot(xs, scoresB, color="orange", label=labelB)
@@ -41,9 +39,24 @@ def plot_scores(scoresA, scoresB, labelA, labelB, filename="graphrun.png"):
     plt.savefig(filename)
     plt.clf()
 
+def plot_cost(scoresA, scoresB, costA, costB, labelA, labelB, filename="costrun.png"):
+
+    plt.plot(costA, scoresB, color="red", label=labelA)
+    plt.plot(costB, scoresB, color="orange", label=labelB)
+    plt.xlabel("Amount spent")
+    plt.ylabel("Average P-rating")
+    plt.legend(loc="upper left")
+    plt.savefig(filename)
+    plt.clf()
+
 def main():
-    A, B = run_agents(OneMoveRandom, OneMoveINB)
+    A, B, sA, sB = run_agents(OneMoveRandom, OneMoveINB)
+    print(sA)
+    print(sB)
+    sA = cumsum(sA)
+    sB = cumsum(sB)
     plot_scores(A, B, "Random Bribing Agent", "Influential Node Bribing Agent")
+    plot_cost(A, B, sA, sB, "Random Bribing Agent", "Influential Node Bribing Agent")
 
 if __name__ == '__main__':
     main()
