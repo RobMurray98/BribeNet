@@ -248,7 +248,7 @@ class ResultsFrame(tk.Frame):
         button1 = tk.Button(self, text="Exit", command=lambda: self.exit())
         button1.pack()
 
-    def plot_results(self, results():
+    def plot_results(self, results):
         xs = [i for i in range(0, len(results))]
         self.ax.clear()
         self.ax.plot(xs, results)
