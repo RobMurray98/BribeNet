@@ -14,3 +14,4 @@ class OneMoveRandom(Briber):
             self.bribe(c, self.max_rating)
         else:
             self.bribe(c, self.max_rating - self.g.get_rating(c))
+        return c

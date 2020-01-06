@@ -26,12 +26,15 @@ class RatingGraph:
     def graph(self):
         return self.__g
 
+    def neighbors(self, idx):
+        return [n for n in self.__g.neighbors(idx) if self.get_rating(n)]
+
     # mean of neighbouring nodes for id
     def p_rating(self, idx):
-        nds = [n for n in self.__g.neighbors(idx) if self.get_rating(n)]
-        if len(nds) == 0:
+        ns = self.neighbors(idx)
+        if len(ns) == 0:
             return 0
-        return sum(self.get_rating(n) for n in nds) / len(nds)
+        return sum(self.get_rating(n) for n in ns) / len(ns)
 
     def pk_rating(self, idx: int, depth: int = 2, decay: float = 0.5):
         """
@@ -71,23 +74,35 @@ class RatingGraph:
         return sum(pk_ratings) / len(nds)
 
     def median_p_rating(self, idx):
-        ns = [n for n in self.__g.neighbors(idx) if self.get_rating(n)]
+        ns = self.neighbors(idx)
         ns = sorted(ns, key=lambda x: self.get_rating(x))
         return self.get_rating(ns[len(ns) // 2])
 
     def sample_p_rating(self, idx):
-        ns = [n for n in self.__g.neighbors(idx) if self.get_rating(n)]
+        ns = self.neighbors(idx)
         sub = random.sample(ns, random.randint(1, len(ns)))
         return sum(self.get_rating(n) for n in sub) / len(sub)
 
     # mean of rating for all nodes
     def o_rating(self):
-        nds = [n for n in self.__g.nodes() if self.get_rating(n)]
-        return sum(self.get_rating(n) for n in nds) / len(nds)
+        ns = [n for n in self.__g.nodes() if self.get_rating(n)]
+        return sum(self.get_rating(n) for n in ns) / len(ns)
 
     # returns customer ids without knowledge of edges or ratings
     def get_customers(self):
         return list(self.__g.nodes())
+
+    # returns list of influential nodes, k is cost of info
+    def is_influential(self, c, k=0.2):
+        g_ = self.copy()
+        prev_p = g_.eval_graph()
+        if g_.get_rating(c) and g_.get_rating(c) < 1 - k:
+            g_.bribe(c, k)  # bribe for information
+            reward = g_.eval_graph() - prev_p - k
+            if reward > 0:
+                return True
+        return False
+
 
     def customer_count(self):
         return len(self.__g.nodes())
@@ -110,7 +125,6 @@ class RatingGraph:
         new_graph = self.__copy_graph()
         generator = SimpleNamespace()
         generator.generate = lambda: new_graph
-        # noinspection PyTypeChecker
         new_rg = RatingGraph(generator)
         new_rg.ratings = self.ratings.copy()
         new_rg.max_rating = self.max_rating
