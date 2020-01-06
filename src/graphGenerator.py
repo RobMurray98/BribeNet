@@ -30,6 +30,22 @@ class RatingGraph:
             return 0
         return sum(self.get_rating(n) for n in nds) / len(nds)
 
+    def pk_rating(self, idx, depth=2, decay=0.5):
+        nds = [n for n in self.__g.neighbors(idx) if self.get_rating(n)]
+        if len(nds) == 0:
+            return 0
+        pk_ratings = [self.__pk_rating(n, nds, depth-1, decay) for n in nds]
+        return sum(pk_ratings) / len(nds)
+
+    def __pk_rating(self, idx, used, depth=0, decay=0.5):
+        if depth == 0:
+            return self.get_rating(idx)
+        nds = [n for n in self.__g.neighbors(idx) if self.get_rating(n) and n not in used]
+        if len(nds) == 0:
+            return 0
+        pk_ratings = [decay * self.__pk_rating(n, list(set(used) & set(nds))) for n in nds]
+        return sum(pk_ratings) / len(nds)
+
     def median_p_rating(self, idx):
         ns = [n for n in self.__g.neighbors(idx) if self.get_rating(n)]
         ns = sorted(ns, key=lambda x: self.get_rating(x))
