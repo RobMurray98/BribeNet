@@ -22,6 +22,11 @@ class TestRatingGraph(TestCase):
             p = self.rating_graph.p_rating(i)
             self.assertTrue(p >= 0)
 
+    def test_pk_rating(self):
+        for i in self.__g.nodes():
+            p = self.rating_graph.pk_rating(i)
+            self.assertTrue(p >= 0)
+
     def test_median_p_rating(self):
         for i in self.__g.nodes():
             p = self.rating_graph.median_p_rating(i)
