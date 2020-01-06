@@ -44,9 +44,9 @@ def plot_scores(scores_a, scores_b, label_a, label_b, filename="graphrun.png"):
     plt.clf()
 
 
-def plot_cost(scoresA, scoresB, costA, costB, labelA, labelB, filename="costrun.png"):
-    plt.plot(costA, scoresB, color="red", label=labelA)
-    plt.plot(costB, scoresB, color="orange", label=labelB)
+def plot_cost(scores_a, scores_b, cost_a, cost_b, label_a, label_b, filename="costrun.png"):
+    plt.plot(cost_a, scores_a, color="red", label=label_a)
+    plt.plot(cost_b, scores_b, color="orange", label=label_b)
     plt.xlabel("Amount spent")
     plt.ylabel("Average P-rating")
     plt.legend(loc="upper left")
@@ -55,13 +55,13 @@ def plot_cost(scoresA, scoresB, costA, costB, labelA, labelB, filename="costrun.
 
 
 def main():
-    A, B, sA, sB = run_agents(OneMoveRandom, OneMoveINB)
-    print(sA)
-    print(sB)
-    sA = cumsum(sA)
-    sB = cumsum(sB)
-    plot_scores(A, B, "Random Bribing Agent", "Influential Node Bribing Agent")
-    plot_cost(A, B, sA, sB, "Random Bribing Agent", "Influential Node Bribing Agent")
+    a, b, s_a, s_b = run_agents(OneMoveRandom, OneMoveINB)
+    print(s_a)
+    print(s_b)
+    s_a = cumsum(s_a)
+    s_b = cumsum(s_b)
+    plot_scores(a, b, "Random Bribing Agent", "Influential Node Bribing Agent")
+    plot_cost(a, b, s_a, s_b, "Random Bribing Agent", "Influential Node Bribing Agent")
 
 
 if __name__ == '__main__':

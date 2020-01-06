@@ -63,7 +63,6 @@ class RatingGraph:
                 return True
         return False
 
-
     def customer_count(self):
         return len(self.__g.nodes())
 
