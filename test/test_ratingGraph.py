@@ -24,7 +24,11 @@ class TestRatingGraph(TestCase):
 
     def test_pk_rating(self):
         for i in self.__g.nodes():
-            p = self.rating_graph.pk_rating(i)
+            p = self.rating_graph.pk_rating(i)  # depth = 2, decay = 1.0
+            # uncomment to inspect behaviour of different parameters in debug
+            # p1 = self.rating_graph.pk_rating(i, depth=2, decay=0.5)
+            # p2 = self.rating_graph.pk_rating(i, depth=4, decay=0.5)
+            # p3 = self.rating_graph.pk_rating(i, depth=4, decay=1)
             self.assertTrue(p >= 0)
 
     def test_median_p_rating(self):
