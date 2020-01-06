@@ -1,3 +1,5 @@
+from typing import Set
+
 import networkit as nk
 import random
 import numpy as np
@@ -16,6 +18,7 @@ class RatingGraph:
         self.ratings = np.repeat(None, len(self.__g.nodes()))
         self.max_rating = 1
         for n in self.__g.nodes():
+            # TODO (rob): justify the use of -0.25 here
             rating = random.uniform(-0.25, self.max_rating)
             if rating >= 0:
                 self.ratings[n] = rating
@@ -30,20 +33,41 @@ class RatingGraph:
             return 0
         return sum(self.get_rating(n) for n in nds) / len(nds)
 
-    def pk_rating(self, idx, depth=2, decay=0.5):
-        nds = [n for n in self.__g.neighbors(idx) if self.get_rating(n)]
+    def pk_rating(self, idx: int, depth: int = 2, decay: float = 0.5):
+        """
+        PK-rating of a node
+        :param idx: the node of which to find the PK-rating
+        :param depth: the number of levels of influence to use, default 2
+        :param decay: the exponential fall-off of value of ratings by level of relation
+        :return: the PK-rating of the node
+        """
+        nds = self.__g.neighbors(idx)
         if len(nds) == 0:
             return 0
-        pk_ratings = [self.__pk_rating(n, nds, depth-1, decay) for n in nds]
+        pk_ratings = [self.__pk_rating(n, {idx}, depth - 1, decay) for n in nds]
         return sum(pk_ratings) / len(nds)
 
-    def __pk_rating(self, idx, used, depth=0, decay=0.5):
+    def __pk_rating(self, idx: int, used: Set[int], depth=0, decay=0.5):
+        """
+        Recursive method to find intermediate PK-rating values
+        :param idx: the node being considered
+        :param used: the nodes already used (the path of recursion)
+        :param depth: the number of levels of recursion to go
+        :param decay: the exponential fall-off of value of ratings by level of relation
+        :return: the intermediate PK-rating value
+        """
         if depth == 0:
-            return self.get_rating(idx)
-        nds = [n for n in self.__g.neighbors(idx) if self.get_rating(n) and n not in used]
+            return self.get_rating(idx) or 0
+        nds = [n for n in self.__g.neighbors(idx)]
         if len(nds) == 0:
-            return 0
-        pk_ratings = [decay * self.__pk_rating(n, list(set(used) & set(nds))) for n in nds]
+            return self.get_rating(idx) or 0
+        # used is to make sure we don't go back on ourselves when we recurse
+        pk_ratings = [decay * self.__pk_rating(n, used | {idx}, depth-1, decay) for n in nds if n not in used]
+        rating = self.get_rating(idx)
+        if rating is not None:
+            # decay is applied to layer below, but not to the actual rating of this node
+            # TODO (rob): check that this doesn't lead to weird behaviour (might lead to really high ratings?)
+            return (sum(pk_ratings) + rating) / (len(nds) + 1)
         return sum(pk_ratings) / len(nds)
 
     def median_p_rating(self, idx):
