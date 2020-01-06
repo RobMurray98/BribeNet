@@ -5,26 +5,21 @@ Created on Tue Nov 19 20:36:51 2019
 @author: callum
 """
 
+import tkinter as tk
+
+import matplotlib.pyplot as plt
+import networkit as nk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.colors import rgb2hex
+from networkit.nxadapter import nk2nx
+from networkit.viztasks import drawGraph
+from networkx import spring_layout
+
 # Import Bribing Agents
-from bribery.influentialNode import InfluentialNodeBriber
-from bribery.mostInfluencialNode import MostInfluentialNodeBriber
-from bribery.random import RandomBriber
 from bribery.oneMoveINB import OneMoveINB
 from bribery.oneMoveRandom import OneMoveRandom
-
 from graphGenerator import RatingGraph
-from parameterPrediction import test_parameter_prediction
 
-import tkinter as tk
-import networkit as nk
-from networkx import spring_layout
-from networkit.nxadapter import nk2nx
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-from matplotlib.backend_bases import key_press_handler
-from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
-from networkit.viztasks import drawGraph
-from matplotlib.colors import rgb2hex
 
 def switch_briber(argument):
     switcher = {
@@ -32,6 +27,7 @@ def switch_briber(argument):
         "i": lambda g: OneMoveINB(g, 10)
     }
     return switcher.get(argument)
+
 
 # outer layer of application
 # links start page with graph page
@@ -55,17 +51,18 @@ class GUI(tk.Tk):
         self.show_frame("StartPage")
 
     def show_frame(self, page):
-        frame=self.frames[page]
+        frame = self.frames[page]
         frame.tkraise()
 
     def generate_graph(self, gtype, btype):
-        ba_gen = nk.generators.BarabasiAlbertGenerator(5,30,0,True)
+        ba_gen = nk.generators.BarabasiAlbertGenerator(5, 30, 0, True)
         rg = RatingGraph() if gtype == "ws" else RatingGraph(ba_gen)
         briber = switch_briber(btype)(rg)
         self.frames["GraphFrame"].set_graph(rg, briber)
 
     def plot_results(self, results):
         self.frames["ResultsFrame"].plot_results(results)
+
 
 # page for selection of graph and bribery method
 class StartPage(tk.Frame):
@@ -95,11 +92,16 @@ class StartPage(tk.Frame):
         self.controller.generate_graph(gtype, btype)
         self.controller.show_frame("GraphFrame")
 
+
 # page for displaying and running graph
 class GraphFrame(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
+        self.graph = None
+        self.pos = None
+        self.briber = None
+        self.anns = []
         self.fig = plt.figure(figsize=(8, 8))
         self.ax = self.fig.add_subplot(111)
         self.canvas = FigureCanvasTkAgg(self.fig, master=self)
@@ -134,7 +136,7 @@ class GraphFrame(tk.Frame):
     def set_graph(self, graph, briber):
         self.graph = graph
         self.pos = spring_layout(nk2nx(self.graph.graph()))
-        self.briber=briber
+        self.briber = briber
         self.results.append(self.graph.eval_graph())
         self.display_graph()
 
@@ -146,8 +148,7 @@ class GraphFrame(tk.Frame):
             for a in self.anns:
                 a.set_visible(True)
 
-
-        self.labels = not(self.labels)
+        self.labels = not self.labels
         self.canvas.draw()
 
     def to_results(self):
@@ -166,7 +167,6 @@ class GraphFrame(tk.Frame):
         drawGraph(self.graph.graph(), node_size=400, node_color=colors, ax=self.ax, pos=self.pos)
         self.anns = []
         for c in self.graph.get_customers():
-            rating = ""
             if not self.graph.get_rating(c):
                 rating = "None"
             else:
@@ -175,7 +175,7 @@ class GraphFrame(tk.Frame):
                 str(c) + ":\n" +
                 "Rating: " + str(rating) + "\n" +
                 "PRating: " + str(round(self.graph.p_rating(c), 2)),
-                xy = (self.pos[c][0], self.pos[c][1]),
+                xy=(self.pos[c][0], self.pos[c][1]),
                 bbox=dict(boxstyle="round", fc="w", ec="0.5", alpha=0.9)
             )
             self.anns.append(ann)
@@ -186,13 +186,13 @@ class GraphFrame(tk.Frame):
         if last >= 0:
             self.ax.add_artist(plt.Circle(
                 (self.pos[last][0], self.pos[last][1]), 0.1,
-                color = "r",
-                fill = False,
-                linewidth = 3.0
+                color="r",
+                fill=False,
+                linewidth=3.0
             ))
         self.canvas.draw()
         avp = str(round(self.graph.eval_graph(), 2))
-        if(last < 0):
+        if last < 0:
             self.txt.set("Average P-Rating: " + avp + " \nLast Bribed: --")
         else:
             self.txt.set("Average P-Rating: " + avp + " \nLast Bribed: " + str(last))
@@ -216,7 +216,6 @@ class GraphFrame(tk.Frame):
         self.ax.clear()
         self.anns = []
         for c in self.graph.get_customers():
-            rating = ""
             if not self.graph.get_rating(c):
                 rating = "None"
             else:
@@ -226,7 +225,7 @@ class GraphFrame(tk.Frame):
                 str(c) + ":\n" +
                 "Rating: " + str(rating) + "\n" +
                 "PRating: " + str(round(self.graph.p_rating(c), 2)),
-                xy = (self.pos[c][0], self.pos[c][1]),
+                xy=(self.pos[c][0], self.pos[c][1]),
                 bbox=dict(boxstyle="round", fc="w", ec="0.5", alpha=0.9)
             )
             self.anns.append(ann)
@@ -236,6 +235,7 @@ class GraphFrame(tk.Frame):
 
         drawGraph(self.graph.graph(), node_size=500, node_color=colors, ax=self.ax, pos=self.pos)
         self.canvas.draw()
+
 
 class ResultsFrame(tk.Frame):
     def __init__(self, parent, controller):
@@ -257,9 +257,7 @@ class ResultsFrame(tk.Frame):
         self.canvas.draw()
 
     def exit(self):
-        self.results = []
         self.controller.show_frame("StartPage")
-
 
 
 if __name__ == '__main__':

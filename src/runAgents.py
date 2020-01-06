@@ -34,9 +34,6 @@ def plot_scores(scores_a, scores_b, label_a, label_b, filename="graphrun.png"):
     xs = [i for i in range(0, len(scores_a))]
     plt.plot(xs, scores_a, color="red", label=label_a)
     plt.plot(xs, scores_b, color="orange", label=label_b)
-    xs = [i for i in range(0, len(scores_a))]
-    plt.plot(xs, scores_a, color="red", label=label_a)
-    plt.plot(xs, scores_b, color="orange", label=label_b)
     plt.xlabel("Moves over time")
     plt.ylabel("Average P-rating")
     plt.legend(loc="upper left")
