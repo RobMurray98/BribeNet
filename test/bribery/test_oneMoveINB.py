@@ -1,4 +1,4 @@
-from bribery.oneMoveINB import OneMoveINB
+from bribery.oneMoveINBriber import OneMoveINBriber
 from graphGenerator import RatingGraph
 from test.bribery.briberTestCase import BriberTestCase
 
@@ -6,7 +6,7 @@ from test.bribery.briberTestCase import BriberTestCase
 class TestOneMoveINB(BriberTestCase):
 
     def setUp(self) -> None:
-        self.briber = OneMoveINB(RatingGraph(), 10)
+        self.briber = OneMoveINBriber(RatingGraph(), 10)
 
     def test_get_influencers(self):
         self.briber.get_influencers()

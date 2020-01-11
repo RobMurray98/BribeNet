@@ -1,24 +1,32 @@
+from typing import Tuple
+
 import networkit as nk
 import random
 import numpy as np
 from types import SimpleNamespace
 
-ws_gen = nk.generators.WattsStrogatzGenerator(30, 5, 0.3)
+from bribery.briber import Briber
+from bribery.nonBriber import NonBriber
+
+DEFAULT_GEN = nk.generators.WattsStrogatzGenerator(30, 5, 0.3)
+DEFAULT_BRIBER = NonBriber(0)
 
 
 # provides view of rating graph for briber
 class RatingGraph:
 
-    def __init__(self, generator=ws_gen):
+    def __init__(self, generator=DEFAULT_GEN, bribers: Tuple[Briber] = (NonBriber,)):
         # Generate random ratings network
         self.__g = generator.generate()
+        self.__bribers = bribers
         # noinspection PyTypeChecker
-        self.ratings = np.repeat(None, len(self.__g.nodes()))
+        self.ratings = np.zeros((len(self.__bribers)), len(self.__g.nodes()))
         self.max_rating = 1
         for n in self.__g.nodes():
-            rating = random.uniform(-0.25, self.max_rating)
-            if rating >= 0:
-                self.ratings[n] = rating
+            for b in enumerate(self.__bribers):
+                rating = random.uniform(-0.25, self.max_rating)
+                if rating >= 0:
+                    self.ratings[n] = rating
 
     def graph(self):
         return self.__g
@@ -62,7 +70,6 @@ class RatingGraph:
             if reward > 0:
                 return True
         return False
-
 
     def customer_count(self):
         return len(self.__g.nodes())

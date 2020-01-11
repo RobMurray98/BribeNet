@@ -4,7 +4,7 @@ from bribery.briber import Briber
 # Can see P-rating, can't see graph
 class InfluentialNodeBriber(Briber):
     def __init__(self, g, u0, k=0.2):
-        super().__init__(g, u0)
+        super().__init__(u0)
         # Make sure that k is set such that there are enough resources left to
         # actually bribe people.
         k = min(0.5 * (u0 / g.customer_count()), k)

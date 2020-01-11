@@ -1,4 +1,4 @@
-from bribery.influentialNode import InfluentialNodeBriber
+from bribery.influentialNodeBriber import InfluentialNodeBriber
 from graphGenerator import RatingGraph
 from test.bribery.briberTestCase import BriberTestCase
 

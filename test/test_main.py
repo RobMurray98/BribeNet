@@ -1,8 +1,8 @@
 from unittest import TestCase
 
-from bribery.influentialNode import InfluentialNodeBriber
-from bribery.mostInfluencialNode import MostInfluentialNodeBriber
-from bribery.random import RandomBriber
+from bribery.influentialNodeBriber import InfluentialNodeBriber
+from bribery.mostInfluencialNodeBriber import MostInfluentialNodeBriber
+from bribery.randomBriber import RandomBriber
 from graphGenerator import RatingGraph
 from parameterPrediction import test_parameter_prediction
 
