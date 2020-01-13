@@ -9,7 +9,7 @@ class TestBriber(BriberTestCase):
         super().setUp()
 
     def test_bribe(self):
-        initial_u = self.briber.u
+        initial_u = self.briber.get_resources()
         bribe = random.randrange(0, initial_u)
         self.briber.bribe(0, bribe)
-        self.assertEqual(self.briber.u, initial_u-bribe)
+        self.assertEqual(self.briber.get_resources(), initial_u-bribe)

@@ -6,18 +6,24 @@ from graph.singleBriberRatingGraph import SingleBriberRatingGraph
 
 
 class DummyBriber(Briber):
-    def __init__(self, g, u0):
-        super().__init__(g, u0)
+
+    def next_bribe(self):
+        pass
+
+    def __init__(self, u0):
+        super().__init__(u0)
 
 
 class BriberTestCase(TestCase, ABC):
 
     @abstractmethod
     def setUp(self) -> None:
-        self.briber = DummyBriber(SingleBriberRatingGraph(), 10)
+        self.briber = DummyBriber(10)
+        self.rg = SingleBriberRatingGraph(self.briber)
+        self.briber.set_graph(self.rg)
 
     def tearDown(self) -> None:
-        del self.briber
+        del self.briber, self.rg
 
     def _total_rating(self, g):
         return sum([x or 0 for x in [g.get_vote(c) for c in self.briber._g.get_customers()]])

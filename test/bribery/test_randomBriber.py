@@ -1,13 +1,15 @@
 from bribery.randomBriber import RandomBriber
-from graph.ratingGraph import RatingGraph
+from graph.singleBriberRatingGraph import SingleBriberRatingGraph
 from test.bribery.briberTestCase import BriberTestCase
 
 
 class TestOneMoveINB(BriberTestCase):
 
     def setUp(self) -> None:
-        self.briber = RandomBriber(RatingGraph(), 10)
+        self.briber = RandomBriber(10)
+        self.rg = SingleBriberRatingGraph(self.briber)
+        self.briber.set_graph(self.rg)
 
     def test_next_bribe_does_not_exceed_budget(self):
         self.briber.next_bribe()
-        self.assertTrue(self.briber.__u >= 0)
+        self.assertTrue(self.briber.get_resources() >= 0)
