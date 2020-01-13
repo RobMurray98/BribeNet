@@ -2,7 +2,7 @@ from copy import deepcopy
 
 import matplotlib.pyplot as plt
 from bribery.oneMoveRandomBriber import OneMoveRandom
-from bribery.oneMoveINBriber import OneMoveINBriber
+from bribery.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
 from graph.ratingGraph import RatingGraph
 
 
@@ -47,7 +47,7 @@ def plot_scores(scores_a, scores_b, label_a, label_b, filename="graphrun.png"):
 
 
 def main():
-    a, b = run_agents(OneMoveRandom, OneMoveINBriber)
+    a, b = run_agents(OneMoveRandom, OneMoveInfluentialNodeBriber)
     plot_scores(a, b, "Random Bribing Agent", "Influential Node Bribing Agent")
 
 

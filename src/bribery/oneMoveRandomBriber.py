@@ -1,5 +1,5 @@
 import random
-from bribery.briber import Briber
+from bribery.briber import Briber, BriberyGraphNotSetException
 
 
 # randomly picks node and gives max bribe to node
@@ -7,11 +7,14 @@ from bribery.briber import Briber
 class OneMoveRandom(Briber):
 
     def next_bribe(self):
-        customers = self.g.get_customers()
+        if self._g is None:
+            raise BriberyGraphNotSetException()
+        customers = self._g.get_customers()
         # pick random customer from list
         c = random.choice(customers)
-        if not self.g.get_vote(c):
-            self.bribe(c, self.max_rating)
+        max_rating = self._g.get_max_rating()
+        if not self._g.get_vote(c):
+            self.bribe(c, max_rating)
         else:
-            self.bribe(c, self.max_rating - self.g.get_vote(c))
+            self.bribe(c, max_rating - self._g.get_vote(c))
         return c
