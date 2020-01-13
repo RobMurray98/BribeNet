@@ -3,7 +3,7 @@ from unittest import TestCase
 from bribery.influentialNodeBriber import InfluentialNodeBriber
 from bribery.mostInfluencialNodeBriber import MostInfluentialNodeBriber
 from bribery.randomBriber import RandomBriber
-from graphGenerator import RatingGraph
+from graph.ratingGraph import RatingGraph
 from parameterPrediction import test_parameter_prediction
 
 

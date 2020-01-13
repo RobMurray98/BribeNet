@@ -6,22 +6,16 @@ Created on Tue Nov 19 20:36:51 2019
 """
 
 # Import Bribing Agents
-from bribery.influentialNodeBriber import InfluentialNodeBriber
-from bribery.mostInfluencialNodeBriber import MostInfluentialNodeBriber
-from bribery.randomBriber import RandomBriber
 from bribery.oneMoveINBriber import OneMoveINBriber
 from bribery.oneMoveRandomBriber import OneMoveRandom
 
-from graphGenerator import RatingGraph
-from parameterPrediction import test_parameter_prediction
+from graph.ratingGraph import RatingGraph
 
 import tkinter as tk
 import networkit as nk
 from networkx import spring_layout
 from networkit.nxadapter import nk2nx
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-from matplotlib.backend_bases import key_press_handler
-from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 from networkit.viztasks import drawGraph
 from matplotlib.colors import rgb2hex
@@ -141,10 +135,10 @@ class GraphFrame(tk.Frame):
         cmap = plt.get_cmap("Purples")
         colors = []
         for c in self.graph.get_customers():
-            if not self.graph.get_rating(c):
+            if not self.graph.get_vote(c):
                 colors.append("gray")
             else:
-                colors.append(rgb2hex(cmap(self.graph.get_rating(c))[:3]))
+                colors.append(rgb2hex(cmap(self.graph.get_vote(c))[:3]))
         # labels = {c: round(self.graph.p_rating(c), 2) for c in self.graph.get_customers()}
 
         self.ax.clear()
@@ -152,15 +146,15 @@ class GraphFrame(tk.Frame):
         drawGraph(self.graph.graph(), node_size=400, node_color=colors, ax=self.ax, pos=self.pos)
         for c in self.graph.get_customers():
             rating = ""
-            if not self.graph.get_rating(c):
+            if not self.graph.get_vote(c):
                 rating = "None"
             else:
-                rating = round(self.graph.get_rating(c), 2)
+                rating = round(self.graph.get_vote(c), 2)
 
             self.ax.annotate(
                 str(c) + ":\n" +
                 "Rating: " + str(rating) + "\n" +
-                "PRating: " + str(round(self.graph.p_rating(c), 2)),
+                "PRating: " + str(round(self.graph._p_rating(), 2)),
                 xy = (self.pos[c][0], self.pos[c][1]),
                 bbox=dict(boxstyle="round", fc="w", ec="0.5", alpha=0.9)
             )
@@ -194,23 +188,23 @@ class GraphFrame(tk.Frame):
         for c in self.graph.get_customers():
             if self.graph.is_influential(c):
                 colors.append("yellow")
-            elif not self.graph.get_rating(c):
+            elif not self.graph.get_vote(c):
                 colors.append("gray")
             else:
-                colors.append(rgb2hex(cmap(self.graph.get_rating(c))[:3]))
+                colors.append(rgb2hex(cmap(self.graph.get_vote(c))[:3]))
         self.ax.clear()
 
         for c in self.graph.get_customers():
             rating = ""
-            if not self.graph.get_rating(c):
+            if not self.graph.get_vote(c):
                 rating = "None"
             else:
-                rating = round(self.graph.get_rating(c), 2)
+                rating = round(self.graph.get_vote(c), 2)
 
             self.ax.annotate(
                 str(c) + ":\n" +
                 "Rating: " + str(rating) + "\n" +
-                "PRating: " + str(round(self.graph.p_rating(c), 2)),
+                "PRating: " + str(round(self.graph._p_rating(), 2)),
                 xy = (self.pos[c][0], self.pos[c][1]),
                 bbox=dict(boxstyle="round", fc="w", ec="0.5", alpha=0.9)
             )

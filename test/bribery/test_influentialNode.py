@@ -1,5 +1,5 @@
 from bribery.influentialNodeBriber import InfluentialNodeBriber
-from graphGenerator import RatingGraph
+from graph.ratingGraph import RatingGraph
 from test.bribery.briberTestCase import BriberTestCase
 
 

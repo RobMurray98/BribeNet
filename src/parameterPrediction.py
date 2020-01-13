@@ -1,7 +1,10 @@
+# noinspection PyUnresolvedReferences
 from networkit.generators import WattsStrogatzGenerator
 from numpy import logspace
-from numpy import sum as npsum
+from numpy import sum as np_sum
+# noinspection PyUnresolvedReferences
 from networkit.centrality import LocalClusteringCoefficient
+# noinspection PyUnresolvedReferences
 from networkit.distance import APSP
 
 TRIALS = 5
@@ -38,7 +41,7 @@ class ParameterPrediction(object):
         # Note! The matrix returned by getDistances is n*n, but we divide by n*n-1
         # since the central diagonal represents distances from a node to itself.
         distances = apsp.getDistances()
-        return npsum(distances) / (n * (n - 1))
+        return np_sum(distances) / (n * (n - 1))
 
     '''
     Given an existing graph (from networkx), predict the parameters that should be used given.
@@ -50,7 +53,7 @@ class ParameterPrediction(object):
 
     def predict_small_world(self):
         n = len(self.__g.nodes())
-        k = sum([len(self.__g.neighbors(i)) for i in self.__g.nodes()]) // (2 * n)
+        k = sum([len(self.__g.neighbours(i)) for i in self.__g.nodes()]) // (2 * n)
         probs = logspace(-5, 0, 64, False, 10)
         (lvs, cvs, l0, c0) = self.generate_example_graphs(n, k, probs)
         lp = self.average_shortest_path_length()

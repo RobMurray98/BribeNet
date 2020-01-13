@@ -10,8 +10,8 @@ class OneMoveRandom(Briber):
         customers = self.g.get_customers()
         # pick random customer from list
         c = random.choice(customers)
-        if not self.g.get_rating(c):
+        if not self.g.get_vote(c):
             self.bribe(c, self.max_rating)
         else:
-            self.bribe(c, self.max_rating - self.g.get_rating(c))
+            self.bribe(c, self.max_rating - self.g.get_vote(c))
         return c

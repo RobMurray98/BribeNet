@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from unittest import TestCase
 
 from bribery.briber import Briber
-from graphGenerator import RatingGraph
+from graph.ratingGraph import RatingGraph
 
 
 class DummyBriber(Briber):
@@ -20,7 +20,7 @@ class BriberTestCase(TestCase, ABC):
         del self.briber
 
     def _total_rating(self, g):
-        return sum([x or 0 for x in [g.get_rating(c) for c in self.briber.g.get_customers()]])
+        return sum([x or 0 for x in [g.get_vote(c) for c in self.briber.g.get_customers()]])
 
     def _p_rating_increase(self, g1, g2):
         rating2 = self._total_rating(g2)

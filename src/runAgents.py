@@ -1,7 +1,9 @@
+from copy import deepcopy
+
 import matplotlib.pyplot as plt
 from bribery.oneMoveRandomBriber import OneMoveRandom
 from bribery.oneMoveINBriber import OneMoveINBriber
-from graphGenerator import RatingGraph
+from graph.ratingGraph import RatingGraph
 
 
 # Returns list of scores over the time of run
@@ -9,7 +11,7 @@ from graphGenerator import RatingGraph
 def run_agents(a, b, init_u=10, moves=20):
     # Two identical graphs
     g1 = RatingGraph()
-    g2 = g1.copy()
+    g2 = deepcopy(g1)
     # Agents running on identical graphs
     agent_a = a(g1, init_u)
     agent_b = b(g2, init_u)

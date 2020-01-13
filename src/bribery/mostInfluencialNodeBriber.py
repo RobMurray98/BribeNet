@@ -17,7 +17,7 @@ class MostInfluentialNodeBriber(Briber):
         for c in self.g.get_customers():
             prev_p = self.g.eval_graph()
             # if voted and less that cost of info
-            if self.g.get_rating(c) and self.g.get_rating(c) < 1 - self.k:
+            if self.g.get_vote(c) and self.g.get_vote(c) < 1 - self.k:
                 self.bribe(c, self.k)  # bribe for information
                 reward = self.g.eval_graph() - prev_p - self.k
                 if reward > 0:
@@ -26,4 +26,4 @@ class MostInfluentialNodeBriber(Briber):
         # Sort based on highest reward
         influencers = sorted(influencers, key=lambda x: -x[0])
         for (_, c) in influencers:
-            self.bribe(c, self.max_rating - self.g.get_rating(c))
+            self.bribe(c, self.max_rating - self.g.get_vote(c))

@@ -1,7 +1,9 @@
+from copy import deepcopy
+
 from bribery.influentialNodeBriber import InfluentialNodeBriber
 from bribery.mostInfluencialNodeBriber import MostInfluentialNodeBriber
 from bribery.randomBriber import RandomBriber
-from graphGenerator import RatingGraph
+from graph.ratingGraph import RatingGraph
 from parameterPrediction import test_parameter_prediction
 # from snapImport import facebook
 
@@ -22,8 +24,8 @@ if __name__ == "__main__":
     print("")
     rating_graph = RatingGraph()
     print("Testing random bribery on a graph!")
-    graph_and_test(lambda g: RandomBriber(g, 10), rating_graph.copy())
+    graph_and_test(lambda g: RandomBriber(g, 10), deepcopy(rating_graph))
     print("Testing influential node bribery on a graph!")
-    graph_and_test(lambda g: InfluentialNodeBriber(g, 10, 0.2), rating_graph.copy())
+    graph_and_test(lambda g: InfluentialNodeBriber(g, 10, 0.2), deepcopy(rating_graph))
     print("Testing most influential node bribery on a graph!")
-    graph_and_test(lambda g: MostInfluentialNodeBriber(g, 10, 0.2), rating_graph.copy())
+    graph_and_test(lambda g: MostInfluentialNodeBriber(g, 10, 0.2), deepcopy(rating_graph))

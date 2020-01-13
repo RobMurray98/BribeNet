@@ -1,5 +1,7 @@
+from copy import deepcopy
+
 from bribery.oneMoveINBriber import OneMoveINBriber
-from graphGenerator import RatingGraph
+from graph.ratingGraph import RatingGraph
 from test.bribery.briberTestCase import BriberTestCase
 
 
@@ -13,6 +15,6 @@ class TestOneMoveINB(BriberTestCase):
         self.assertTrue(len(self.briber.influencers) > 0)
 
     def test_next_bribe_increases_p_rating(self):
-        initial_g = self.briber.g.copy()
+        initial_g = deepcopy(self.briber.g)
         self.briber.next_bribe()
         self._p_rating_increase(initial_g, self.briber.g)

@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+from graph.ratingGraph import RatingGraph
+
 
 class BriberyGraphNotSetException(Exception):
     pass
@@ -7,13 +9,10 @@ class BriberyGraphNotSetException(Exception):
 
 # abstract briber class
 class Briber(ABC):
-    def __init__(self, u0: float):
+    def __init__(self, g: RatingGraph, u0: float):
         self.__u = u0  # resources of briber to spend
-        self.g = None  # network for agent
-        self.max_rating = self.g.max_rating
-
-    def set_graph(self, g):
-        self.g = g
+        self.g = g  # network for agent
+        self.max_rating = self.g._max_rating
 
     def set_resources(self, u: float):
         self.__u = u
@@ -30,4 +29,4 @@ class Briber(ABC):
 
     @abstractmethod
     def next_bribe(self):
-        pass
+        raise NotImplementedError
