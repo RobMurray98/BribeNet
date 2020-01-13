@@ -7,7 +7,7 @@ Created on Tue Nov 19 20:36:51 2019
 
 # Import Bribing Agents
 from bribery.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
-from bribery.oneMoveRandomBriber import OneMoveRandom
+from bribery.oneMoveRandomBriber import OneMoveRandomBriber
 
 from graph.singleBriberRatingGraph import SingleBriberRatingGraph
 
@@ -23,7 +23,7 @@ from matplotlib.colors import rgb2hex
 
 def switch_briber(argument):
     switcher = {
-        "r": lambda: OneMoveRandom(10),
+        "r": lambda: OneMoveRandomBriber(10),
         "i": lambda: OneMoveInfluentialNodeBriber(10)
     }
     return switcher.get(argument)

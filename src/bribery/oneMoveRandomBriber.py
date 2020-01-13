@@ -4,7 +4,7 @@ from bribery.briber import Briber, BriberyGraphNotSetException
 
 # randomly picks node and gives max bribe to node
 # operates one node at a time
-class OneMoveRandom(Briber):
+class OneMoveRandomBriber(Briber):
 
     def next_bribe(self):
         if self._g is None:

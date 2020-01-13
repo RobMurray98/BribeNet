@@ -3,7 +3,7 @@ from copy import deepcopy
 import matplotlib.pyplot as plt
 
 from bribery.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
-from bribery.oneMoveRandomBriber import OneMoveRandom
+from bribery.oneMoveRandomBriber import OneMoveRandomBriber
 # Returns list of scores over the time of run
 # Inputs A and B should be the class of agent used
 from graph.singleBriberRatingGraph import SingleBriberRatingGraph
@@ -50,7 +50,7 @@ def plot_scores(scores_a, scores_b, label_a, label_b, filename="graphrun.png"):
 
 
 def main():
-    a, b = run_agents(OneMoveRandom, OneMoveInfluentialNodeBriber)
+    a, b = run_agents(OneMoveRandomBriber, OneMoveInfluentialNodeBriber)
     plot_scores(a, b, "Random Bribing Agent", "Influential Node Bribing Agent")
 
 
