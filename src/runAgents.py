@@ -1,20 +1,23 @@
 from copy import deepcopy
 
 import matplotlib.pyplot as plt
-from bribery.oneMoveRandomBriber import OneMoveRandom
+
 from bribery.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
-from graph.ratingGraph import RatingGraph
-
-
+from bribery.oneMoveRandomBriber import OneMoveRandom
 # Returns list of scores over the time of run
 # Inputs A and B should be the class of agent used
+from graph.singleBriberRatingGraph import SingleBriberRatingGraph
+
+
 def run_agents(a, b, init_u=10, moves=20):
     # Two identical graphs
-    g1 = RatingGraph()
+    g1 = SingleBriberRatingGraph(None)
     g2 = deepcopy(g1)
     # Agents running on identical graphs
-    agent_a = a(g1, init_u)
-    agent_b = b(g2, init_u)
+    agent_a = a(init_u)
+    agent_b = b(init_u)
+    agent_a.set_graph(g1)
+    agent_b.set_graph(g2)
     # scores over time
     scores_a = [g1.eval_graph()]
     scores_b = [g2.eval_graph()]

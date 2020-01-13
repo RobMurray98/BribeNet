@@ -59,6 +59,7 @@ class GUI(tk.Tk):
         # noinspection PyUnresolvedReferences
         ba_gen = nk.generators.BarabasiAlbertGenerator(5, 30, 0, True)
         rg = SingleBriberRatingGraph(briber) if gtype == "ws" else SingleBriberRatingGraph(briber, generator=ba_gen)
+        briber.set_graph(rg)
         self.frames["GraphFrame"].set_graph(rg, briber)
 
     def plot_results(self, results):
@@ -206,7 +207,7 @@ class GraphFrame(tk.Frame):
             self.ax.annotate(
                 str(c) + ":\n" +
                 "Rating: " + str(rating) + "\n" +
-                "PRating: " + str(round(self.graph._p_rating(), 2)),
+                "PRating: " + str(round(self.graph.get_rating(c), 2)),
                 xy=(self.pos[c][0], self.pos[c][1]),
                 bbox=dict(boxstyle="round", fc="w", ec="0.5", alpha=0.9)
             )

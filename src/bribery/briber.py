@@ -28,6 +28,9 @@ class Briber(ABC):
     def add_resources(self, u: float):
         self._u += u
 
+    def get_resources(self) -> float:
+        return self._u
+
     def bribe(self, bribe_id: int, amount: float):
         if self._g is None:
             raise BriberyGraphNotSetException()

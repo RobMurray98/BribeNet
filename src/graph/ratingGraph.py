@@ -50,6 +50,13 @@ class RatingGraph(ABC):
         assert self._bribers is not None
         assert type(self._votes) is np.ndarray
 
+    def get_bribers(self):
+        """
+        Get the bribers active on the graph
+        :return: the bribers
+        """
+        return self._bribers
+
     def get_max_rating(self) -> float:
         """
         Get the maximum rating

@@ -53,7 +53,7 @@ class ParameterPrediction(object):
 
     def predict_small_world(self):
         n = len(self.__g.nodes())
-        k = sum([len(self.__g.neighbours(i)) for i in self.__g.nodes()]) // (2 * n)
+        k = sum([len(self.__g.neighbors(i)) for i in self.__g.nodes()]) // (2 * n)
         probs = logspace(-5, 0, 64, False, 10)
         (lvs, cvs, l0, c0) = self.generate_example_graphs(n, k, probs)
         lp = self.average_shortest_path_length()
