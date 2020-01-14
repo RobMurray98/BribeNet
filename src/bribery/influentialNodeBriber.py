@@ -1,15 +1,14 @@
 from bribery.briber import Briber, BriberyGraphNotSetException
 
-# Can see P-rating, can't see graph
-from graph.ratingGraph import RatingGraph
 
+# Can see P-rating, can't see graph
 
 class InfluentialNodeBriber(Briber):
     def __init__(self, u0, k=0.2):
         super().__init__(u0)
         self.k = k
 
-    def _set_graph(self, g: RatingGraph):
+    def _set_graph(self, g):
         super()._set_graph(g)
         # Make sure that k is set such that there are enough resources left to actually bribe people.
         self.k = min(0.5 * (self._u / self._g.customer_count()), self.k)

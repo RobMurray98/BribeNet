@@ -4,7 +4,7 @@ from bribery.influentialNodeBriber import InfluentialNodeBriber
 from bribery.mostInfluencialNodeBriber import MostInfluentialNodeBriber
 from bribery.randomBriber import RandomBriber
 from graph.singleBriberRatingGraph import SingleBriberRatingGraph
-from parameterPrediction import test_parameter_prediction
+from prediction.parameterPrediction import test_parameter_prediction
 
 
 # from snapImport import facebook

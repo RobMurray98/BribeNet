@@ -6,8 +6,6 @@ from typing import Tuple, Optional, Union, List
 import networkit as nk
 import numpy as np
 
-from bribery.briber import Briber
-
 # noinspection PyUnresolvedReferences
 DEFAULT_GEN = nk.generators.WattsStrogatzGenerator(30, 5, 0.3)
 
@@ -49,13 +47,17 @@ class RatingGraph(ABC):
         """
         Perform assertions that ensure everything is initialised
         """
-        assert self._bribers is not None
+        assert self._bribers is not None, "specifics of implementing class did not instantiate self._bribers"
+        from bribery.briber import Briber
         if issubclass(self._bribers.__class__, Briber):
+            # noinspection PyProtectedMember
             self._bribers._set_graph(self)
         else:
             for briber in self._bribers:
+                # noinspection PyProtectedMember
                 briber._set_graph(self)
-        assert type(self._votes) is np.ndarray
+        assert type(self._votes) is np.ndarray, "specifics of implementing class did not instantiate self._votes to " \
+                                                "an ndarray"
 
     def get_bribers(self):
         """
@@ -88,7 +90,7 @@ class RatingGraph(ABC):
         """
         rm = rating_method or self._rating_method
         if rm == RatingMethod.O_RATING:
-            return self._o_rating()
+            return self._o_rating(briber_id)
         if rm == RatingMethod.P_RATING:
             return self._p_rating(node_id, briber_id)
         if rm == RatingMethod.MEDIAN_P_RATING:
@@ -147,9 +149,10 @@ class RatingGraph(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def _o_rating(self) -> float:
+    def _o_rating(self, briber_id: int) -> float:
         """
         Get the O-rating for the node
+        :param briber_id: the id number of the briber
         :return: mean of all actual ratings
         """
         raise NotImplementedError

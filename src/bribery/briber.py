@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Optional
 
 
 class BriberyGraphNotSetException(Exception):
@@ -18,10 +19,11 @@ class Briber(ABC):
     def __init__(self, u0: float):
         self._u = u0  # resources of briber to spend
         from graph.ratingGraph import RatingGraph
-        # noinspection PyTypeChecker
-        self._g: RatingGraph = None  # network for agent
+        self._g: Optional[RatingGraph] = None  # network for agent
 
     def _set_graph(self, g):
+        from graph.ratingGraph import RatingGraph
+        assert issubclass(g.__class__, RatingGraph), "graph must be subclass of RatingGraph"
         if self._g is not None:
             raise BriberyGraphAlreadySetException()
         self._g = g

@@ -54,7 +54,7 @@ class SingleBriberRatingGraph(RatingGraph):
         sub = random.sample(ns, random.randint(1, len(ns)))
         return sum(self.get_vote(n) for n in sub) / len(sub)
 
-    def _o_rating(self):
+    def _o_rating(self, *args):
         ns = [n for n in self._g.nodes() if self.get_vote(n)]
         return sum(self.get_vote(n) for n in ns) / len(ns)
 

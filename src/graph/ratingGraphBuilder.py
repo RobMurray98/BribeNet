@@ -14,7 +14,7 @@ from graph.singleBriberRatingGraph import SingleBriberRatingGraph
 
 
 @enum.unique
-class BriberID(enum.Enum):
+class BriberType(enum.Enum):
     Non = 0
     Random = 1
     OneMoveRandom = 2
@@ -23,7 +23,7 @@ class BriberID(enum.Enum):
     OneMoveInfluentialNode = 5
 
     @classmethod
-    def get_briber_constructor(cls, idx):
+    def get_briber_constructor(cls, idx, *args, **kwargs):
         c = None
         if idx == cls.Non:
             c = NonBriber
@@ -37,7 +37,7 @@ class BriberID(enum.Enum):
             c = MostInfluentialNodeBriber
         if idx == cls.OneMoveInfluentialNode:
             c = OneMoveInfluentialNodeBriber
-        return lambda u0, args, kwargs: c(u0, *args, **kwargs)
+        return lambda u0: c(u0, *args, **kwargs)
 
 
 class RatingGraphBuilder(object):
@@ -46,11 +46,13 @@ class RatingGraphBuilder(object):
         self.bribers: List[Briber] = []
         self.generator = DEFAULT_GEN
 
-    def add_builder(self, briber: BriberID, u0: int = 0, *args, **kwargs):
-        self.bribers.append(BriberID.get_briber_constructor(briber)(u0, *args, **kwargs))
+    def add_briber(self, briber: BriberType, u0: int = 0, *args, **kwargs):
+        self.bribers.append(BriberType.get_briber_constructor(briber)(u0, *args, **kwargs))
+        return self
 
     def set_generator(self, generator):
         self.generator = generator
+        return self
 
     def build(self) -> RatingGraph:
         if not self.bribers:

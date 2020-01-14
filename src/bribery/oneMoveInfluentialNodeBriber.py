@@ -1,6 +1,4 @@
 from bribery.briber import Briber, BriberyGraphNotSetException
-from graph.ratingGraph import RatingGraph
-
 
 # On each move will bribe the most influential node
 from graph.singleBriberRatingGraph import SingleBriberRatingGraph
@@ -12,7 +10,7 @@ class OneMoveInfluentialNodeBriber(Briber):
         self.influencers = []
         self.k = k
 
-    def _set_graph(self, g: RatingGraph):
+    def _set_graph(self, g):
         super()._set_graph(g)
         # Make sure that k is set such that there are enough resources left to actually bribe people.
         self.k = min(0.5 * (self._u / self._g.customer_count()), self.k)
@@ -49,7 +47,6 @@ class OneMoveInfluentialNodeBriber(Briber):
 def main():
     inb = OneMoveInfluentialNodeBriber(10)
     rg = SingleBriberRatingGraph(inb)
-    inb._set_graph(rg)
     inb.get_influencers()
     inb.next_bribe()
 

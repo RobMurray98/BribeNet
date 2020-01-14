@@ -3,7 +3,7 @@ from graph.singleBriberRatingGraph import SingleBriberRatingGraph
 from test.bribery.briberTestCase import BriberTestCase
 
 
-class TestOneMoveINB(BriberTestCase):
+class TestRandomBriber(BriberTestCase):
 
     def setUp(self) -> None:
         self.briber = RandomBriber(10)
