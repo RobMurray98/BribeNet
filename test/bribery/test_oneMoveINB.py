@@ -10,7 +10,6 @@ class TestOneMoveINB(BriberTestCase):
     def setUp(self) -> None:
         self.briber = OneMoveInfluentialNodeBriber(10)
         self.rg = SingleBriberRatingGraph(self.briber)
-        self.briber.set_graph(self.rg)
 
     def test_get_influencers(self):
         self.briber.get_influencers()

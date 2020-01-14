@@ -12,7 +12,7 @@ from parameterPrediction import test_parameter_prediction
 
 # briber: function that takes a graph and returns a briber
 def graph_and_test(briber, graph):
-    briber.set_graph(graph)
+    briber._set_graph(graph)
     graph._bribers = briber
     print(graph.eval_graph())
     print("Bribing!")

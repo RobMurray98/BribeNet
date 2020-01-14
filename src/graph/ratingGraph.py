@@ -6,6 +6,8 @@ from typing import Tuple, Optional, Union, List
 import networkit as nk
 import numpy as np
 
+from bribery.briber import Briber
+
 # noinspection PyUnresolvedReferences
 DEFAULT_GEN = nk.generators.WattsStrogatzGenerator(30, 5, 0.3)
 
@@ -48,6 +50,11 @@ class RatingGraph(ABC):
         Perform assertions that ensure everything is initialised
         """
         assert self._bribers is not None
+        if issubclass(self._bribers.__class__, Briber):
+            self._bribers._set_graph(self)
+        else:
+            for briber in self._bribers:
+                briber._set_graph(self)
         assert type(self._votes) is np.ndarray
 
     def get_bribers(self):

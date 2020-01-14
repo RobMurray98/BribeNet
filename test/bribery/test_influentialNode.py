@@ -10,7 +10,6 @@ class TestInfluentialNodeBriber(BriberTestCase):
     def setUp(self) -> None:
         self.briber = InfluentialNodeBriber(10)
         self.rg = SingleBriberRatingGraph(self.briber)
-        self.briber.set_graph(self.rg)
 
     def test_next_bribe_increases_p_rating(self):
         initial_g = deepcopy(self.briber._g)

@@ -9,7 +9,7 @@ from bribery.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
 from bribery.oneMoveRandomBriber import OneMoveRandomBriber
 from bribery.randomBriber import RandomBriber
 from graph.multiBriberRatingGraph import MultiBriberRatingGraph
-from graph.ratingGraph import RatingGraph
+from graph.ratingGraph import RatingGraph, DEFAULT_GEN
 from graph.singleBriberRatingGraph import SingleBriberRatingGraph
 
 
@@ -44,18 +44,19 @@ class RatingGraphBuilder(object):
 
     def __init__(self):
         self.bribers: List[Briber] = []
+        self.generator = DEFAULT_GEN
 
     def add_builder(self, briber: BriberID, u0: int = 0, *args, **kwargs):
         self.bribers.append(BriberID.get_briber_constructor(briber)(u0, *args, **kwargs))
+
+    def set_generator(self, generator):
+        self.generator = generator
 
     def build(self) -> RatingGraph:
         if not self.bribers:
             return SingleBriberRatingGraph(None)
         if len(self.bribers) == 1:
             rg = SingleBriberRatingGraph(self.bribers[0])
-            self.bribers[0].set_graph(rg)
-            return rg
         else:
             rg = MultiBriberRatingGraph(tuple(self.bribers))
-            [briber.set_graph(rg) for briber in self.bribers]
-            return rg
+        return rg

@@ -8,7 +8,6 @@ class TestOneMoveINB(BriberTestCase):
     def setUp(self) -> None:
         self.briber = RandomBriber(10)
         self.rg = SingleBriberRatingGraph(self.briber)
-        self.briber.set_graph(self.rg)
 
     def test_next_bribe_does_not_exceed_budget(self):
         self.briber.next_bribe()

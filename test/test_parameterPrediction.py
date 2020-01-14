@@ -1,5 +1,6 @@
 from unittest import TestCase
 
+# noinspection PyUnresolvedReferences
 from networkit.generators import WattsStrogatzGenerator
 from numpy import logspace
 

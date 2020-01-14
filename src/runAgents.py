@@ -16,8 +16,8 @@ def run_agents(a, b, init_u=10, moves=20):
     # Agents running on identical graphs
     agent_a = a(init_u)
     agent_b = b(init_u)
-    agent_a.set_graph(g1)
-    agent_b.set_graph(g2)
+    agent_a._set_graph(g1)
+    agent_b._set_graph(g2)
     # scores over time
     scores_a = [g1.eval_graph()]
     scores_b = [g2.eval_graph()]

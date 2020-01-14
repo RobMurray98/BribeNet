@@ -20,7 +20,6 @@ class BriberTestCase(TestCase, ABC):
     def setUp(self) -> None:
         self.briber = DummyBriber(10)
         self.rg = SingleBriberRatingGraph(self.briber)
-        self.briber.set_graph(self.rg)
 
     def tearDown(self) -> None:
         del self.briber, self.rg
