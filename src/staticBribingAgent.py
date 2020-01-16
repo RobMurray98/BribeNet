@@ -1,5 +1,5 @@
-from bribery.influentialNodeBriber import InfluentialNodeBriber
-from graph.singleBriberRatingGraph import SingleBriberRatingGraph
+from bribery.static.influentialNodeBriber import InfluentialNodeBriber
+from graph.static.singleBriberRatingGraph import SingleBriberRatingGraph
 
 
 def main():

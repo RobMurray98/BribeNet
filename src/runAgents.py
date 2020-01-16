@@ -2,11 +2,11 @@ from copy import deepcopy
 
 import matplotlib.pyplot as plt
 
-from bribery.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
-from bribery.oneMoveRandomBriber import OneMoveRandomBriber
+from bribery.static.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
+from bribery.static.oneMoveRandomBriber import OneMoveRandomBriber
 # Returns list of scores over the time of run
 # Inputs A and B should be the class of agent used
-from graph.singleBriberRatingGraph import SingleBriberRatingGraph
+from graph.static.singleBriberRatingGraph import SingleBriberRatingGraph
 
 
 def run_agents(a, b, init_u=10, moves=20):

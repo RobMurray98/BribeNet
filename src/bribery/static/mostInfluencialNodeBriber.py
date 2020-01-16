@@ -1,11 +1,15 @@
-from bribery.briber import Briber, BriberyGraphNotSetException
+from bribery.briber import BriberyGraphNotSetException
+
+from bribery.static.staticBriber import StaticBriber
 
 
-# An extension to influential that bribes only the most important people
-# by considering each of their effectiveness and bribing them in order
-# of effectiveness (rather than bribing anyone that does better than 0)
+class MostInfluentialNodeBriber(StaticBriber):
+    """
+    An extension to influential that bribes only the most important people
+    by considering each of their effectiveness and bribing them in order
+    of effectiveness (rather than bribing anyone that does better than 0)
+    """
 
-class MostInfluentialNodeBriber(Briber):
     def __init__(self, u0, k=0.2):
         super().__init__(u0)
         self.k = k

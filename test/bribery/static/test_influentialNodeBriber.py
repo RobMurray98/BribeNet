@@ -1,8 +1,8 @@
 from copy import deepcopy
 
-from bribery.influentialNodeBriber import InfluentialNodeBriber
-from graph.singleBriberRatingGraph import SingleBriberRatingGraph
-from test.bribery.briberTestCase import BriberTestCase
+from bribery.static.influentialNodeBriber import InfluentialNodeBriber
+from graph.static.singleBriberRatingGraph import SingleBriberRatingGraph
+from test.bribery.static.briberTestCase import BriberTestCase
 
 
 class TestInfluentialNodeBriber(BriberTestCase):

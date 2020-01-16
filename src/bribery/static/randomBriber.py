@@ -1,9 +1,10 @@
 import random
-from bribery.briber import Briber, BriberyGraphNotSetException
+
+from bribery.briber import BriberyGraphNotSetException
+from bribery.static.staticBriber import StaticBriber
 
 
-# randomly assigns utility to bribes
-class RandomBriber(Briber):
+class RandomBriber(StaticBriber):
 
     def next_bribe(self):
         if self._g is None:

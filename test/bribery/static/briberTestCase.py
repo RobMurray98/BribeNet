@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from unittest import TestCase
 
 from bribery.briber import Briber
-from graph.singleBriberRatingGraph import SingleBriberRatingGraph
+from graph.static.singleBriberRatingGraph import SingleBriberRatingGraph
 
 
 class DummyBriber(Briber):

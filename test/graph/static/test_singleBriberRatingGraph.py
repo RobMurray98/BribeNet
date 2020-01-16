@@ -1,7 +1,7 @@
 from copy import deepcopy
 from unittest import TestCase
 
-from graph.singleBriberRatingGraph import SingleBriberRatingGraph
+from graph.static.singleBriberRatingGraph import SingleBriberRatingGraph
 
 
 class TestSingleBriberRatingGraph(TestCase):

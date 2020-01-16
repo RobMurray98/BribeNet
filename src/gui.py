@@ -6,10 +6,10 @@ Created on Tue Nov 19 20:36:51 2019
 """
 
 # Import Bribing Agents
-from bribery.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
-from bribery.oneMoveRandomBriber import OneMoveRandomBriber
+from bribery.static.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
+from bribery.static.oneMoveRandomBriber import OneMoveRandomBriber
 
-from graph.singleBriberRatingGraph import SingleBriberRatingGraph
+from graph.static.singleBriberRatingGraph import SingleBriberRatingGraph
 
 import tkinter as tk
 import networkit as nk

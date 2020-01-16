@@ -1,12 +1,12 @@
 from unittest import TestCase
 
-from bribery.influentialNodeBriber import InfluentialNodeBriber
-from bribery.mostInfluencialNodeBriber import MostInfluentialNodeBriber
-from bribery.nonBriber import NonBriber
-from bribery.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
-from bribery.oneMoveRandomBriber import OneMoveRandomBriber
-from bribery.randomBriber import RandomBriber
-from graph.ratingGraphBuilder import RatingGraphBuilder, BriberType
+from bribery.static.influentialNodeBriber import InfluentialNodeBriber
+from bribery.static.mostInfluencialNodeBriber import MostInfluentialNodeBriber
+from bribery.static.nonBriber import NonBriber
+from bribery.static.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
+from bribery.static.oneMoveRandomBriber import OneMoveRandomBriber
+from bribery.static.randomBriber import RandomBriber
+from graph.static.ratingGraphBuilder import RatingGraphBuilder, BriberType
 
 
 class TestRatingGraphBuilder(TestCase):

@@ -1,9 +1,10 @@
-from bribery.briber import Briber, BriberyGraphNotSetException
+from bribery.briber import BriberyGraphNotSetException
 
 
-# Can see P-rating, can't see graph
+from bribery.static.staticBriber import StaticBriber
 
-class InfluentialNodeBriber(Briber):
+
+class InfluentialNodeBriber(StaticBriber):
     def __init__(self, u0, k=0.2):
         super().__init__(u0)
         self.k = k

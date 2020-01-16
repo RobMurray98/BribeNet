@@ -1,9 +1,9 @@
 from copy import deepcopy
 from unittest import TestCase
 
-from bribery.nonBriber import NonBriber
-from bribery.randomBriber import RandomBriber
-from graph.multiBriberRatingGraph import MultiBriberRatingGraph
+from bribery.static.nonBriber import NonBriber
+from bribery.static.randomBriber import RandomBriber
+from graph.static.multiBriberRatingGraph import MultiBriberRatingGraph
 
 
 class TestMultiBriberRatingGraph(TestCase):

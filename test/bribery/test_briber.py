@@ -1,6 +1,6 @@
 import random
 
-from test.bribery.briberTestCase import BriberTestCase
+from test.bribery.static.briberTestCase import BriberTestCase
 
 
 class TestBriber(BriberTestCase):

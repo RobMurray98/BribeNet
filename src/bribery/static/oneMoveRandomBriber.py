@@ -1,10 +1,10 @@
 import random
-from bribery.briber import Briber, BriberyGraphNotSetException
+
+from bribery.briber import BriberyGraphNotSetException
+from bribery.static.staticBriber import StaticBriber
 
 
-# randomly picks node and gives max bribe to node
-# operates one node at a time
-class OneMoveRandomBriber(Briber):
+class OneMoveRandomBriber(StaticBriber):
 
     def next_bribe(self):
         if self._g is None:

@@ -1,10 +1,9 @@
-from bribery.briber import Briber, BriberyGraphNotSetException
+from bribery.briber import BriberyGraphNotSetException
 
-# On each move will bribe the most influential node
-from graph.singleBriberRatingGraph import SingleBriberRatingGraph
+from bribery.static.staticBriber import StaticBriber
 
 
-class OneMoveInfluentialNodeBriber(Briber):
+class OneMoveInfluentialNodeBriber(StaticBriber):
     def __init__(self, u0, k=0.01):
         super().__init__(u0)
         self.influencers = []
@@ -42,14 +41,3 @@ class OneMoveInfluentialNodeBriber(Briber):
             return c
         else:
             return 0
-
-
-def main():
-    inb = OneMoveInfluentialNodeBriber(10)
-    rg = SingleBriberRatingGraph(inb)
-    inb.get_influencers()
-    inb.next_bribe()
-
-
-if __name__ == '__main__':
-    main()

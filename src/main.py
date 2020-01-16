@@ -1,9 +1,9 @@
 from copy import deepcopy
 
-from bribery.influentialNodeBriber import InfluentialNodeBriber
-from bribery.mostInfluencialNodeBriber import MostInfluentialNodeBriber
-from bribery.randomBriber import RandomBriber
-from graph.singleBriberRatingGraph import SingleBriberRatingGraph
+from bribery.static.influentialNodeBriber import InfluentialNodeBriber
+from bribery.static.mostInfluencialNodeBriber import MostInfluentialNodeBriber
+from bribery.static.randomBriber import RandomBriber
+from graph.static.singleBriberRatingGraph import SingleBriberRatingGraph
 from prediction.parameterPrediction import test_parameter_prediction
 
 

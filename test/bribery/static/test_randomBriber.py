@@ -1,6 +1,6 @@
-from bribery.randomBriber import RandomBriber
-from graph.singleBriberRatingGraph import SingleBriberRatingGraph
-from test.bribery.briberTestCase import BriberTestCase
+from bribery.static.randomBriber import RandomBriber
+from graph.static.singleBriberRatingGraph import SingleBriberRatingGraph
+from test.bribery.static.briberTestCase import BriberTestCase
 
 
 class TestRandomBriber(BriberTestCase):
