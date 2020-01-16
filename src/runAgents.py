@@ -22,7 +22,7 @@ def run_agents(a, b, init_u=10, moves=20):
     scores_a = [g1.eval_graph()]
     scores_b = [g2.eval_graph()]
 
-    for i in range(0, moves):
+    for _ in range(0, moves):
         # Bribe A
         agent_a.next_bribe()
         scores_a.append(g1.eval_graph())

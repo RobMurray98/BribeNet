@@ -2,4 +2,4 @@
 # -*- coding: utf-8 -*-
 
 from networkit.graphio import SNAPGraphReader
-facebook = SNAPGraphReader().read("data/facebook/facebook_combined.txt")
+facebook = SNAPGraphReader().read("../data/facebook/facebook_combined.txt")
