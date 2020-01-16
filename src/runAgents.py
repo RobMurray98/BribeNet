@@ -1,23 +1,28 @@
+from copy import deepcopy
+
 import matplotlib.pyplot as plt
-from bribery.oneMoveRandom import OneMoveRandom
-from bribery.oneMoveINB import OneMoveINB
-from graphGenerator import RatingGraph
 
-
+from bribery.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
+from bribery.oneMoveRandomBriber import OneMoveRandomBriber
 # Returns list of scores over the time of run
 # Inputs A and B should be the class of agent used
+from graph.singleBriberRatingGraph import SingleBriberRatingGraph
+
+
 def run_agents(a, b, init_u=10, moves=20):
     # Two identical graphs
-    g1 = RatingGraph()
-    g2 = g1.copy()
+    g1 = SingleBriberRatingGraph(None)
+    g2 = deepcopy(g1)
     # Agents running on identical graphs
-    agent_a = a(g1, init_u)
-    agent_b = b(g2, init_u)
+    agent_a = a(init_u)
+    agent_b = b(init_u)
+    agent_a._set_graph(g1)
+    agent_b._set_graph(g2)
     # scores over time
     scores_a = [g1.eval_graph()]
     scores_b = [g2.eval_graph()]
 
-    for i in range(0, moves):
+    for _ in range(0, moves):
         # Bribe A
         agent_a.next_bribe()
         scores_a.append(g1.eval_graph())
@@ -45,7 +50,7 @@ def plot_scores(scores_a, scores_b, label_a, label_b, filename="graphrun.png"):
 
 
 def main():
-    a, b = run_agents(OneMoveRandom, OneMoveINB)
+    a, b = run_agents(OneMoveRandomBriber, OneMoveInfluentialNodeBriber)
     plot_scores(a, b, "Random Bribing Agent", "Influential Node Bribing Agent")
 
 

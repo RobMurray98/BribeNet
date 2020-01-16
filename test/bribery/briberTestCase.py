@@ -2,25 +2,30 @@ from abc import ABC, abstractmethod
 from unittest import TestCase
 
 from bribery.briber import Briber
-from graphGenerator import RatingGraph
+from graph.singleBriberRatingGraph import SingleBriberRatingGraph
 
 
 class DummyBriber(Briber):
-    def __init__(self, g, u0):
-        super().__init__(g, u0)
+
+    def next_bribe(self):
+        pass
+
+    def __init__(self, u0):
+        super().__init__(u0)
 
 
 class BriberTestCase(TestCase, ABC):
 
     @abstractmethod
     def setUp(self) -> None:
-        self.briber = DummyBriber(RatingGraph(), 10)
+        self.briber = DummyBriber(10)
+        self.rg = SingleBriberRatingGraph(self.briber)
 
     def tearDown(self) -> None:
-        del self.briber
+        del self.briber, self.rg
 
     def _total_rating(self, g):
-        return sum([x or 0 for x in [g.get_rating(c) for c in self.briber.g.get_customers()]])
+        return sum([x or 0 for x in [g.get_vote(c) for c in self.briber._g.get_customers()]])
 
     def _p_rating_increase(self, g1, g2):
         rating2 = self._total_rating(g2)

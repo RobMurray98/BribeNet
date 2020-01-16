@@ -1,9 +1,10 @@
 from unittest import TestCase
 
+# noinspection PyUnresolvedReferences
 from networkit.generators import WattsStrogatzGenerator
 from numpy import logspace
 
-from parameterPrediction import ParameterPrediction
+from prediction.parameterPrediction import ParameterPrediction
 
 
 class TestParameterPrediction(TestCase):

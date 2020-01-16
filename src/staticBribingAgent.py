@@ -1,14 +1,15 @@
-from bribery.influentialNode import InfluentialNodeBriber
-from graphGenerator import RatingGraph
+from bribery.influentialNodeBriber import InfluentialNodeBriber
+from graph.singleBriberRatingGraph import SingleBriberRatingGraph
 
 
 def main():
-    g = RatingGraph()
-    inb = InfluentialNodeBriber(g, 100.0)
-    print(inb.u)
+    inb = InfluentialNodeBriber(100.0)
+    g = SingleBriberRatingGraph(inb)
+    inb._set_graph(g)
+    print(inb.get_resources())
     for _ in range(20):
         inb.next_bribe()
-        print(inb.u)
+        print(inb.get_resources())
 
 
 if __name__ == '__main__':
