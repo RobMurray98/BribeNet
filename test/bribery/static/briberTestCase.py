@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
 from unittest import TestCase
 
-from bribery.briber import Briber
+from bribery.static.staticBriber import StaticBriber
 from graph.static.singleBriberRatingGraph import SingleBriberRatingGraph
 
 
-class DummyBriber(Briber):
+class DummyBriber(StaticBriber):
 
     def next_bribe(self):
         pass

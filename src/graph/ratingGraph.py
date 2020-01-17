@@ -28,6 +28,9 @@ class RatingGraph(ABC):
         """
         Implementing classes should initialise self.__true_rating and self.__bribers
         :param generator: the graph generator used to instantiate the graph
+        :param specifics: function in implementing class to call after the superclass initialisation,
+                          but prior to __finalise_init (template design pattern)
+        :param **kwargs:  additional keyword arguments to the graph, such as max_rating
         """
         # Generate random ratings network
         self._g = generator.generate()
