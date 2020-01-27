@@ -26,12 +26,12 @@ class TestRatingGraphBuilder(TestCase):
 
     def test_build_no_bribers(self):
         rg = self.builder.build()
-        self.assertIsInstance(rg.get_bribers(), NonBriber)
+        self.assertIsInstance(rg.get_bribers()[0], NonBriber)
 
     def test_build_one_briber(self):
         self.builder.add_briber(BriberType.Random)
         rg = self.builder.build()
-        self.assertIsInstance(rg.get_bribers(), RandomBriber)
+        self.assertIsInstance(rg.get_bribers()[0], RandomBriber)
 
     def test_build_multiple_bribers(self):
         self.builder.add_briber(BriberType.Random).add_briber(BriberType.InfluentialNode)

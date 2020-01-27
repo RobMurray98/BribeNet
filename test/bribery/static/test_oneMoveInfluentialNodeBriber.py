@@ -1,7 +1,7 @@
 from copy import deepcopy
 
 from bribery.static.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
-from graph.static.singleBriberRatingGraph import SingleBriberRatingGraph
+from graph.static.ratingGraph import StaticRatingGraph
 from test.bribery.static.briberTestCase import BriberTestCase
 
 
@@ -9,7 +9,7 @@ class TestOneMoveInfluentialNodeBriber(BriberTestCase):
 
     def setUp(self) -> None:
         self.briber = OneMoveInfluentialNodeBriber(10)
-        self.rg = SingleBriberRatingGraph(self.briber)
+        self.rg = StaticRatingGraph(self.briber)
 
     def test_get_influencers(self):
         self.briber.get_influencers()

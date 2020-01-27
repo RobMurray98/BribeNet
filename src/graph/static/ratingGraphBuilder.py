@@ -57,6 +57,6 @@ class RatingGraphBuilder(object):
 
     def build(self) -> StaticRatingGraph:
         if not self.bribers:
-            print("WARNING: StaticRatingGraph built with no bribers. Using DummyBriber...", file=sys.stderr)
-            return StaticRatingGraph(tuple([DummyBriber(0)]))
+            print("WARNING: StaticRatingGraph built with no bribers. Using NonBriber...", file=sys.stderr)
+            return StaticRatingGraph(tuple([NonBriber(0)]))
         return StaticRatingGraph(tuple(self.bribers))

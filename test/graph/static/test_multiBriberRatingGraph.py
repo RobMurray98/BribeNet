@@ -3,14 +3,14 @@ from unittest import TestCase
 
 from bribery.static.nonBriber import NonBriber
 from bribery.static.randomBriber import RandomBriber
-from graph.static.ratingGraph import MultiBriberRatingGraph
+from graph.static.ratingGraph import StaticRatingGraph
 
 
 class TestMultiBriberRatingGraph(TestCase):
 
     def setUp(self) -> None:
         # noinspection PyTypeChecker
-        self.rg = MultiBriberRatingGraph((RandomBriber(10), NonBriber(10)))
+        self.rg = StaticRatingGraph((RandomBriber(10), NonBriber(10)))
 
     def tearDown(self) -> None:
         del self.rg
