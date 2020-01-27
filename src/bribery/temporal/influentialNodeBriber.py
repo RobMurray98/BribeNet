@@ -1,11 +1,10 @@
-from bribery.static.influentialNodeBriber import InfluentialNodeBriber as StaticInfluentialNodeBriber
 from bribery.temporal.briber import TemporalBriber
 from bribery.temporal.briberyAction import BriberyAction
 
 
-class InfluentialNodeBriber(TemporalBriber, StaticInfluentialNodeBriber):
+class InfluentialNodeBriber(TemporalBriber):
 
     def next_action(self) -> BriberyAction:
         pass
 
-    # TODO: implement different behaviour that returns BriberyAction
+    # TODO: implement influential node behaviour that returns BriberyAction

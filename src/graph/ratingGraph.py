@@ -180,24 +180,25 @@ class RatingGraph(ABC):
     def is_influential(self, node_id: int, k: float = 0.2, briber_id: int = 0,
                        rating_method: Optional[RatingMethod] = None, charge_briber: bool = True) -> float:
         """
-        Determines if a node is influential
+        Determines if a node is influential using a small bribe
         :param node_id: the id of the node
         :param k: the cost of information
         :param briber_id: the briber for which the node may be influential
         :param rating_method: a rating method to override the current set rating method if not None
-        :param charge_briber: whether this query is being made by a briber who must be charged
+        :param charge_briber: whether this query is being made by a briber who must be charged and the ratings adjusted
         :return: float > 0 if influential, 0 otherwise
         """
-        g_ = deepcopy(self)
-        prev_p = g_.eval_graph(briber_id, rating_method)
-        if g_.get_vote(node_id)[briber_id] is not None and (g_.get_vote(node_id)[briber_id] < 1 - k):
+        prev_p = self.eval_graph(briber_id, rating_method)
+        if self.get_vote(node_id)[briber_id] is not None and (self.get_vote(node_id)[briber_id] < 1 - k):
             if charge_briber:
                 # bribe via the briber in order to charge their utility
-                g_._bribers[briber_id].bribe(node_id, k)
+                self._bribers[briber_id].bribe(node_id, k)
+                reward = self.eval_graph(briber_id, rating_method) - prev_p - k
             else:
-                # bribe directly on the graph, not charging the briber
+                # "bribe" directly on the graph, not charging the briber and not affecting ratings
+                g_ = deepcopy(self)
                 g_.bribe(node_id, k, briber_id)
-            reward = g_.eval_graph(briber_id, rating_method) - prev_p - k
+                reward = g_.eval_graph(briber_id, rating_method) - prev_p - k
             if reward > 0:
                 return reward
         return 0.0
