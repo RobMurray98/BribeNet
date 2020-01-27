@@ -187,7 +187,7 @@ class GraphFrame(tk.Frame):
         colors = []
 
         for c in self.graph.get_customers():
-            if self.graph.is_influential(c):
+            if self.graph.is_influential(c, charge_briber=False):
                 colors.append("yellow")
             elif not self.graph.get_vote(c):
                 colors.append("gray")

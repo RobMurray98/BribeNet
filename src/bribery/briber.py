@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import Optional
 
 
@@ -57,7 +57,3 @@ class Briber(ABC):
         if amount <= self._u:
             self._g.bribe(node_id, amount, self.get_briber_id())
             self._u -= amount
-
-    @abstractmethod
-    def next_bribe(self):
-        raise NotImplementedError

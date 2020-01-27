@@ -12,7 +12,7 @@ class TestOneMoveInfluentialNodeBriber(BriberTestCase):
         self.rg = StaticRatingGraph(self.briber)
 
     def test_get_influencers(self):
-        self.briber.get_influencers()
+        self.briber._get_influencers()
         self.assertTrue(len(self.briber.influencers) > 0)
 
     def test_next_bribe_increases_p_rating(self):

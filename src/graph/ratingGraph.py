@@ -1,4 +1,5 @@
-from abc import ABC, abstractmethod
+import random
+from abc import ABC
 from copy import deepcopy
 from typing import Tuple, Optional, Union, List
 
@@ -53,7 +54,7 @@ class RatingGraph(ABC):
         assert isinstance(self._votes, np.ndarray), "specifics of implementing class did not instantiate self._votes " \
                                                     "to an ndarray"
 
-    def get_bribers(self):
+    def get_bribers(self) -> Tuple[Briber]:
         """
         Get the bribers active on the graph
         :return: the bribers
@@ -102,54 +103,14 @@ class RatingGraph(ABC):
         """
         return self._g
 
-    @abstractmethod
-    def _neighbours(self, node_id: int, briber_id: int) -> List[int]:
+    def _neighbours(self, node_id: int, briber_id: int = 0) -> List[int]:
         """
         Get the voting neighbours of a node
         :param node_id: the node to get neighbours of
         :param briber_id: the briber on which voting has been done
         :return: the voting neighbours of the node for the briber
         """
-        raise NotImplementedError
-
-    @abstractmethod
-    def _p_rating(self, node_id: int, briber_id: int) -> float:
-        """
-        Get the P-rating for the node
-        :param node_id: the id of the node
-        :param briber_id: the id number of the briber
-        :return: mean of actual rating of neighbouring voters
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def _median_p_rating(self, node_id: int, briber_id: int) -> float:
-        """
-        Get the median-based P-rating for the node
-        :param node_id: the id of the node
-        :param briber_id: the id number of the briber
-        :return: median of actual rating of neighbouring voters
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def _sample_p_rating(self, node_id: int, briber_id: int) -> float:
-        """
-        Get the sample-based P-rating for the node
-        :param node_id: the id of the node
-        :param briber_id: the id number of the briber
-        :return: mean of a sample of actual rating of neighbouring voters
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def _o_rating(self, briber_id: int) -> float:
-        """
-        Get the O-rating for the node
-        :param briber_id: the id number of the briber
-        :return: mean of all actual ratings
-        """
-        raise NotImplementedError
+        return [n for n in self._g.neighbors(node_id) if self.get_vote(n)[briber_id]]
 
     def get_customers(self) -> List[int]:
         """
@@ -157,18 +118,6 @@ class RatingGraph(ABC):
         :return: the customer ids in the graph
         """
         return list(self._g.nodes())
-
-    @abstractmethod
-    def is_influential(self, node_id: int, k: float, briber_id: int, rating_method: Optional[RatingMethod]) -> bool:
-        """
-        Determines if a node is influential
-        :param node_id: the id of the node
-        :param k: the cost of information
-        :param briber_id: the briber for which the node may be influential
-        :param rating_method: a rating method to override the current set rating method if not None
-        :return: True if influential, otherwise False
-        """
-        raise NotImplementedError
 
     def customer_count(self) -> int:
         """
@@ -185,25 +134,95 @@ class RatingGraph(ABC):
         """
         return self._votes[idx]
 
-    @abstractmethod
-    def eval_graph(self, briber_id: int, rating_method: Optional[RatingMethod]) -> float:
+    def _p_rating(self, node_id: int, briber_id: int = 0):
         """
-        Metric to determine overall rating of the graph
-        :param rating_method: a rating method to override the current set rating method if not None
-        :return: the sum of the rating across the network
-        :param briber_id: the briber being considered in the evaluation
+        Get the P-rating for the node
+        :param node_id: the id of the node
+        :param briber_id: the id number of the briber
+        :return: mean of actual rating of neighbouring voters
         """
-        raise NotImplementedError
+        ns = self._neighbours(node_id, briber_id)
+        if len(ns) == 0:
+            return 0
+        return sum(self.get_vote(n)[briber_id] for n in ns) / len(ns)
 
-    @abstractmethod
-    def bribe(self, node_id: int, b: float, briber_id: int):
+    def _median_p_rating(self, node_id: int, briber_id: int = 0):
+        """
+        Get the median-based P-rating for the node
+        :param node_id: the id of the node
+        :param briber_id: the id number of the briber
+        :return: median of actual rating of neighbouring voters
+        """
+        ns = self._neighbours(node_id, briber_id)
+        ns = sorted(ns, key=lambda x: self.get_vote(x)[briber_id])
+        return self.get_vote(ns[len(ns) // 2])[briber_id]
+
+    def _sample_p_rating(self, node_id: int, briber_id: int = 0):
+        """
+        Get the sample-based P-rating for the node
+        :param node_id: the id of the node
+        :param briber_id: the id number of the briber
+        :return: mean of a sample of actual rating of neighbouring voters
+        """
+        ns = self._neighbours(node_id, briber_id)
+        sub = random.sample(ns, random.randint(1, len(ns)))
+        return sum(self.get_vote(n)[briber_id] for n in sub) / len(sub)
+
+    def _o_rating(self, briber_id: int = 0):
+        """
+        Get the O-rating for the node
+        :param briber_id: the id number of the briber
+        :return: mean of all actual ratings
+        """
+        ns = [n for n in self._g.nodes() if self.get_vote(n)[briber_id]]
+        return sum(self.get_vote(n)[briber_id] for n in ns) / len(ns)
+
+    def is_influential(self, node_id: int, k: float = 0.2, briber_id: int = 0,
+                       rating_method: Optional[RatingMethod] = None, charge_briber: bool = True) -> float:
+        """
+        Determines if a node is influential
+        :param node_id: the id of the node
+        :param k: the cost of information
+        :param briber_id: the briber for which the node may be influential
+        :param rating_method: a rating method to override the current set rating method if not None
+        :param charge_briber: whether this query is being made by a briber who must be charged
+        :return: float > 0 if influential, 0 otherwise
+        """
+        g_ = deepcopy(self)
+        prev_p = g_.eval_graph(briber_id, rating_method)
+        if g_.get_vote(node_id)[briber_id] is not None and (g_.get_vote(node_id)[briber_id] < 1 - k):
+            if charge_briber:
+                # bribe via the briber in order to charge their utility
+                g_._bribers[briber_id].bribe(node_id, k)
+            else:
+                # bribe directly on the graph, not charging the briber
+                g_.bribe(node_id, k, briber_id)
+            reward = g_.eval_graph(briber_id, rating_method) - prev_p - k
+            if reward > 0:
+                return reward
+        return 0.0
+
+    def bribe(self, node_id, b, briber_id=0):
         """
         Increase the rating of a node by an amount, capped at the max rating
         :param node_id: the node to bribe
         :param b: the amount to bribe the node
         :param briber_id: the briber who's performing the briber
         """
-        raise NotImplementedError
+        if self._votes[node_id][briber_id]:
+            self._votes[node_id][briber_id] = min(self._max_rating, self._votes[node_id][briber_id] + b)
+        else:
+            self._votes[node_id][briber_id] = min(self._max_rating, b)
+
+    def eval_graph(self, briber_id=0, rating_method=None):
+        """
+        Metric to determine overall rating of the graph
+        :param rating_method: a rating method to override the current set rating method if not None
+        :return: the sum of the rating across the network
+        :param briber_id: the briber being considered in the evaluation
+        """
+        return sum(self.get_rating(node_id=n, briber_id=briber_id, rating_method=rating_method)
+                   for n in self._g.nodes())
 
     def __copy__(self):
         """

@@ -4,7 +4,7 @@ from typing import List
 
 from bribery.briber import Briber
 from bribery.static.influentialNodeBriber import InfluentialNodeBriber
-from bribery.static.mostInfluencialNodeBriber import MostInfluentialNodeBriber
+from bribery.static.mostInfluentialNodeBriber import MostInfluentialNodeBriber
 from bribery.static.nonBriber import NonBriber
 from bribery.static.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
 from bribery.static.oneMoveRandomBriber import OneMoveRandomBriber

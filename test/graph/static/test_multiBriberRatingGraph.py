@@ -42,7 +42,7 @@ class TestMultiBriberRatingGraph(TestCase):
     def test_is_influential(self):
         for b in range(len(self.rg.get_bribers())):
             for i in self.rg.get_customers():
-                self.assertIsInstance(self.rg.is_influential(i, 0.2, b), bool)
+                self.assertGreaterEqual(self.rg.is_influential(i, 0.2, b, charge_briber=False), 0)
 
     def test_bribe(self):
         for i in range(len(self.rg.get_bribers())):

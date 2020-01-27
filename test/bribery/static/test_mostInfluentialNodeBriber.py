@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-from bribery.static.mostInfluencialNodeBriber import MostInfluentialNodeBriber
+from bribery.static.mostInfluentialNodeBriber import MostInfluentialNodeBriber
 from graph.static.ratingGraph import StaticRatingGraph
 from test.bribery.static.briberTestCase import BriberTestCase
 
