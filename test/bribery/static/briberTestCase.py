@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from unittest import TestCase
 
-from bribery.static.staticBriber import StaticBriber
+from bribery.static.briber import StaticBriber
 from graph.static.singleBriberRatingGraph import SingleBriberRatingGraph
 
 

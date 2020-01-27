@@ -1,4 +1,5 @@
 import enum
+import sys
 from typing import List
 
 from bribery.briber import Briber
@@ -8,9 +9,9 @@ from bribery.static.nonBriber import NonBriber
 from bribery.static.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
 from bribery.static.oneMoveRandomBriber import OneMoveRandomBriber
 from bribery.static.randomBriber import RandomBriber
-from graph.static.multiBriberRatingGraph import MultiBriberRatingGraph
+from graph.static.ratingGraph import StaticRatingGraph
 from graph.ratingGraph import RatingGraph, DEFAULT_GEN
-from graph.static.singleBriberRatingGraph import SingleBriberRatingGraph
+from test.bribery.static.briberTestCase import DummyBriber
 
 
 @enum.unique
@@ -54,11 +55,8 @@ class RatingGraphBuilder(object):
         self.generator = generator
         return self
 
-    def build(self) -> RatingGraph:
+    def build(self) -> StaticRatingGraph:
         if not self.bribers:
-            return SingleBriberRatingGraph(None)
-        if len(self.bribers) == 1:
-            rg = SingleBriberRatingGraph(self.bribers[0])
-        else:
-            rg = MultiBriberRatingGraph(tuple(self.bribers))
-        return rg
+            print("WARNING: StaticRatingGraph built with no bribers. Using DummyBriber...", file=sys.stderr)
+            return StaticRatingGraph(tuple([DummyBriber(0)]))
+        return StaticRatingGraph(tuple(self.bribers))

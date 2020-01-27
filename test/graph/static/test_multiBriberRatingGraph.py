@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from bribery.static.nonBriber import NonBriber
 from bribery.static.randomBriber import RandomBriber
-from graph.static.multiBriberRatingGraph import MultiBriberRatingGraph
+from graph.static.ratingGraph import MultiBriberRatingGraph
 
 
 class TestMultiBriberRatingGraph(TestCase):
