@@ -1,13 +1,14 @@
 from copy import deepcopy
 from unittest import TestCase
 
-from graph.static.singleBriberRatingGraph import SingleBriberRatingGraph
+from graph.static.ratingGraph import StaticRatingGraph
+from test.bribery.static.briberTestCase import DummyBriber
 
 
 class TestSingleBriberRatingGraph(TestCase):
 
     def setUp(self) -> None:
-        self.rg = SingleBriberRatingGraph(None)
+        self.rg = StaticRatingGraph(DummyBriber(0))
 
     def tearDown(self) -> None:
         del self.rg

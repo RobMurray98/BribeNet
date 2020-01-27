@@ -1,7 +1,7 @@
 import random
 
 from bribery.briber import BriberyGraphNotSetException
-from bribery.static.staticBriber import StaticBriber
+from bribery.static.briber import StaticBriber
 
 
 class OneMoveRandomBriber(StaticBriber):

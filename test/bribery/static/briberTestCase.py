@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from unittest import TestCase
 
-from bribery.static.staticBriber import StaticBriber
-from graph.static.singleBriberRatingGraph import SingleBriberRatingGraph
+from bribery.static.briber import StaticBriber
+from graph.static.ratingGraph import StaticRatingGraph
 
 
 class DummyBriber(StaticBriber):
@@ -19,7 +19,7 @@ class BriberTestCase(TestCase, ABC):
     @abstractmethod
     def setUp(self) -> None:
         self.briber = DummyBriber(10)
-        self.rg = SingleBriberRatingGraph(self.briber)
+        self.rg = StaticRatingGraph(self.briber)
 
     def tearDown(self) -> None:
         del self.briber, self.rg

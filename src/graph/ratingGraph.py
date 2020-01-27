@@ -1,4 +1,3 @@
-import enum
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from typing import Tuple, Optional, Union, List
@@ -6,61 +5,53 @@ from typing import Tuple, Optional, Union, List
 import networkit as nk
 import numpy as np
 
+from graph.ratingMethod import RatingMethod
+
 # noinspection PyUnresolvedReferences
 DEFAULT_GEN = nk.generators.WattsStrogatzGenerator(30, 5, 0.3)
-
-
-@enum.unique
-class RatingMethod(enum.Enum):
-    O_RATING = 0
-    P_RATING = 1
-    MEDIAN_P_RATING = 2
-    SAMPLE_P_RATING = 3
-    PK_RATING = 4
 
 
 class RatingGraph(ABC):
     """
     Representation of network graph which bribers interact with
     """
+    from bribery.briber import Briber
 
-    def __init__(self, generator=DEFAULT_GEN, specifics=None, **kwargs):
+    def __init__(self, bribers: Tuple[Briber], generator=DEFAULT_GEN, specifics=None, **kwargs):
         """
         Implementing classes should initialise self.__true_rating and self.__bribers
         :param generator: the graph generator used to instantiate the graph
         :param specifics: function in implementing class to call after the superclass initialisation,
-                          but prior to __finalise_init (template design pattern)
+                          but prior to _finalise_init (template design pattern)
         :param **kwargs:  additional keyword arguments to the graph, such as max_rating
         """
         # Generate random ratings network
         self._g = generator.generate()
-        self._bribers = None
+        from bribery.briber import Briber
+        self._bribers: Tuple[Briber] = bribers
         if "max_rating" in kwargs.keys():
-            max_rating = kwargs["max_rating"]
+            self._max_rating: float = kwargs["max_rating"]
         else:
-            max_rating = 1.0
-        self._max_rating: float = max_rating
+            self._max_rating: float = 1.0
         self._votes: np.ndarray[Optional[float]] = None
         self._rating_method: RatingMethod = RatingMethod.P_RATING
         if specifics is not None:
             specifics()
-        self.__finalise_init()
+        self._finalise_init()
 
-    def __finalise_init(self):
+    def _finalise_init(self):
         """
         Perform assertions that ensure everything is initialised
         """
-        assert self._bribers is not None, "specifics of implementing class did not instantiate self._bribers"
-        from bribery.briber import Briber
-        if issubclass(self._bribers.__class__, Briber):
+        assert isinstance(self._bribers, tuple), "specifics of implementing class did not instantiate self._bribers " \
+                                                 "as a tuple"
+        for briber in self._bribers:
+            from bribery.briber import Briber
+            assert issubclass(briber.__class__, Briber)
             # noinspection PyProtectedMember
-            self._bribers._set_graph(self)
-        else:
-            for briber in self._bribers:
-                # noinspection PyProtectedMember
-                briber._set_graph(self)
-        assert type(self._votes) is np.ndarray, "specifics of implementing class did not instantiate self._votes to " \
-                                                "an ndarray"
+            briber._set_graph(self)
+        assert isinstance(self._votes, np.ndarray), "specifics of implementing class did not instantiate self._votes " \
+                                                    "to an ndarray"
 
     def get_bribers(self):
         """

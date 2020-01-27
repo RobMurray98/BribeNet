@@ -9,7 +9,7 @@ Created on Tue Nov 19 20:36:51 2019
 from bribery.static.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
 from bribery.static.oneMoveRandomBriber import OneMoveRandomBriber
 
-from graph.static.singleBriberRatingGraph import SingleBriberRatingGraph
+from graph.static.ratingGraph import StaticRatingGraph
 
 import tkinter as tk
 import networkit as nk
@@ -58,7 +58,7 @@ class GUI(tk.Tk):
         briber = switch_briber(btype)()
         # noinspection PyUnresolvedReferences
         ba_gen = nk.generators.BarabasiAlbertGenerator(5, 30, 0, True)
-        rg = SingleBriberRatingGraph(briber) if gtype == "ws" else SingleBriberRatingGraph(briber, generator=ba_gen)
+        rg = StaticRatingGraph(briber) if gtype == "ws" else StaticRatingGraph(briber, generator=ba_gen)
         self.frames["GraphFrame"].set_graph(rg, briber)
 
     def plot_results(self, results):
@@ -142,18 +142,17 @@ class GraphFrame(tk.Frame):
             if not self.graph.get_vote(c):
                 colors.append("gray")
             else:
-                colors.append(rgb2hex(cmap(self.graph.get_vote(c))[:3]))
+                colors.append(rgb2hex(cmap(self.graph.get_vote(c)[0])[:3]))
         # labels = {c: round(self.graph.p_rating(c), 2) for c in self.graph.get_customers()}
 
         self.ax.clear()
 
         drawGraph(self.graph.graph(), node_size=400, node_color=colors, ax=self.ax, pos=self.pos)
         for c in self.graph.get_customers():
-            rating = ""
             if not self.graph.get_vote(c):
                 rating = "None"
             else:
-                rating = round(self.graph.get_vote(c), 2)
+                rating = round(self.graph.get_vote(c)[0], 2)
 
             self.ax.annotate(
                 str(c) + ":\n" +
@@ -171,7 +170,7 @@ class GraphFrame(tk.Frame):
             ))
         self.canvas.draw()
         avp = str(round(self.graph.eval_graph(), 2))
-        if (last < 0):
+        if last < 0:
             self.txt.set("Average P-Rating: " + avp + " \nLast Bribed: --")
         else:
             self.txt.set("Average P-Rating: " + avp + " \nLast Bribed: " + str(last))
@@ -193,7 +192,7 @@ class GraphFrame(tk.Frame):
             elif not self.graph.get_vote(c):
                 colors.append("gray")
             else:
-                colors.append(rgb2hex(cmap(self.graph.get_vote(c))[:3]))
+                colors.append(rgb2hex(cmap(self.graph.get_vote(c)[0])[:3]))
         self.ax.clear()
 
         for c in self.graph.get_customers():
@@ -201,7 +200,7 @@ class GraphFrame(tk.Frame):
             if not self.graph.get_vote(c):
                 rating = "None"
             else:
-                rating = round(self.graph.get_vote(c), 2)
+                rating = round(self.graph.get_vote(c)[0], 2)
 
             self.ax.annotate(
                 str(c) + ":\n" +

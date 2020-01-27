@@ -4,20 +4,21 @@ import matplotlib.pyplot as plt
 
 from bribery.static.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
 from bribery.static.oneMoveRandomBriber import OneMoveRandomBriber
+from graph.static.ratingGraph import StaticRatingGraph
+
+
 # Returns list of scores over the time of run
 # Inputs A and B should be the class of agent used
-from graph.static.singleBriberRatingGraph import SingleBriberRatingGraph
-
-
 def run_agents(a, b, init_u=10, moves=20):
-    # Two identical graphs
-    g1 = SingleBriberRatingGraph(None)
-    g2 = deepcopy(g1)
-    # Agents running on identical graphs
     agent_a = a(init_u)
     agent_b = b(init_u)
-    agent_a._set_graph(g1)
+    # Two identical graphs
+    g1 = StaticRatingGraph(agent_a)
+    g2 = deepcopy(g1)
+    g2._bribers = tuple([agent_b])
+    # noinspection PyProtectedMember
     agent_b._set_graph(g2)
+
     # scores over time
     scores_a = [g1.eval_graph()]
     scores_b = [g2.eval_graph()]

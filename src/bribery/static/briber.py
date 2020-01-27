@@ -9,7 +9,7 @@ class StaticBriber(Briber, ABC):
         super().__init__(u0=u0)
 
     def _set_graph(self, g):
-        from graph.static.staticRatingGraph import StaticRatingGraph
+        from graph.static.ratingGraph import StaticRatingGraph
         assert issubclass(g.__class__, StaticRatingGraph), "graph must be subclass of StaticRatingGraph"
         if self._g is not None:
             raise BriberyGraphAlreadySetException()
