@@ -58,8 +58,7 @@ class GUI(tk.Tk):
         briber = switch_briber(btype)()
         # noinspection PyUnresolvedReferences
         ba_gen = nk.generators.BarabasiAlbertGenerator(5, 30, 0, True)
-        # noinspection PyTypeChecker
-        rg = StaticRatingGraph(tuple([briber])) if gtype == "ws" else StaticRatingGraph(tuple([briber]), generator=ba_gen)
+        rg = StaticRatingGraph(briber) if gtype == "ws" else StaticRatingGraph(briber, generator=ba_gen)
         self.frames["GraphFrame"].set_graph(rg, briber)
 
     def plot_results(self, results):
@@ -143,7 +142,7 @@ class GraphFrame(tk.Frame):
             if not self.graph.get_vote(c):
                 colors.append("gray")
             else:
-                colors.append(rgb2hex(cmap(self.graph.get_vote(c))[:3]))
+                colors.append(rgb2hex(cmap(self.graph.get_vote(c)[0])[:3]))
         # labels = {c: round(self.graph.p_rating(c), 2) for c in self.graph.get_customers()}
 
         self.ax.clear()
@@ -153,7 +152,7 @@ class GraphFrame(tk.Frame):
             if not self.graph.get_vote(c):
                 rating = "None"
             else:
-                rating = round(self.graph.get_vote(c), 2)
+                rating = round(self.graph.get_vote(c)[0], 2)
 
             self.ax.annotate(
                 str(c) + ":\n" +
@@ -193,7 +192,7 @@ class GraphFrame(tk.Frame):
             elif not self.graph.get_vote(c):
                 colors.append("gray")
             else:
-                colors.append(rgb2hex(cmap(self.graph.get_vote(c))[:3]))
+                colors.append(rgb2hex(cmap(self.graph.get_vote(c)[0])[:3]))
         self.ax.clear()
 
         for c in self.graph.get_customers():
@@ -201,7 +200,7 @@ class GraphFrame(tk.Frame):
             if not self.graph.get_vote(c):
                 rating = "None"
             else:
-                rating = round(self.graph.get_vote(c), 2)
+                rating = round(self.graph.get_vote(c)[0], 2)
 
             self.ax.annotate(
                 str(c) + ":\n" +

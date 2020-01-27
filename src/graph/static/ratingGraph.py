@@ -70,7 +70,7 @@ class StaticRatingGraph(RatingGraph):
         ns = [n for n in self._g.nodes() if self.get_vote(n)[briber_id]]
         return sum(self.get_vote(n)[briber_id] for n in ns) / len(ns)
 
-    def is_influential(self, node_id, k, briber_id=0, rating_method=None):
+    def is_influential(self, node_id, k=0.2, briber_id=0, rating_method=None):
         g_ = deepcopy(self)
         prev_p = g_.eval_graph(briber_id, rating_method)
         if g_.get_vote(node_id)[briber_id] is not None and (g_.get_vote(node_id)[briber_id] < 1 - k):

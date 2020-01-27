@@ -16,6 +16,8 @@ def run_agents(a, b, init_u=10, moves=20):
     g1 = StaticRatingGraph(agent_a)
     g2 = deepcopy(g1)
     g2._bribers = tuple([agent_b])
+    # noinspection PyProtectedMember
+    agent_b._set_graph(g2)
 
     # scores over time
     scores_a = [g1.eval_graph()]
