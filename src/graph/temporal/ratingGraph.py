@@ -1,17 +1,16 @@
-from copy import deepcopy
-from random import random
-from typing import Optional, List, Tuple, Union
+import random
+from typing import Tuple
 
 import numpy as np
 
-from graph.ratingGraph import RatingMethod, DEFAULT_GEN, RatingGraph
+from bribery.temporal.action.briberyAction import BriberyAction
+from graph.ratingGraph import DEFAULT_GEN, RatingGraph
 from helpers.override import override
 
 
 class TemporalRatingGraph(RatingGraph):
-    from bribery.temporal.briber import TemporalBriber
 
-    def __init__(self, bribers: Union[Tuple[TemporalBriber], TemporalBriber], generator=DEFAULT_GEN, **kwargs):
+    def __init__(self, bribers, generator=DEFAULT_GEN, **kwargs):
         from bribery.temporal.briber import TemporalBriber
         if issubclass(bribers.__class__, TemporalBriber):
             bribers = tuple([bribers])
@@ -39,6 +38,7 @@ class TemporalRatingGraph(RatingGraph):
                 rating = random.uniform(lower_bound, self._max_rating)
                 if rating >= 0:
                     self._votes[n][b] = rating
+        self.time_step: int = 0
         del self.__tmp_bribers, self.__tmp_kwargs
 
     @override
@@ -51,6 +51,17 @@ class TemporalRatingGraph(RatingGraph):
             from bribery.temporal.briber import TemporalBriber
             assert issubclass(briber.__class__, TemporalBriber), "member of graph bribers not an instance of a " \
                                                                  "subclass of TemporalBriber"
+
+    def bribe_action(self, action: BriberyAction):
+        """
+        Perform a bribery action and increment the time step
+        :param action: the bribery action to be performed
+        """
+        action.perform_action()
+        self.time_step += 1
+
+    def get_time_step(self):
+        return self.time_step
 
     def step(self):
         # TODO: implement temporal model behaviour
