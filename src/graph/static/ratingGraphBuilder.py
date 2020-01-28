@@ -9,9 +9,8 @@ from bribery.static.nonBriber import NonBriber
 from bribery.static.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
 from bribery.static.oneMoveRandomBriber import OneMoveRandomBriber
 from bribery.static.randomBriber import RandomBriber
+from graph.ratingGraph import DEFAULT_GEN
 from graph.static.ratingGraph import StaticRatingGraph
-from graph.ratingGraph import RatingGraph, DEFAULT_GEN
-from test.bribery.static.briberTestCase import DummyBriber
 
 
 @enum.unique

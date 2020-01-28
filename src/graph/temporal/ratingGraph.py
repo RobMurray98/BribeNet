@@ -1,5 +1,5 @@
 import random
-from typing import Tuple
+from typing import Tuple, Union, Any
 
 import numpy as np
 
@@ -10,7 +10,7 @@ from helpers.override import override
 
 class TemporalRatingGraph(RatingGraph):
 
-    def __init__(self, bribers, generator=DEFAULT_GEN, **kwargs):
+    def __init__(self, bribers: Union[Tuple[Any], Any], generator=DEFAULT_GEN, **kwargs):
         from bribery.temporal.briber import TemporalBriber
         if issubclass(bribers.__class__, TemporalBriber):
             bribers = tuple([bribers])
