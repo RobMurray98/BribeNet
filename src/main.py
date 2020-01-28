@@ -25,7 +25,7 @@ if __name__ == "__main__":
     print("Testing parameter prediction!")
     test_parameter_prediction()
     print("")
-    bribers = (RandomBriber(10), InfluentialNodeBriber(10, k=0.2), MostInfluentialNodeBriber(10, k=0.2))
+    bribers = (RandomBriber(10), InfluentialNodeBriber(10, k=0.1), MostInfluentialNodeBriber(10, k=0.1))
     print("Testing random bribery on a graph!")
     graph_and_test(StaticRatingGraph(bribers[0]))
     print("Testing influential node bribery on a graph!")

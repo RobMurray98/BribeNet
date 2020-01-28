@@ -5,16 +5,16 @@ from helpers.override import override
 
 
 class OneMoveInfluentialNodeBriber(StaticBriber):
-    def __init__(self, u0):
+    def __init__(self, u0, k=0.1):
         super().__init__(u0)
         self.influencers = []
-        self.k = 0  # will be reassigned when graph set
+        self.k = k  # will be reassigned when graph set
 
     @override
     def _set_graph(self, g):
         super()._set_graph(g)
         # Make sure that k is set such that there are enough resources left to actually bribe people.
-        self.k = 0.5 * (self._u / self._g.customer_count())
+        self.k = min(self.k, 0.5 * (self._u / self._g.customer_count()))
 
     # sets influencers to ordered list of most influential nodes
     def _get_influencers(self):

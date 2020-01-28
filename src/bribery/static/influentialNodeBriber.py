@@ -7,15 +7,15 @@ from helpers.override import override
 
 class InfluentialNodeBriber(StaticBriber):
 
-    def __init__(self, u0):
+    def __init__(self, u0, k=0.1):
         super().__init__(u0)
-        self.k = 0  # will be reassigned when graph set
+        self.k = k  # will be reassigned when graph set
 
     @override
     def _set_graph(self, g):
         super()._set_graph(g)
         # Make sure that k is set such that there are enough resources left to actually bribe people.
-        self.k = 0.5 * (self._u / self._g.customer_count())
+        self.k = min(self.k, 0.5 * (self._u / self._g.customer_count()))
 
     def next_bribe(self):
         if self._g is None:

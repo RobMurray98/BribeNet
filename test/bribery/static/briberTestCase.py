@@ -24,11 +24,8 @@ class BriberTestCase(TestCase, ABC):
     def tearDown(self) -> None:
         del self.briber, self.rg
 
-    def _total_rating(self, g):
-        return sum([x or 0 for x in [g.get_vote(c) for c in self.briber._g.get_customers()]])
-
     def _p_rating_increase(self, g1, g2):
-        rating2 = self._total_rating(g2)
-        rating1 = self._total_rating(g1)
+        rating2 = g2.eval_graph()
+        rating1 = g1.eval_graph()
         self.assertTrue(rating2 > rating1)
         return None
