@@ -1,7 +1,7 @@
 import random
 from abc import ABC
 from copy import deepcopy
-from typing import Tuple, Optional, Union, List
+from typing import Tuple, Optional, Union, List, Any
 
 import networkit as nk
 import numpy as np
@@ -16,9 +16,8 @@ class RatingGraph(ABC):
     """
     Representation of network graph which bribers interact with
     """
-    from bribery.briber import Briber
 
-    def __init__(self, bribers: Tuple[Briber], generator=DEFAULT_GEN, specifics=None, **kwargs):
+    def __init__(self, bribers: Tuple[Any], generator=DEFAULT_GEN, specifics=None, **kwargs):
         """
         Implementing classes should initialise self.__true_rating and self.__bribers
         :param generator: the graph generator used to instantiate the graph
@@ -46,15 +45,15 @@ class RatingGraph(ABC):
         """
         assert isinstance(self._bribers, tuple), "specifics of implementing class did not instantiate self._bribers " \
                                                  "as a tuple"
+        from bribery.briber import Briber
         for briber in self._bribers:
-            from bribery.briber import Briber
             assert issubclass(briber.__class__, Briber)
             # noinspection PyProtectedMember
             briber._set_graph(self)
         assert isinstance(self._votes, np.ndarray), "specifics of implementing class did not instantiate self._votes " \
                                                     "to an ndarray"
 
-    def get_bribers(self) -> Tuple[Briber]:
+    def get_bribers(self) -> Tuple[Any]:
         """
         Get the bribers active on the graph
         :return: the bribers

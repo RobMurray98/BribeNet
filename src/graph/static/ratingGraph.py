@@ -1,6 +1,6 @@
 from copy import deepcopy
 import random
-from typing import Tuple, Union
+from typing import Tuple, Union, Any
 
 import numpy as np
 
@@ -9,9 +9,8 @@ from helpers.override import override
 
 
 class StaticRatingGraph(RatingGraph):
-    from bribery.static.briber import StaticBriber
 
-    def __init__(self, bribers: Union[Tuple[StaticBriber], StaticBriber], generator=DEFAULT_GEN, **kwargs):
+    def __init__(self, bribers: Union[Tuple[Any], Any], generator=DEFAULT_GEN, **kwargs):
         from bribery.static.briber import StaticBriber
         if issubclass(bribers.__class__, StaticBriber):
             bribers = tuple([bribers])
@@ -27,8 +26,8 @@ class StaticRatingGraph(RatingGraph):
         Perform assertions that ensure everything is initialised
         """
         super()._finalise_init()
+        from bribery.static.briber import StaticBriber
         for briber in self._bribers:
-            from bribery.static.briber import StaticBriber
             assert issubclass(briber.__class__, StaticBriber), "member of graph bribers not an instance of a " \
                                                                "subclass of StaticBriber"
 

@@ -47,8 +47,8 @@ class TemporalRatingGraph(RatingGraph):
         Perform assertions that ensure everything is initialised
         """
         super()._finalise_init()
+        from bribery.temporal.briber import TemporalBriber
         for briber in self._bribers:
-            from bribery.temporal.briber import TemporalBriber
             assert issubclass(briber.__class__, TemporalBriber), "member of graph bribers not an instance of a " \
                                                                  "subclass of TemporalBriber"
 
