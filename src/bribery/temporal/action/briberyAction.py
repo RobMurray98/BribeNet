@@ -22,7 +22,8 @@ class BriberyAction(ABC):
     def perform_action(self):
         """
         Perform the action safely
-        :raises BriberyBriberyActionExecutedMultipleTimesException: if action already executed
+        :raises BriberyActionTimeNotCorrectException: if action not at same time step as graph
+        :raises BriberyActionExecutedMultipleTimesException: if action already executed
         """
         if not self.__performed:
             if self.__time_step == self.graph.get_time_step():

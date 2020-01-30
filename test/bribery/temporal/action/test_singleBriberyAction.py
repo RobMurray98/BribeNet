@@ -16,7 +16,7 @@ class TestSingleBriberyAction(TestCase):
             action = SingleBriberyAction(self.briber)
             action.add_bribe(0, -1.0)
         except AssertionError as e:
-            self.assertEqual(str(e)[:5], "bribe")
+            self.assertEqual(str(e), "bribe quantity must be greater than 0")
             return
         self.fail()
 
@@ -25,7 +25,7 @@ class TestSingleBriberyAction(TestCase):
             action = SingleBriberyAction(self.briber)
             action.add_bribe(-1, 1.0)
         except AssertionError as e:
-            self.assertEqual(str(e)[:4], "node")
+            self.assertEqual(str(e), "node not present in graph")
             return
         self.fail()
 
@@ -44,13 +44,13 @@ class TestSingleBriberyAction(TestCase):
             action = SingleBriberyAction(self.briber, bribes={1: 10.0})
             action._perform_action()
         except AssertionError as e:
-            self.assertEqual(str(e)[:6], "Single")
+            self.assertEqual(str(e), "SingleBriberyAction exceeded resources available to briber")
             return
         self.fail()
 
     def test__perform_action(self):
         try:
-            action = SingleBriberyAction(self.briber, bribes={1: 0.5})
+            action = SingleBriberyAction(self.briber, bribes={0: 0.5})
             action._perform_action()
         except Exception as e:
             self.fail(str(e))

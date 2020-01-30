@@ -23,7 +23,7 @@ class MultiBriberyAction(BriberyAction):
         assert all(b.briber.get_graph() is graph for b in actions), "all actions must be on same graph"
         time_step = actions[0].get_time_step()
         assert all(b.get_time_step() == time_step for b in actions), "all actions must be at same time"
-        return cls(graph=graph, bribes={b.briber.get_briber_id(): b for b in actions})
+        return cls(graph=graph, bribes={b.briber.get_briber_id(): b.bribes for b in actions})
 
     def add_bribe(self, briber_id: int, node_id: int, bribe: float):
         assert bribe > 0, "bribe quantity must be greater than 0"
@@ -39,6 +39,10 @@ class MultiBriberyAction(BriberyAction):
             self.bribes[briber_id] = {node_id: bribe}
 
     def _perform_action(self):
+        bribers = self.graph.get_bribers()
+        for briber_id, bribe in self.bribes.items():
+            assert sum(bribe.values()) <= bribers[briber_id].get_resources(), \
+                f"MultiBriberyAction exceeded resources available to briber {briber_id}: {str(bribers[briber_id])}"
         for briber_id, bribe in self.bribes.items():
             for customer, value in bribe.items():
-                self.graph.get_bribers()[briber_id].bribe(node_id=customer, amount=value)
+                bribers[briber_id].bribe(node_id=customer, amount=value)
