@@ -37,7 +37,8 @@ class TestMultiBriberRatingGraph(TestCase):
 
     def test_o_rating(self):
         for b in range(len(self.rg.get_bribers())):
-            self.assertTrue(self.rg._o_rating(b) >= 0)
+            rating = self.rg._o_rating(b)
+            self.assertTrue(rating >= 0)
 
     def test_is_influential(self):
         for b in range(len(self.rg.get_bribers())):

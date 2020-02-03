@@ -3,12 +3,13 @@ from typing import Dict, Optional, List
 
 from bribery.temporal.action.briberyAction import BriberyAction
 from bribery.temporal.action.singleBriberyAction import SingleBriberyAction
-from graph.temporal.ratingGraph import TemporalRatingGraph
 
 
 class MultiBriberyAction(BriberyAction):
 
-    def __init__(self, graph: TemporalRatingGraph, bribes: Optional[Dict[int, Dict[int, float]]] = None):
+    def __init__(self, graph, bribes: Optional[Dict[int, Dict[int, float]]] = None):
+        from graph.temporal.ratingGraph import TemporalRatingGraph
+        assert issubclass(graph.__class__, TemporalRatingGraph)
         super().__init__(graph=graph)
         if bribes is not None:
             for _, bribe in bribes.items():

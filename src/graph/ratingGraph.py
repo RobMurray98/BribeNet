@@ -34,6 +34,7 @@ class RatingGraph(ABC):
         else:
             self._max_rating: float = 1.0
         self._votes: np.ndarray[Optional[float]] = None
+        self._truths: np.ndarray[float] = None
         self._rating_method: RatingMethod = RatingMethod.P_RATING
         if specifics is not None:
             specifics()
@@ -52,6 +53,8 @@ class RatingGraph(ABC):
             briber._set_graph(self)
         assert isinstance(self._votes, np.ndarray), "specifics of implementing class did not instantiate self._votes " \
                                                     "to an ndarray"
+        assert isinstance(self._truths, np.ndarray), "specifics of implementing class did not instantiate " \
+                                                     "self._truths to an ndarray"
 
     def get_bribers(self) -> Tuple[Any]:
         """
@@ -109,7 +112,7 @@ class RatingGraph(ABC):
         :param briber_id: the briber on which voting has been done
         :return: the voting neighbours of the node for the briber
         """
-        return [n for n in self._g.neighbors(node_id) if self.get_vote(n)[briber_id]]
+        return [n for n in self._g.neighbors(node_id) if not np.isnan(self._votes[n][briber_id])]
 
     def get_customers(self) -> List[int]:
         """
@@ -125,11 +128,11 @@ class RatingGraph(ABC):
         """
         return len(self._g.nodes())
 
-    def get_vote(self, idx: int) -> Union[Optional[float], Tuple[Optional[float]]]:
+    def get_vote(self, idx: int):
         """
-        Returns the true ratings of a voter in the current network state
+        Returns the vote of a voter in the current network state
         :param idx: the id of the voter
-        :return: None if non-voter, otherwise float if single briber, tuple of floats if multiple bribers
+        :return: np.nan if non-voter, otherwise float if single briber, np.ndarray of floats if multiple bribers
         """
         return self._votes[idx]
 
@@ -173,7 +176,7 @@ class RatingGraph(ABC):
         :param briber_id: the id number of the briber
         :return: mean of all actual ratings
         """
-        ns = [n for n in self._g.nodes() if self.get_vote(n)[briber_id]]
+        ns = [n for n in self._g.nodes() if not np.isnan(self._votes[n][briber_id])]
         return sum(self.get_vote(n)[briber_id] for n in ns) / len(ns)
 
     def is_influential(self, node_id: int, k: float = 0.2, briber_id: int = 0,

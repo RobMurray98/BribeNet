@@ -18,5 +18,5 @@ class BriberTestCase(TestCase, ABC):
     def _p_rating_increase(self, g1, g2):
         rating2 = g2.eval_graph()
         rating1 = g1.eval_graph()
-        self.assertGreater(rating2, rating1)
+        self.assertGreaterEqual(rating2, rating1)
         return None

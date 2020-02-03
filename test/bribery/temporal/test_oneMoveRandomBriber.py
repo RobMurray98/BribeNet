@@ -17,6 +17,6 @@ class TestOneMoveInfluentialNodeBriber(BriberTestCase):
         briber_id = self.briber.get_briber_id()
         prev_eval = graph.eval_graph(briber_id=briber_id)
 
-        graph.bribe_action(action)
+        action.perform_action()
         self.assertGreater(graph.eval_graph(briber_id=briber_id), prev_eval)
 
