@@ -1,7 +1,7 @@
 import random
 from abc import ABC
 from copy import deepcopy
-from typing import Tuple, Optional, Union, List, Any
+from typing import Tuple, Optional, List, Any
 
 import networkit as nk
 import numpy as np
@@ -191,7 +191,8 @@ class RatingGraph(ABC):
         :return: float > 0 if influential, 0 otherwise
         """
         prev_p = self.eval_graph(briber_id, rating_method)
-        if self.get_vote(node_id)[briber_id] is not None and (self.get_vote(node_id)[briber_id] < 1 - k):
+        vote = self.get_vote(node_id)[briber_id]
+        if (not np.isnan(vote)) and (vote < 1 - k):
             if charge_briber:
                 # bribe via the briber in order to charge their utility
                 self._bribers[briber_id].bribe(node_id, k)
