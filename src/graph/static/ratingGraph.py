@@ -1,11 +1,11 @@
-from copy import deepcopy
 import random
-from typing import Tuple, Union, Any
-
 import numpy as np
+from typing import Tuple, Union, Any
 
 from graph.ratingGraph import RatingGraph, DEFAULT_GEN
 from helpers.override import override
+
+DEFAULT_NON_VOTER_PROPORTION = 0.2
 
 
 class StaticRatingGraph(RatingGraph):
@@ -36,14 +36,18 @@ class StaticRatingGraph(RatingGraph):
         self._bribers: Tuple[StaticBriber] = self.__tmp_bribers
         # noinspection PyTypeChecker
         self._votes = np.zeros((len(self._g.nodes()), len(self._bribers)))
+        self._truths = np.zeros((len(self._g.nodes()), len(self._bribers)))
         # Generate random ratings network
-        if "random_init_lower_bound" in self.__tmp_kwargs.keys():
-            lower_bound = self.__tmp_kwargs["random_init_lower_bound"]
+        if "non_voter_proportion" in self.__tmp_kwargs.keys():
+            non_voter_proportion = self.__tmp_kwargs["non_voter_proportion"]
         else:
-            lower_bound = -0.25
+            non_voter_proportion = DEFAULT_NON_VOTER_PROPORTION
         for n in self._g.nodes():
             for b, _ in enumerate(self._bribers):
-                rating = random.uniform(lower_bound, self._max_rating)
-                if rating >= 0:
+                rating = random.uniform(0, self._max_rating)
+                self._truths[n][b] = rating
+                if random.random() > non_voter_proportion:
                     self._votes[n][b] = rating
+                else:
+                    self._votes[n][b] = np.nan
         del self.__tmp_bribers, self.__tmp_kwargs

@@ -6,6 +6,7 @@ import numpy as np
 from bribery.temporal.action.briberyAction import BriberyAction
 from bribery.temporal.action.multiBriberyAction import MultiBriberyAction
 from graph.ratingGraph import DEFAULT_GEN, RatingGraph
+from graph.static.ratingGraph import DEFAULT_NON_VOTER_PROPORTION
 from graph.temporal.decisionMethod import DecisionMethod
 from helpers.override import override
 
@@ -24,6 +25,7 @@ class TemporalRatingGraph(RatingGraph):
                                                             "of TemporalBriber"
         self.__tmp_bribers = bribers
         self.__tmp_kwargs = kwargs
+        self._decision_method = decision_method
         self._last_bribery_action: Optional[BriberyAction] = None
         self._time_step: int = 0
         self._decision_method = decision_method
@@ -34,16 +36,21 @@ class TemporalRatingGraph(RatingGraph):
         self._bribers: Tuple[TemporalBriber] = self.__tmp_bribers
         # noinspection PyTypeChecker
         self._votes = np.zeros((len(self._g.nodes()), len(self._bribers)))
+        self._truths = np.zeros((len(self._g.nodes()), len(self._bribers)))
         # Generate random ratings network
-        if "random_init_lower_bound" in self.__tmp_kwargs.keys():
-            lower_bound = self.__tmp_kwargs["random_init_lower_bound"]
+        if "non_voter_proportion" in self.__tmp_kwargs.keys():
+            non_voter_proportion = self.__tmp_kwargs["non_voter_proportion"]
         else:
-            lower_bound = -0.25
+            non_voter_proportion = DEFAULT_NON_VOTER_PROPORTION
         for n in self._g.nodes():
             for b, _ in enumerate(self._bribers):
-                rating = random.uniform(lower_bound, self._max_rating)
-                if rating >= 0:
+                rating = random.uniform(0, self._max_rating)
+                self._truths[n][b] = rating
+                if random.random() > non_voter_proportion:
                     self._votes[n][b] = rating
+                else:
+                    self._votes[n][b] = np.nan
+        self._time_step = 0
         del self.__tmp_bribers, self.__tmp_kwargs
 
     @override
@@ -83,4 +90,3 @@ class TemporalRatingGraph(RatingGraph):
         else:
             self._customer_action()
         self._time_step += 1
-
