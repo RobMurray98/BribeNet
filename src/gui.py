@@ -5,20 +5,21 @@ Created on Tue Nov 19 20:36:51 2019
 @author: callum
 """
 
-# Import Bribing Agents
-from bribery.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
-from bribery.oneMoveRandomBriber import OneMoveRandomBriber
-
-from graph.singleBriberRatingGraph import SingleBriberRatingGraph
-
 import tkinter as tk
-import networkit as nk
-from networkx import spring_layout
-from networkit.nxadapter import nk2nx
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
 import matplotlib.pyplot as plt
-from networkit.viztasks import drawGraph
+import networkit as nk
+import numpy as np
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.colors import rgb2hex
+from networkit.nxadapter import nk2nx
+from networkit.viztasks import drawGraph
+from networkx import spring_layout
+
+# Import Bribing Agents
+from bribery.static.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
+from bribery.static.oneMoveRandomBriber import OneMoveRandomBriber
+from graph.static.ratingGraph import StaticRatingGraph
 
 
 def switch_briber(argument):
@@ -58,7 +59,7 @@ class GUI(tk.Tk):
         briber = switch_briber(btype)()
         # noinspection PyUnresolvedReferences
         ba_gen = nk.generators.BarabasiAlbertGenerator(5, 30, 0, True)
-        rg = SingleBriberRatingGraph(briber) if gtype == "ws" else SingleBriberRatingGraph(briber, generator=ba_gen)
+        rg = StaticRatingGraph(briber) if gtype == "ws" else StaticRatingGraph(briber, generator=ba_gen)
         self.frames["GraphFrame"].set_graph(rg, briber)
 
     def plot_results(self, results):
@@ -139,21 +140,20 @@ class GraphFrame(tk.Frame):
         cmap = plt.get_cmap("Purples")
         colors = []
         for c in self.graph.get_customers():
-            if not self.graph.get_vote(c):
+            if np.isnan(self.graph.get_vote(c)):
                 colors.append("gray")
             else:
-                colors.append(rgb2hex(cmap(self.graph.get_vote(c))[:3]))
+                colors.append(rgb2hex(cmap(self.graph.get_vote(c)[0])[:3]))
         # labels = {c: round(self.graph.p_rating(c), 2) for c in self.graph.get_customers()}
 
         self.ax.clear()
 
         drawGraph(self.graph.graph(), node_size=400, node_color=colors, ax=self.ax, pos=self.pos)
         for c in self.graph.get_customers():
-            rating = ""
-            if not self.graph.get_vote(c):
+            if np.isnan(self.graph.get_vote(c)):
                 rating = "None"
             else:
-                rating = round(self.graph.get_vote(c), 2)
+                rating = round(self.graph.get_vote(c)[0], 2)
 
             self.ax.annotate(
                 str(c) + ":\n" +
@@ -171,7 +171,7 @@ class GraphFrame(tk.Frame):
             ))
         self.canvas.draw()
         avp = str(round(self.graph.eval_graph(), 2))
-        if (last < 0):
+        if last < 0:
             self.txt.set("Average P-Rating: " + avp + " \nLast Bribed: --")
         else:
             self.txt.set("Average P-Rating: " + avp + " \nLast Bribed: " + str(last))
@@ -188,20 +188,20 @@ class GraphFrame(tk.Frame):
         colors = []
 
         for c in self.graph.get_customers():
-            if self.graph.is_influential(c):
+            if self.graph.is_influential(c, charge_briber=False):
                 colors.append("yellow")
-            elif not self.graph.get_vote(c):
+            elif np.isnan(self.graph.get_vote(c)):
                 colors.append("gray")
             else:
-                colors.append(rgb2hex(cmap(self.graph.get_vote(c))[:3]))
+                colors.append(rgb2hex(cmap(self.graph.get_vote(c)[0])[:3]))
         self.ax.clear()
 
         for c in self.graph.get_customers():
             rating = ""
-            if not self.graph.get_vote(c):
+            if np.isnan(self.graph.get_vote(c)):
                 rating = "None"
             else:
-                rating = round(self.graph.get_vote(c), 2)
+                rating = round(self.graph.get_vote(c)[0], 2)
 
             self.ax.annotate(
                 str(c) + ":\n" +

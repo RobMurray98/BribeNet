@@ -1,22 +1,15 @@
-import enum
-from abc import ABC, abstractmethod
+import random
+from abc import ABC
 from copy import deepcopy
-from typing import Tuple, Optional, Union, List
+from typing import Tuple, Optional, List, Any
 
 import networkit as nk
 import numpy as np
 
+from graph.ratingMethod import RatingMethod
+
 # noinspection PyUnresolvedReferences
 DEFAULT_GEN = nk.generators.WattsStrogatzGenerator(30, 5, 0.3)
-
-
-@enum.unique
-class RatingMethod(enum.Enum):
-    O_RATING = 0
-    P_RATING = 1
-    MEDIAN_P_RATING = 2
-    SAMPLE_P_RATING = 3
-    PK_RATING = 4
 
 
 class RatingGraph(ABC):
@@ -24,42 +17,46 @@ class RatingGraph(ABC):
     Representation of network graph which bribers interact with
     """
 
-    def __init__(self, generator=DEFAULT_GEN, specifics=None, **kwargs):
+    def __init__(self, bribers: Tuple[Any], generator=DEFAULT_GEN, specifics=None, **kwargs):
         """
         Implementing classes should initialise self.__true_rating and self.__bribers
         :param generator: the graph generator used to instantiate the graph
+        :param specifics: function in implementing class to call after the superclass initialisation,
+                          but prior to _finalise_init (template design pattern)
+        :param **kwargs:  additional keyword arguments to the graph, such as max_rating
         """
         # Generate random ratings network
         self._g = generator.generate()
-        self._bribers = None
+        from bribery.briber import Briber
+        self._bribers: Tuple[Briber] = bribers
         if "max_rating" in kwargs.keys():
-            max_rating = kwargs["max_rating"]
+            self._max_rating: float = kwargs["max_rating"]
         else:
-            max_rating = 1.0
-        self._max_rating: float = max_rating
+            self._max_rating: float = 1.0
         self._votes: np.ndarray[Optional[float]] = None
+        self._truths: np.ndarray[float] = None
         self._rating_method: RatingMethod = RatingMethod.P_RATING
         if specifics is not None:
             specifics()
-        self.__finalise_init()
+        self._finalise_init()
 
-    def __finalise_init(self):
+    def _finalise_init(self):
         """
         Perform assertions that ensure everything is initialised
         """
-        assert self._bribers is not None, "specifics of implementing class did not instantiate self._bribers"
+        assert isinstance(self._bribers, tuple), "specifics of implementing class did not instantiate self._bribers " \
+                                                 "as a tuple"
         from bribery.briber import Briber
-        if issubclass(self._bribers.__class__, Briber):
+        for briber in self._bribers:
+            assert issubclass(briber.__class__, Briber)
             # noinspection PyProtectedMember
-            self._bribers._set_graph(self)
-        else:
-            for briber in self._bribers:
-                # noinspection PyProtectedMember
-                briber._set_graph(self)
-        assert type(self._votes) is np.ndarray, "specifics of implementing class did not instantiate self._votes to " \
-                                                "an ndarray"
+            briber._set_graph(self)
+        assert isinstance(self._votes, np.ndarray), "specifics of implementing class did not instantiate self._votes " \
+                                                    "to an ndarray"
+        assert isinstance(self._truths, np.ndarray), "specifics of implementing class did not instantiate " \
+                                                     "self._truths to an ndarray"
 
-    def get_bribers(self):
+    def get_bribers(self) -> Tuple[Any]:
         """
         Get the bribers active on the graph
         :return: the bribers
@@ -108,54 +105,14 @@ class RatingGraph(ABC):
         """
         return self._g
 
-    @abstractmethod
-    def _neighbours(self, node_id: int, briber_id: int) -> List[int]:
+    def _neighbours(self, node_id: int, briber_id: int = 0) -> List[int]:
         """
         Get the voting neighbours of a node
         :param node_id: the node to get neighbours of
         :param briber_id: the briber on which voting has been done
         :return: the voting neighbours of the node for the briber
         """
-        raise NotImplementedError
-
-    @abstractmethod
-    def _p_rating(self, node_id: int, briber_id: int) -> float:
-        """
-        Get the P-rating for the node
-        :param node_id: the id of the node
-        :param briber_id: the id number of the briber
-        :return: mean of actual rating of neighbouring voters
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def _median_p_rating(self, node_id: int, briber_id: int) -> float:
-        """
-        Get the median-based P-rating for the node
-        :param node_id: the id of the node
-        :param briber_id: the id number of the briber
-        :return: median of actual rating of neighbouring voters
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def _sample_p_rating(self, node_id: int, briber_id: int) -> float:
-        """
-        Get the sample-based P-rating for the node
-        :param node_id: the id of the node
-        :param briber_id: the id number of the briber
-        :return: mean of a sample of actual rating of neighbouring voters
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def _o_rating(self, briber_id: int) -> float:
-        """
-        Get the O-rating for the node
-        :param briber_id: the id number of the briber
-        :return: mean of all actual ratings
-        """
-        raise NotImplementedError
+        return [n for n in self._g.neighbors(node_id) if not np.isnan(self._votes[n][briber_id])]
 
     def get_customers(self) -> List[int]:
         """
@@ -164,18 +121,6 @@ class RatingGraph(ABC):
         """
         return list(self._g.nodes())
 
-    @abstractmethod
-    def is_influential(self, node_id: int, k: float, briber_id: int, rating_method: Optional[RatingMethod]) -> bool:
-        """
-        Determines if a node is influential
-        :param node_id: the id of the node
-        :param k: the cost of information
-        :param briber_id: the briber for which the node may be influential
-        :param rating_method: a rating method to override the current set rating method if not None
-        :return: True if influential, otherwise False
-        """
-        raise NotImplementedError
-
     def customer_count(self) -> int:
         """
         Get the number of customers
@@ -183,33 +128,105 @@ class RatingGraph(ABC):
         """
         return len(self._g.nodes())
 
-    def get_vote(self, idx: int) -> Union[Optional[float], Tuple[Optional[float]]]:
+    def get_vote(self, idx: int):
         """
-        Returns the true ratings of a voter in the current network state
+        Returns the vote of a voter in the current network state
         :param idx: the id of the voter
-        :return: None if non-voter, otherwise float if single briber, tuple of floats if multiple bribers
+        :return: np.nan if non-voter, otherwise float if single briber, np.ndarray of floats if multiple bribers
         """
         return self._votes[idx]
 
-    @abstractmethod
-    def eval_graph(self, briber_id: int, rating_method: Optional[RatingMethod]) -> float:
+    def _p_rating(self, node_id: int, briber_id: int = 0):
         """
-        Metric to determine overall rating of the graph
-        :param rating_method: a rating method to override the current set rating method if not None
-        :return: the sum of the rating across the network
-        :param briber_id: the briber being considered in the evaluation
+        Get the P-rating for the node
+        :param node_id: the id of the node
+        :param briber_id: the id number of the briber
+        :return: mean of actual rating of neighbouring voters
         """
-        raise NotImplementedError
+        ns = self._neighbours(node_id, briber_id)
+        if len(ns) == 0:
+            return 0
+        return sum(self.get_vote(n)[briber_id] for n in ns) / len(ns)
 
-    @abstractmethod
-    def bribe(self, node_id: int, b: float, briber_id: int):
+    def _median_p_rating(self, node_id: int, briber_id: int = 0):
+        """
+        Get the median-based P-rating for the node
+        :param node_id: the id of the node
+        :param briber_id: the id number of the briber
+        :return: median of actual rating of neighbouring voters
+        """
+        ns = self._neighbours(node_id, briber_id)
+        ns = sorted(ns, key=lambda x: self.get_vote(x)[briber_id])
+        return self.get_vote(ns[len(ns) // 2])[briber_id]
+
+    def _sample_p_rating(self, node_id: int, briber_id: int = 0):
+        """
+        Get the sample-based P-rating for the node
+        :param node_id: the id of the node
+        :param briber_id: the id number of the briber
+        :return: mean of a sample of actual rating of neighbouring voters
+        """
+        ns = self._neighbours(node_id, briber_id)
+        sub = random.sample(ns, random.randint(1, len(ns)))
+        return sum(self.get_vote(n)[briber_id] for n in sub) / len(sub)
+
+    def _o_rating(self, briber_id: int = 0):
+        """
+        Get the O-rating for the node
+        :param briber_id: the id number of the briber
+        :return: mean of all actual ratings
+        """
+        ns = [n for n in self._g.nodes() if not np.isnan(self._votes[n][briber_id])]
+        return sum(self.get_vote(n)[briber_id] for n in ns) / len(ns)
+
+    def is_influential(self, node_id: int, k: float = 0.2, briber_id: int = 0,
+                       rating_method: Optional[RatingMethod] = None, charge_briber: bool = True) -> float:
+        """
+        Determines if a node is influential using a small bribe
+        :param node_id: the id of the node
+        :param k: the cost of information
+        :param briber_id: the briber for which the node may be influential
+        :param rating_method: a rating method to override the current set rating method if not None
+        :param charge_briber: whether this query is being made by a briber who must be charged and the ratings adjusted
+        :return: float > 0 if influential, 0 otherwise
+        """
+        prev_p = self.eval_graph(briber_id, rating_method)
+        vote = self.get_vote(node_id)[briber_id]
+        if (not np.isnan(vote)) and (vote < 1 - k):
+            if charge_briber:
+                # bribe via the briber in order to charge their utility
+                self._bribers[briber_id].bribe(node_id, k)
+                reward = self.eval_graph(briber_id, rating_method) - prev_p - k
+            else:
+                # "bribe" directly on the graph, not charging the briber and not affecting ratings
+                g_ = deepcopy(self)
+                g_.bribe(node_id, k, briber_id)
+                reward = g_.eval_graph(briber_id, rating_method) - prev_p - k
+            if reward > 0:
+                return reward
+        return 0.0
+
+    def bribe(self, node_id, b, briber_id=0):
         """
         Increase the rating of a node by an amount, capped at the max rating
         :param node_id: the node to bribe
         :param b: the amount to bribe the node
         :param briber_id: the briber who's performing the briber
         """
-        raise NotImplementedError
+        if self._votes[node_id][briber_id]:
+            self._votes[node_id][briber_id] = min(self._max_rating, self._votes[node_id][briber_id] + b)
+        else:
+            self._votes[node_id][briber_id] = min(self._max_rating, b)
+
+    def eval_graph(self, briber_id=0, rating_method=None):
+        """
+        Metric to determine overall rating of the graph
+        :param rating_method: a rating method to override the current set rating method if not None
+        :return: the sum of the rating across the network
+        :param briber_id: the briber being considered in the evaluation
+        """
+        return sum(self.get_rating(node_id=n, briber_id=briber_id, rating_method=rating_method)
+                   for n in self._g.nodes())
 
     def __copy__(self):
         """
