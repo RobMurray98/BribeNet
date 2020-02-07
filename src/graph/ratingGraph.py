@@ -8,6 +8,8 @@ import numpy as np
 
 from graph.ratingMethod import RatingMethod
 
+from graph.conversions import to_weighted
+
 # noinspection PyUnresolvedReferences
 DEFAULT_GEN = nk.generators.WattsStrogatzGenerator(30, 5, 0.3)
 
@@ -27,6 +29,7 @@ class RatingGraph(ABC):
         """
         # Generate random ratings network
         self._g = generator.generate()
+        self._g = to_weighted(self._g)
         from bribery.briber import Briber
         self._bribers: Tuple[Briber] = bribers
         if "max_rating" in kwargs.keys():
