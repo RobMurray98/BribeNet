@@ -1,3 +1,4 @@
+import abc
 import random
 from typing import Tuple, Union, Any, Optional
 
@@ -7,34 +8,29 @@ from bribery.temporal.action.briberyAction import BriberyAction
 from bribery.temporal.action.multiBriberyAction import MultiBriberyAction
 from graph.ratingGraph import DEFAULT_GEN, RatingGraph
 from graph.static.ratingGraph import DEFAULT_NON_VOTER_PROPORTION
-from graph.temporal.decisionMethod import DecisionMethod
 from helpers.override import override
 
 
-class TemporalRatingGraph(RatingGraph):
+class TemporalRatingGraph(RatingGraph, abc.ABC):
 
-    def __init__(self, bribers: Union[Tuple[Any], Any], generator=DEFAULT_GEN,
-                 decision_method: DecisionMethod = DecisionMethod.THRESHOLD, **kwargs):
+    def __init__(self, bribers: Union[Tuple[Any], Any], generator=DEFAULT_GEN, **kwargs):
         from bribery.temporal.briber import TemporalBriber
         if issubclass(bribers.__class__, TemporalBriber):
             bribers = tuple([bribers])
-        assert isinstance(bribers, tuple), "bribers must be a tuple of instances of subclasses of StaticRatingBriber"
+        assert isinstance(bribers, tuple), "bribers must be a tuple of instances of subclasses of TemporalRatingBriber"
         assert len(bribers) > 0, "should be at least one briber"
         for b in bribers:
             assert issubclass(b.__class__, TemporalBriber), "member of bribers tuple not an instance of a subclass " \
                                                             "of TemporalBriber"
         self.__tmp_bribers = bribers
         self.__tmp_kwargs = kwargs
-        self._decision_method = decision_method
         self._last_bribery_action: Optional[BriberyAction] = None
         self._time_step: int = 0
-        self._decision_method = decision_method
         super().__init__(generator, specifics=self.__specifics, **kwargs)
 
     def __specifics(self):
         from bribery.temporal.briber import TemporalBriber
         self._bribers: Tuple[TemporalBriber] = self.__tmp_bribers
-        # noinspection PyTypeChecker
         self._votes = np.zeros((len(self._g.nodes()), len(self._bribers)))
         self._truths = np.zeros((len(self._g.nodes()), len(self._bribers)))
         # Generate random ratings network
@@ -70,11 +66,12 @@ class TemporalRatingGraph(RatingGraph):
     def get_last_action(self):
         return self._last_bribery_action
 
+    @abc.abstractmethod
     def _customer_action(self):
         """
         Perform the action of each customer in the graph
         """
-        pass  # TODO (i30): implement threshold model
+        raise NotImplementedError
 
     def _bribery_action(self):
         actions = [b.next_action() for b in self._bribers]

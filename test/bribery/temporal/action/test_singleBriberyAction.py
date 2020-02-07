@@ -2,14 +2,14 @@ from unittest import TestCase
 
 from bribery.temporal.action.singleBriberyAction import SingleBriberyAction
 from bribery.temporal.nonBriber import NonBriber
-from graph.temporal.ratingGraph import TemporalRatingGraph
+from graph.temporal.noCustomerActionGraph import NoCustomerActionGraph
 
 
 class TestSingleBriberyAction(TestCase):
 
     def setUp(self) -> None:
         self.briber = NonBriber(1)
-        self.graph = TemporalRatingGraph(self.briber)
+        self.graph = NoCustomerActionGraph(self.briber)
 
     def test_add_bribe_fails_if_bribe_not_greater_than_zero(self):
         try:

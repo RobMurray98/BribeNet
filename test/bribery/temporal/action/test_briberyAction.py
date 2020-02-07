@@ -5,14 +5,14 @@ from bribery.temporal.action.briberyAction import BriberyActionTimeNotCorrectExc
     BriberyActionExecutedMultipleTimesException
 from bribery.temporal.nonBriber import NonBriber
 from bribery.temporal.action.singleBriberyAction import SingleBriberyAction
-from graph.temporal.ratingGraph import TemporalRatingGraph
+from graph.temporal.noCustomerActionGraph import NoCustomerActionGraph
 
 
 class TestBriberyAction(TestCase):
 
     def setUp(self) -> None:
         self.briber = NonBriber(1)
-        self.graph = TemporalRatingGraph(self.briber)
+        self.graph = NoCustomerActionGraph(self.briber)
         self.action = SingleBriberyAction(self.briber)
 
     def test_perform_action_fails_if_at_different_times(self):
