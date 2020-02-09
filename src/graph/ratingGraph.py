@@ -277,19 +277,17 @@ class RatingGraph(ABC):
     def trust(self, node1_id: int, node2_id: int, rating_method: Optional[RatingMethod] = None) -> float:
         """
         Determines the trust of a given edge, which is a value from 0 to 1.
-        This uses the average of the difference in rating between each pair of places.
+        This uses the average of the difference in vote between each pair of places.
         :param node1_id: the first node of the edge
         :param node2_id: the second node of the edge
         """
-        se = 0
-        # TODO: should loop over places instead of bribers, although right now these are equivalent
-        for briber_id in range(len(self._bribers)):
-            # Get ratings at each node, and take the square difference.
-            diff = self.get_rating(node1_id, briber_id, rating_method) - self.get_rating(node2_id, briber_id, rating_method)
-            if np.isnan(diff): diff = 0
-            se += diff**2
-        mse = se / len(self._bribers)
-        return mse
+        votes1 = self.get_vote(node1_id)
+        votes2 = self.get_vote(node2_id)
+        differences = votes1 - votes2
+        nans = np.isnan(differences)
+        differences[nans] = 0
+        differences = np.square(differences)
+        return np.sum(differences) / len(differences)
 
     def __copy__(self):
         """
