@@ -10,6 +10,6 @@ class TestConversions(TestCase):
     
     def test_add_weights(self):
         g_weighted = conversions.to_weighted(self.graph)
-        self.assertEqual(self.graph.nodes(), g_weighted.nodes())
-        self.assertEqual(self.graph.edges(), g_weighted.edges())
-        self.assertEqual(True, g_weighted.isWeighted())
+        self.assertEqual(sorted(self.graph.nodes()), sorted(g_weighted.nodes()))
+        self.assertEqual(sorted(self.graph.edges()), sorted(g_weighted.edges()))
+        self.assertTrue(g_weighted.isWeighted())

@@ -73,6 +73,22 @@ class TemporalRatingGraph(RatingGraph):
         actions = [b.next_action() for b in self._bribers]
         multi_action = MultiBriberyAction.make_multi_action_from_single_actions(actions)
         multi_action.perform_action()
+    
+    def _update_trust(self, learning_rate : float = 0.1):
+        """
+        Update the weights of the graph based on the trust between nodes.
+        :param learning_rate The learning rate at which we adjust our edge weights
+        """
+        # Get the weights and calculate the new weights first.
+        new_weights = {}
+        for (u,v) in self.get_edges():
+            prev_weight = self.get_weight(u,v)
+            new_weight = prev_weight + learning_rate * (self.trust(u, v) - prev_weight)
+            new_weights[(u,v)] = new_weight
+        # Then set them, as some ratings systems could give different values
+        # if the weights are modified during the calculations.
+        for (u,v) in self.get_edges():
+            self.set_weight(u, v, new_weights[(u,v)])
 
     def step(self):
         """
@@ -82,4 +98,5 @@ class TemporalRatingGraph(RatingGraph):
             self._bribery_action()
         else:
             self._customer_action()
+            self._update_trust()
         self._time_step += 1
