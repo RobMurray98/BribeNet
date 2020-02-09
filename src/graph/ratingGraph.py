@@ -80,7 +80,7 @@ class RatingGraph(ABC):
         """
         self._rating_method = rating_method
 
-    def get_rating(self, node_id: int = 0, briber_id: int = 0, rating_method: Optional[RatingMethod] = None):
+    def get_rating(self, node_id: int = 0, briber_id: int = 0, rating_method: Optional[RatingMethod] = None, nan_default: Optional[int] = None):
         """
         Get the rating for a certain node and briber, according to the set rating method
         :param node_id: the node to find the rating of (can be omitted for O-rating)
@@ -89,18 +89,21 @@ class RatingGraph(ABC):
         :return: the rating
         """
         rm = rating_method or self._rating_method
+        rating = np.nan
         if rm == RatingMethod.O_RATING:
-            return self._o_rating(briber_id)
-        if rm == RatingMethod.P_RATING:
-            return self._p_rating(node_id, briber_id)
-        if rm == RatingMethod.MEDIAN_P_RATING:
-            return self._median_p_rating(node_id, briber_id)
-        if rm == RatingMethod.SAMPLE_P_RATING:
-            return self._sample_p_rating(node_id, briber_id)
-        if rm == RatingMethod.WEIGHTED_P_RATING:
-            return self._p_rating_weighted(node_id, briber_id)
-        # if rm == RatingMethod.PK_RATING:
+            rating = self._o_rating(briber_id)
+        elif rm == RatingMethod.P_RATING:
+            rating = self._p_rating(node_id, briber_id)
+        elif rm == RatingMethod.MEDIAN_P_RATING:
+            rating = self._median_p_rating(node_id, briber_id)
+        elif rm == RatingMethod.SAMPLE_P_RATING:
+            rating = self._sample_p_rating(node_id, briber_id)
+        elif rm == RatingMethod.WEIGHTED_P_RATING:
+            rating = self._p_rating_weighted(node_id, briber_id)
+        # elif rm == RatingMethod.PK_RATING:
         #     return self._pk_rating(node_id, briber_id)
+        if np.isnan(rating) and nan_default: rating = nan_default
+        return rating
 
     def graph(self):
         """
@@ -151,7 +154,7 @@ class RatingGraph(ABC):
         """
         ns = self._neighbours(node_id, briber_id)
         if len(ns) == 0:
-            return 0
+            return np.nan
         return sum(self.get_vote(n)[briber_id] for n in ns) / len(ns)
 
     def _p_rating_weighted(self, node_id: int, briber_id: int = 0):
@@ -163,7 +166,7 @@ class RatingGraph(ABC):
         """
         ns = self._neighbours(node_id, briber_id)
         if len(ns) == 0:
-            return 0
+            return np.nan
         dividing_factor = 0
         contributions = 0
         for n in ns:
@@ -249,7 +252,7 @@ class RatingGraph(ABC):
         :return: the sum of the rating across the network
         :param briber_id: the briber being considered in the evaluation
         """
-        return sum(self.get_rating(node_id=n, briber_id=briber_id, rating_method=rating_method)
+        return sum(self.get_rating(node_id=n, briber_id=briber_id, rating_method=rating_method, nan_default=0)
                    for n in self._g.nodes())
     
     def set_weight(self, node1_id: int, node2_id: int, weight: float):
@@ -283,6 +286,7 @@ class RatingGraph(ABC):
         for briber_id in range(len(self._bribers)):
             # Get ratings at each node, and take the square difference.
             diff = self.get_rating(node1_id, briber_id, rating_method) - self.get_rating(node2_id, briber_id, rating_method)
+            if np.isnan(diff): diff = 0
             se += diff**2
         mse = se / len(self._bribers)
         return mse
