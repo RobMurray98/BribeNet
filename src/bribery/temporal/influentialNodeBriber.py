@@ -4,13 +4,11 @@ import random
 
 
 class InfluentialNodeBriber(TemporalBriber):
-    # TODO: implement influential node behaviour that returns BriberyAction
+    # TODO: implement influential node behaviour that returns multiBriberyAction
 
-    def __init__(self, u0, k=0.1, i=7):
+    def __init__(self, u0, k=0.1):
         super().__init__(u0)
         self.k = k  # will be reassigned when graph
-        self.c = 0
-        self.i = i
         self.pr = 0
         self.npr = 0
         self.nprd = 0
