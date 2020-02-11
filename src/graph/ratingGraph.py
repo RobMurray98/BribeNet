@@ -128,6 +128,13 @@ class RatingGraph(ABC):
         """
         return len(self._g.nodes())
 
+    def get_random_customer(self) -> int:
+        """
+        Gets the id of a random customer
+        :return: random node id in the graph
+        """
+        return random.choice(self._g.nodes())
+
     def get_vote(self, idx: int):
         """
         Returns the vote of a voter in the current network state

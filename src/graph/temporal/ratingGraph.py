@@ -63,9 +63,6 @@ class TemporalRatingGraph(RatingGraph):
     def get_time_step(self):
         return self._time_step
 
-    def get_votes(self):
-        return self._votes
-
     def _customer_action(self):
         """
         Perform the action of each customer in the graph

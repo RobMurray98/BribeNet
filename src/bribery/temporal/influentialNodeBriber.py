@@ -22,12 +22,12 @@ class InfluentialNodeBriber(TemporalBriber):
 
     def next_action(self) -> SingleBriberyAction:
         nextAct = SingleBriberyAction(self)
-        if self.npr>self.pr:
-            nextAct.add_bribe(self.nprd, min(self.get_resources(), (1-self.get_graph().getvote(self.nprd))))
+        if self.npr > self.pr:
+            nextAct.add_bribe(self.nprd, min(self.get_resources(),
+                                             self._g.get_max_rating() - self._g.get_vote(self.nprd)))
             self.pr = self.npr
         else:
-            mNode = len(self.get_graph().get_votes())
-            nNode = random.randint(0,mNode-1)
+            nNode = self.get_graph().get_random_customer()
             nextAct.add_bribe(nNode, self.k)
             self.npr = self.get_graph().eval_graph(self.get_briber_id())
             self.nprd = nNode
