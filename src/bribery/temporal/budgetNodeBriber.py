@@ -2,7 +2,8 @@ from bribery.temporal.briber import TemporalBriber
 from bribery.temporal.action.singleBriberyAction import SingleBriberyAction
 import random
 
-class budgetNodeBriber(TemporalBriber):
+
+class BudgetNodeBriber(TemporalBriber):
 
     # TODO: implement influential node behaviour that returns multiBriberyAction
     def __init__(self, u0, k=0.1, i=7, b=0.5):
