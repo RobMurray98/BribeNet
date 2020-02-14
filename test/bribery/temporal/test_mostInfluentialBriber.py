@@ -42,3 +42,13 @@ class TestRandomBriber(BriberTestCase):
         self.assertIn(1, action.bribes)
         self.assertEqual(self.briber._c, 0)
         self.assertEqual(self.briber._max_rating_increase, 0)
+
+    def test_next_action_finds_best_node(self):
+        graph = self.briber._g
+        graph.eval_graph = MagicMock(return_value=10)
+        graph.get_random_customer = MagicMock(return_value=3)
+        self.briber._previous_rating = 1
+        self.briber._max_rating_increase = 0
+        action = self.briber.next_action()
+        self.assertIn(3, action.bribes)
+        self.assertEqual(self.briber._max_rating_increase, 9)
