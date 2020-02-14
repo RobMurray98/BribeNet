@@ -2,12 +2,14 @@ from bribery.temporal.briber import TemporalBriber
 from bribery.temporal.action.singleBriberyAction import SingleBriberyAction
 import random
 
+
 class MostInfluentialNodeBriber(TemporalBriber):
 
     # TODO: implement influential node behaviour that returns multiBriberyAction
     def __init__(self, u0, k=0.1, i=7):
         super().__init__(u0)
-        self.k = k  # will be reassigned when graph
+        self._k = k
+        # TODO @callum: rename variables to better explain their purpose, make package-private where appropriate
         self.c = 0
         self.i = i
         self.pr = 0
@@ -18,24 +20,29 @@ class MostInfluentialNodeBriber(TemporalBriber):
     def _set_graph(self, g):
         super()._set_graph(g)
         # Make sure that k is set such that there are enough resources left to actually bribe people.
-        self.k = min(self.k, 0.5 * (self._u / self._g.customer_count()))
-        self.pr = self.get_graph().eval_graph(self.get_briber_id())
+        self._k = min(self._k, 0.5 * (self._u / self._g.customer_count()))
+        self.pr = self._g.eval_graph(self.get_briber_id())
         self.npr = self.pr
 
     def next_action(self) -> SingleBriberyAction:
-        nextAct = SingleBriberyAction(self)
+        # TODO @callum: docstring to describe nature of action returned
+        # TODO @callum: implement tests for correct function
+        # TODO @callum: a lot of repeated code between influential temporal bribers,
+        #               factor out (class or function level)
+        next_act = SingleBriberyAction(self)
         if self.c >= self.i:
-            nextAct.add_bribe(self.nid, min(self.get_resources(),
-                                            self._g.get_max_rating() - self._g.get_vote(self.nprd)))
+            next_act.add_bribe(self.nid, min(self.get_resources(),
+                                             self._g.get_max_rating() - self._g.get_vote(self.nprd)))
+            # TODO @callum: self.nprd not defined in __init__ - did you mean self.npr?
             self.c = 0
-            self.pr = self.get_graph().eval_graph(self.get_briber_id())
+            self.pr = self._g.eval_graph(self.get_briber_id())
         else:
-            nNode = self.get_graph().get_random_customer()
-            nextAct.add_bribe(nNode, self.k)
-            self.npr = self.get_graph().eval_graph(self.get_briber_id())
+            next_node = self._g.get_random_customer()
+            next_act.add_bribe(next_node, self._k)
+            self.npr = self._g.eval_graph(self.get_briber_id())
             self.c = self.c + 1
-            if self.npr-self.pr > self.pri:
-                self.nid = nNode
-                self.pri = self.npr-self.pr
+            if self.npr - self.pr > self.pri:
+                self.nid = next_node
+                self.pri = self.npr - self.pr
             self.pr = self.npr
-        return nextAct
+        return next_act
