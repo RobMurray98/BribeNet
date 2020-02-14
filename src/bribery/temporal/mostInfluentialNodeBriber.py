@@ -32,7 +32,7 @@ class MostInfluentialNodeBriber(TemporalBriber):
         # Make sure that k is set such that there are enough resources left to actually bribe people.
         self._k = min(self._k, 0.5 * (self._u / self._g.customer_count()))
         self._cpr = self._g.eval_graph(self.get_briber_id())
-        self._ppr = self.cpr
+        self._ppr = self._cpr
 
     def next_action(self) -> SingleBriberyAction:
         """ Returns next action of briber
