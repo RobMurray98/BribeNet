@@ -31,7 +31,6 @@ class InfluentialNodeBriber(TemporalBriber):
 
         """
         # TODO @callum: docstring to describe nature of action returned
-        # TODO @callum: implement tests for correct function
         self._current_rating = self._g.eval_graph(self.get_briber_id())
         next_act = SingleBriberyAction(self)
         if self._current_rating > self._previous_rating:

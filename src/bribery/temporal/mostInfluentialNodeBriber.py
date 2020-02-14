@@ -37,9 +37,6 @@ class MostInfluentialNodeBriber(TemporalBriber):
 
         """
         # TODO @callum: docstring to describe nature of action returned
-        # TODO @callum: implement tests for correct function
-        # TODO @callum: a lot of repeated code between influential temporal bribers,
-        #               factor out (class or function level)
         self._current_rating = self._g.eval_graph(self.get_briber_id())
         next_act = SingleBriberyAction(self)
         self._next_node = self._g.get_random_customer()
