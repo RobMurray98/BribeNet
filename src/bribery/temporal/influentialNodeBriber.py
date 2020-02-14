@@ -9,28 +9,35 @@ class InfluentialNodeBriber(TemporalBriber):
         super().__init__(u0)
         self._k = k
         # TODO @callum: rename variables to better explain their purpose, make package-private where appropriate
-        self.pr = 0
-        self.npr = 0
-        self.nprd = 0
+        #_cpr is current p_rating
+        #_ppr is past p_rating
+        #_nnode is new node being tested
+        self._cpr = 0
+        self._ppr = 0
+        self._nnode = 0
 
     def _set_graph(self, g):
         super()._set_graph(g)
         # Make sure that k is set such that there are enough resources left to actually bribe people.
         self._k = min(self._k, 0.5 * (self._u / self._g.customer_count()))
-        self.pr = self._g.eval_graph(self.get_briber_id())
-        self.npr = self.pr
+        self._cpr = self._g.eval_graph(self.get_briber_id())
+        self._ppr = self._pr
 
     def next_action(self) -> SingleBriberyAction:
+        """ Returns next action of briber
+
+        Returns: SingleBriberyAction for the briber to take in the next temporal time step
+
+        """
         # TODO @callum: docstring to describe nature of action returned
         # TODO @callum: implement tests for correct function
+        self._cpr = self._g.eval_graph(self.get_briber_id())
         next_act = SingleBriberyAction(self)
-        if self.npr > self.pr:
-            next_act.add_bribe(self.nprd, min(self.get_resources(),
-                                              self._g.get_max_rating() - self._g.get_vote(self.nprd)))
-            self.pr = self.npr
+        if self._cpr > self._ppr:
+            next_act.add_bribe(self._nnode, min(self.get_resources(),
+                                              self._g.get_max_rating() - self._g.get_vote(self._nnode)))
         else:
-            next_node = self._g.get_random_customer()
-            next_act.add_bribe(next_node, self._k)
-            self.npr = self._g.eval_graph(self.get_briber_id())
-            self.nprd = next_node
+            self._nnode = self._g.get_random_customer()
+            next_act.add_bribe(self._nnode, self._k)
+        self._ppr = self._cpr
         return next_act
