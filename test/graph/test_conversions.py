@@ -3,6 +3,7 @@ from networkit.generators import WattsStrogatzGenerator
 
 from graph import conversions
 
+
 class TestConversions(TestCase):
     def setUp(self) -> None:
         self.gen = WattsStrogatzGenerator(30, 2, 0.3)

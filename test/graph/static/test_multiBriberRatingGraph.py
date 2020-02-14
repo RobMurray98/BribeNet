@@ -66,3 +66,5 @@ class TestMultiBriberRatingGraph(TestCase):
                 self.assertEqual(trust1, trust2)
                 self.assertGreaterEqual(trust1, 0)
                 self.assertLessEqual(trust1, 1)
+
+    # TODO @finnbar: test for trust reduction caused by bribery (re. review on PR)
