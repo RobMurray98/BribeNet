@@ -50,6 +50,8 @@ class MostInfluentialNodeBriber(TemporalBriber):
             next_act.add_bribe(self._best_node, min(self.get_resources(),
                                                     self._g.get_max_rating() - self._g.get_vote(self._best_node)))
             self._c = 0
+            self._max_rating_increase = 0
+            self._best_node = 0
         else:
             next_act.add_bribe(self._next_node, self._k)
             self._c = self._c + 1

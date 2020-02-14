@@ -16,7 +16,7 @@ class BudgetNodeBriber(TemporalBriber):
         self._k = k
         self._current_rating = 0
         self._previous_rating = 0
-        self._next_good_node = 0
+        self._next_node = 0
         self._budget = b
 
     def _set_graph(self, g):
@@ -36,13 +36,12 @@ class BudgetNodeBriber(TemporalBriber):
         # TODO @callum: implement tests for correct function
         self._current_rating = self._g.eval_graph(self.get_briber_id())
         next_act = SingleBriberyAction(self)
+        maximum_bribe = (self._g.get_max_rating() - self._g.get_vote(self._next_node))
         if self._current_rating > self._previous_rating and \
-                min(self._u, (1 - self._g.get_vote(self._next_good_node))) <= self._budget:
-            next_act.add_bribe(self._next_good_node,
-                               min(self.get_resources(),
-                                   self._g.get_max_rating() - self._g.get_vote(self._next_good_node)))
+                min(self._u, maximum_bribe) <= self._budget:
+            next_act.add_bribe(self._next_node, min(self._u, maximum_bribe))
         else:
-            self._next_good_node = self._g.get_random_customer()
-            next_act.add_bribe(self._next_good_node, self._k)
+            self._next_node = self._g.get_random_customer()
+            next_act.add_bribe(self._next_node, self._k)
         self._previous_rating = self._current_rating
         return next_act
