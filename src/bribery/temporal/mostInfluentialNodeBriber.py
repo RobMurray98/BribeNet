@@ -29,8 +29,6 @@ class MostInfluentialNodeBriber(TemporalBriber):
         self._k = min(self._k, 0.5 * (self._u / self._g.customer_count()))
         self._current_rating = self._g.eval_graph(self.get_briber_id())
         self._previous_rating = self._current_rating
-        self._cpr = self._g.eval_graph(self.get_briber_id())
-        self._ppr = self._cpr
 
     def next_action(self) -> SingleBriberyAction:
         """ Returns next action of briber
