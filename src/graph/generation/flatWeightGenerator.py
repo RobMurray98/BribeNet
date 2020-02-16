@@ -4,7 +4,7 @@ from graph.generation import GraphGeneratorAlgo, algo_to_constructor
 
 class FlatWeightedGraphGenerator(WeightedGraphGenerator):
 
-    def __init__(self, a: GraphGenerationAlgo, *args, **kwargs):
+    def __init__(self, a: GraphGeneratorAlgo, *args, **kwargs):
         super().__init__(a, *args, **kwargs)
 
     def generate(self):
