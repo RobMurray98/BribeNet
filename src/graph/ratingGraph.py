@@ -8,6 +8,8 @@ import numpy as np
 
 from graph.ratingMethod import RatingMethod
 
+from graph.conversions import to_weighted
+
 # noinspection PyUnresolvedReferences
 DEFAULT_GEN = nk.generators.WattsStrogatzGenerator(30, 5, 0.3)
 
@@ -27,6 +29,7 @@ class RatingGraph(ABC):
         """
         # Generate random ratings network
         self._g = generator.generate()
+        self._g = to_weighted(self._g)
         from bribery.briber import Briber
         self._bribers: Tuple[Briber] = bribers
         if "max_rating" in kwargs.keys():
@@ -77,25 +80,33 @@ class RatingGraph(ABC):
         """
         self._rating_method = rating_method
 
-    def get_rating(self, node_id: int = 0, briber_id: int = 0, rating_method: Optional[RatingMethod] = None):
+    def get_rating(self, node_id: int = 0, briber_id: int = 0, rating_method: Optional[RatingMethod] = None,
+                   nan_default: Optional[int] = None):
         """
         Get the rating for a certain node and briber, according to the set rating method
         :param node_id: the node to find the rating of (can be omitted for O-rating)
         :param briber_id: the briber to find the rating of (can be omitted in single-briber rating graphs)
         :param rating_method: a rating method to override the current set rating method if not None
+        :param nan_default: optional default integer value to replace np.nan as default return
         :return: the rating
         """
         rm = rating_method or self._rating_method
+        rating = np.nan
         if rm == RatingMethod.O_RATING:
-            return self._o_rating(briber_id)
-        if rm == RatingMethod.P_RATING:
-            return self._p_rating(node_id, briber_id)
-        if rm == RatingMethod.MEDIAN_P_RATING:
-            return self._median_p_rating(node_id, briber_id)
-        if rm == RatingMethod.SAMPLE_P_RATING:
-            return self._sample_p_rating(node_id, briber_id)
-        # if rm == RatingMethod.PK_RATING:
+            rating = self._o_rating(briber_id)
+        elif rm == RatingMethod.P_RATING:
+            rating = self._p_rating(node_id, briber_id)
+        elif rm == RatingMethod.MEDIAN_P_RATING:
+            rating = self._median_p_rating(node_id, briber_id)
+        elif rm == RatingMethod.SAMPLE_P_RATING:
+            rating = self._sample_p_rating(node_id, briber_id)
+        elif rm == RatingMethod.WEIGHTED_P_RATING:
+            rating = self._p_rating_weighted(node_id, briber_id)
+        # elif rm == RatingMethod.PK_RATING:
         #     return self._pk_rating(node_id, briber_id)
+        if np.isnan(rating) and nan_default:
+            rating = nan_default
+        return rating
 
     def graph(self):
         """
@@ -145,8 +156,26 @@ class RatingGraph(ABC):
         """
         ns = self._neighbours(node_id, briber_id)
         if len(ns) == 0:
-            return 0
+            return np.nan
         return sum(self.get_vote(n)[briber_id] for n in ns) / len(ns)
+
+    def _p_rating_weighted(self, node_id: int, briber_id: int = 0):
+        """
+        Get the P-rating for the node, weighted based on trust
+        :param node_id: the id of the node
+        :param briber_id: the id number of the briber
+        :return: mean of actual rating of neighbouring voters
+        """
+        ns = self._neighbours(node_id, briber_id)
+        if len(ns) == 0:
+            return np.nan
+        dividing_factor = 0
+        contributions = 0
+        for n in ns:
+            weight = self.get_weight(n, node_id)
+            contributions += weight * self.get_vote(n)[briber_id]
+            dividing_factor += weight
+        return contributions / dividing_factor
 
     def _median_p_rating(self, node_id: int, briber_id: int = 0):
         """
@@ -225,8 +254,46 @@ class RatingGraph(ABC):
         :return: the sum of the rating across the network
         :param briber_id: the briber being considered in the evaluation
         """
-        return sum(self.get_rating(node_id=n, briber_id=briber_id, rating_method=rating_method)
+        return sum(self.get_rating(node_id=n, briber_id=briber_id, rating_method=rating_method, nan_default=0)
                    for n in self._g.nodes())
+
+    def set_weight(self, node1_id: int, node2_id: int, weight: float):
+        """
+        Sets a weight for a given edge, thus allowing for trust metrics to affect graph structure.
+        :param node1_id: the first node of the edge
+        :param node2_id: the second node of the edge
+        :param weight: the weight of the edge to set
+        """
+        self._g.setWeight(node1_id, node2_id, weight)
+
+    def get_weight(self, node1_id: int, node2_id: int) -> float:
+        """
+        Gets the weight of a given edge.
+        :param node1_id: the first node of the edge
+        :param node2_id: the second node of the edge
+        """
+        return self._g.weight(node1_id, node2_id)
+
+    def get_edges(self) -> [(int, int)]:
+        return self._g.edges()
+
+    def trust(self, node1_id: int, node2_id: int) -> float:
+        """
+        Determines the trust of a given edge, which is a value from 0 to 1.
+        This uses the average of the difference in vote between each pair of places.
+        :param node1_id: the first node of the edge
+        :param node2_id: the second node of the edge
+        """
+        votes1 = self.get_vote(node1_id)
+        votes2 = self.get_vote(node2_id)
+        # TODO @finnbar: should they both be using votes? What if someone is bribed and their vote is max but their
+        #                ground truth is not, should they not use their ground truth?
+        #                e.g. trust(x, y) may not equal trust(y, x)?
+        differences = votes1 - votes2
+        nans = np.isnan(differences)
+        differences[nans] = 0
+        differences = np.square(differences)
+        return np.sum(differences) / len(differences)
 
     def __copy__(self):
         """

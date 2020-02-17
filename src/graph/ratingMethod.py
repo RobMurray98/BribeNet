@@ -8,4 +8,4 @@ class RatingMethod(enum.Enum):
     MEDIAN_P_RATING = 2
     SAMPLE_P_RATING = 3
     PK_RATING = 4
-
+    WEIGHTED_P_RATING = 5
