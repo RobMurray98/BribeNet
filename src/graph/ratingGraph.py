@@ -80,12 +80,14 @@ class RatingGraph(ABC):
         """
         self._rating_method = rating_method
 
-    def get_rating(self, node_id: int = 0, briber_id: int = 0, rating_method: Optional[RatingMethod] = None, nan_default: Optional[int] = None):
+    def get_rating(self, node_id: int = 0, briber_id: int = 0, rating_method: Optional[RatingMethod] = None,
+                   nan_default: Optional[int] = None):
         """
         Get the rating for a certain node and briber, according to the set rating method
         :param node_id: the node to find the rating of (can be omitted for O-rating)
         :param briber_id: the briber to find the rating of (can be omitted in single-briber rating graphs)
         :param rating_method: a rating method to override the current set rating method if not None
+        :param nan_default: optional default integer value to replace np.nan as default return
         :return: the rating
         """
         rm = rating_method or self._rating_method
@@ -102,7 +104,8 @@ class RatingGraph(ABC):
             rating = self._p_rating_weighted(node_id, briber_id)
         # elif rm == RatingMethod.PK_RATING:
         #     return self._pk_rating(node_id, briber_id)
-        if np.isnan(rating) and nan_default: rating = nan_default
+        if np.isnan(rating) and nan_default:
+            rating = nan_default
         return rating
 
     def graph(self):
@@ -149,7 +152,6 @@ class RatingGraph(ABC):
         Get the P-rating for the node
         :param node_id: the id of the node
         :param briber_id: the id number of the briber
-        :param weighted: whether to weight nodes by trust
         :return: mean of actual rating of neighbouring voters
         """
         ns = self._neighbours(node_id, briber_id)
@@ -205,7 +207,7 @@ class RatingGraph(ABC):
         """
         ns = [n for n in self._g.nodes() if not np.isnan(self._votes[n][briber_id])]
         return sum(self.get_vote(n)[briber_id] for n in ns) / len(ns)
-    
+
     def is_influential(self, node_id: int, k: float = 0.2, briber_id: int = 0,
                        rating_method: Optional[RatingMethod] = None, charge_briber: bool = True) -> float:
         """
@@ -254,15 +256,16 @@ class RatingGraph(ABC):
         """
         return sum(self.get_rating(node_id=n, briber_id=briber_id, rating_method=rating_method, nan_default=0)
                    for n in self._g.nodes())
-    
+
     def set_weight(self, node1_id: int, node2_id: int, weight: float):
         """
         Sets a weight for a given edge, thus allowing for trust metrics to affect graph structure.
         :param node1_id: the first node of the edge
         :param node2_id: the second node of the edge
+        :param weight: the weight of the edge to set
         """
         self._g.setWeight(node1_id, node2_id, weight)
-    
+
     def get_weight(self, node1_id: int, node2_id: int) -> float:
         """
         Gets the weight of a given edge.
@@ -270,11 +273,11 @@ class RatingGraph(ABC):
         :param node2_id: the second node of the edge
         """
         return self._g.weight(node1_id, node2_id)
-    
+
     def get_edges(self) -> [(int, int)]:
         return self._g.edges()
-    
-    def trust(self, node1_id: int, node2_id: int, rating_method: Optional[RatingMethod] = None) -> float:
+
+    def trust(self, node1_id: int, node2_id: int) -> float:
         """
         Determines the trust of a given edge, which is a value from 0 to 1.
         This uses the average of the difference in vote between each pair of places.
@@ -283,6 +286,9 @@ class RatingGraph(ABC):
         """
         votes1 = self.get_vote(node1_id)
         votes2 = self.get_vote(node2_id)
+        # TODO @finnbar: should they both be using votes? What if someone is bribed and their vote is max but their
+        #                ground truth is not, should they not use their ground truth?
+        #                e.g. trust(x, y) may not equal trust(y, x)?
         differences = votes1 - votes2
         nans = np.isnan(differences)
         differences[nans] = 0
