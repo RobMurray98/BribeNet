@@ -40,3 +40,4 @@ def generate_composite_graph(n: int, community_count: int, small_world_conn: int
                     if random() <= p:
                         big_graph.addEdge(nc1, nc2)
                         p = p * 0.6
+    return big_graph
