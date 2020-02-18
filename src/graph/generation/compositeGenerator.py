@@ -2,7 +2,7 @@
 
 from networkit.generators import BarabasiAlbertGenerator, WattsStrogatzGenerator
 from networkit.graph import Graph
-from random import gauss
+from random import gauss, sample, random
 
 def generate_composite_graph(n: int, community_count: int, small_world_conn: int, rewiring: float, scale_free_k: int):
     # First, generate a scale free network, which acts as our community network.
@@ -22,8 +22,21 @@ def generate_composite_graph(n: int, community_count: int, small_world_conn: int
     big_graph = Graph(0, False, False)
     ranges = [0]
     partition = []
+    neighbours = [list(communities.neighbors(node)) for node in communities]
     for graph in small_world_graphs:
         big_graph.append(graph)
         ranges.append(len(big_graph.nodes()))
         partition.append(list(range(ranges[-2], ranges[-1])))
     # Finally, connect these small world graphs where their parent nodes are connected.
+    for i in range(len(neighbours)):
+        for j in neighbours[i]:
+            # Connect partitions i and j
+            n1 = partition[i]
+            n2 = partition[j]
+            p = 1.0
+            for nc1 in sample(n1, len(n1)):
+                for nc2 in sample(n2, len(n2)):
+                    # Connect with probability p
+                    if random() <= p:
+                        big_graph.addEdge(nc1, nc2)
+                        p = p * 0.6
