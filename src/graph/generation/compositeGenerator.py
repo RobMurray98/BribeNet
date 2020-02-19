@@ -1,23 +1,33 @@
+# noinspection PyUnresolvedReferences
 from networkit.generators import BarabasiAlbertGenerator, WattsStrogatzGenerator
+# noinspection PyUnresolvedReferences
 from networkit.graph import Graph
 from random import gauss, sample, random
 from math import floor
 
-def generate_composite_graph(n: int, community_count: int, small_world_neighbours: int, rewiring: float, scale_free_k: int, probability_reduce: float = 0.05):
+# TODO @finnbar @callum: refactor into instance of WeightedGraphGenerator
+
+
+def generate_composite_graph(n: int, community_count: int, small_world_neighbours: int, rewiring: float,
+                             scale_free_k: int, probability_reduce: float = 0.05):
     # First, generate a scale free network, which acts as our community network.
     communities = BarabasiAlbertGenerator(scale_free_k, community_count, 4, True).generate()
     small_world_graphs = {}
     nodes = communities.nodes()
     community_size = n / community_count
-    # Then generate a small world graph for each node with size decided by a Gaussian distribution around the average node size.
-    for i in range(len(nodes)-1, -1, -1):
+    # Then generate a small world graph for each node with size decided
+    # by a Gaussian distribution around the average node size.
+    for i in range(len(nodes) - 1, -1, -1):
         local_size = gauss(community_size, community_size / 3)
-        local_n = min(round(local_size), n-i)
+        local_n = min(round(local_size), n - i)
         # Cannot choose a local_n which is smaller than zero.
-        if local_n <= 0: local_n = 1
+        if local_n <= 0:
+            local_n = 1
         # If it's the last iteration, we much "use up" the rest of the nodes.
-        if i == 0: local_n = n
-        # There are many difficult parameters on connectivity, which should be checked by NetworKit but currently they aren't.
+        if i == 0:
+            local_n = n
+        # There are many difficult parameters on connectivity,
+        # which should be checked by NetworKit but currently they aren't.
         # As a result, we do the checks ourselves. (An issue has been filed.)
         connectivity = max(0, min(floor(local_n / 2) - 1, small_world_neighbours))
         small_world_graphs[nodes[i]] = WattsStrogatzGenerator(local_n, connectivity, rewiring).generate()
@@ -49,9 +59,11 @@ def generate_composite_graph(n: int, community_count: int, small_world_neighbour
                         p = p * probability_reduce
     return big_graph
 
+
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
     from networkit.viztasks import drawGraph
+
     g = generate_composite_graph(4000, 15, 50, 0.1, 2)
     drawGraph(g)
     plt.show()

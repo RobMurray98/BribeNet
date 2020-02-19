@@ -1,6 +1,10 @@
-import networkit as nk
 import enum
+
+# noinspection PyUnresolvedReferences
+from networkit.generators import WattsStrogatzGenerator, BarabasiAlbertGenerator
+
 from graph.generation.compositeGenerator import generate_composite_graph
+
 
 class GraphGenerationAlgoNotDefinedException(Exception):
     pass
@@ -24,9 +28,9 @@ def algo_to_constructor(g: GraphGeneratorAlgo):
     :raises GraphGenerationAlgoNotDefinedException: if g is not a member of the GraphGeneratorAlgo enum
     """
     if g == GraphGeneratorAlgo.WATTS_STROGATZ:
-        return nk.generators.WattsStrogatzGenerator
+        return WattsStrogatzGenerator
     if g == GraphGeneratorAlgo.BARABASI_ALBERT:
-        return nk.generators.BarabasiAlbertGenerator
+        return BarabasiAlbertGenerator
     if g == GraphGeneratorAlgo.COMPOSITE:
         return generate_composite_graph
     # Add more algorithms here if needed

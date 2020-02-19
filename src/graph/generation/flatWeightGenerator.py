@@ -1,7 +1,9 @@
-from graph.generation.weightedGenerator import WeightedGraphGenerator
-from graph.generation import GraphGeneratorAlgo, algo_to_constructor
-import networkit.nxadapter as adap
 import networkit as nk
+import networkit.nxadapter as adap
+
+from graph.generation import GraphGeneratorAlgo
+from graph.generation.weightedGenerator import WeightedGraphGenerator
+
 
 class FlatWeightedGraphGenerator(WeightedGraphGenerator):
 
@@ -13,7 +15,7 @@ class FlatWeightedGraphGenerator(WeightedGraphGenerator):
     def generate(self) -> nk.graph:
         nxg = adap.nk2nx(self._algo.generate())
 
-        for (u,v) in nxg.edges():
+        for (u, v) in nxg.edges():
             nxg[u][v]['weight'] = 1.0
 
         return adap.nx2nk(nxg, 'weight')
