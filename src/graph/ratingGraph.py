@@ -32,7 +32,7 @@ class RatingGraph(ABC):
         self._g = to_weighted(self._g)
         from bribery.briber import Briber
         self._bribers: Tuple[Briber] = bribers
-        if "max_rating" in kwargs.keys():
+        if "max_rating" in kwargs:
             self._max_rating: float = kwargs["max_rating"]
         else:
             self._max_rating: float = 1.0

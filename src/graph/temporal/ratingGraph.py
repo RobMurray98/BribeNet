@@ -26,15 +26,13 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
         self.__tmp_kwargs = kwargs
         self._last_bribery_action: Optional[BriberyAction] = None
         self._time_step: int = 0
-        super().__init__(generator, specifics=self.__specifics, **kwargs)
+        super().__init__(bribers, generator, specifics=self.__specifics, **kwargs)
 
     def __specifics(self):
-        from bribery.temporal.briber import TemporalBriber
-        self._bribers: Tuple[TemporalBriber] = self.__tmp_bribers
         self._votes = np.zeros((len(self._g.nodes()), len(self._bribers)))
         self._truths = np.zeros((len(self._g.nodes()), len(self._bribers)))
         # Generate random ratings network
-        if "non_voter_proportion" in self.__tmp_kwargs.keys():
+        if "non_voter_proportion" in self.__tmp_kwargs:
             non_voter_proportion = self.__tmp_kwargs["non_voter_proportion"]
         else:
             non_voter_proportion = DEFAULT_NON_VOTER_PROPORTION

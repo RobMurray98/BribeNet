@@ -38,7 +38,7 @@ class StaticRatingGraph(RatingGraph):
         self._votes = np.zeros((len(self._g.nodes()), len(self._bribers)))
         self._truths = np.zeros((len(self._g.nodes()), len(self._bribers)))
         # Generate random ratings network
-        if "non_voter_proportion" in self.__tmp_kwargs.keys():
+        if "non_voter_proportion" in self.__tmp_kwargs:
             non_voter_proportion = self.__tmp_kwargs["non_voter_proportion"]
         else:
             non_voter_proportion = DEFAULT_NON_VOTER_PROPORTION
