@@ -8,6 +8,7 @@ from bribery.temporal.action.briberyAction import BriberyAction
 from bribery.temporal.action.multiBriberyAction import MultiBriberyAction
 from graph.ratingGraph import DEFAULT_GEN, RatingGraph
 from graph.static.ratingGraph import DEFAULT_NON_VOTER_PROPORTION
+from graph.temporal.action.customerAction import CustomerAction
 from helpers.override import override
 
 
@@ -65,7 +66,7 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
         return self._last_bribery_action
 
     @abc.abstractmethod
-    def _customer_action(self):
+    def _customer_action(self) -> CustomerAction:
         """
         Perform the action of each customer in the graph
         """
@@ -75,6 +76,7 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
         actions = [b.next_action() for b in self._bribers]
         multi_action = MultiBriberyAction.make_multi_action_from_single_actions(actions)
         multi_action.perform_action()
+        self._last_bribery_action = multi_action
 
     def _update_trust(self, learning_rate: float = 0.1):
         """

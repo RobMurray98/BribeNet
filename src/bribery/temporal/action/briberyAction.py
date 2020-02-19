@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import List
 
 
 class BriberyActionExecutedMultipleTimesException(Exception):
@@ -43,6 +44,14 @@ class BriberyAction(ABC):
     def _perform_action(self):
         """
         Perform the stored bribery actions simultaneously
-        :return:
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def is_bribed(self, node_id) -> (bool, List[int]):
+        """
+        Determine if the bribery action results in a node being bribed this time step
+        :param node_id: the node
+        :return: whether the node is bribed this time step
         """
         raise NotImplementedError

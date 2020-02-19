@@ -47,3 +47,8 @@ class MultiBriberyAction(BriberyAction):
         for briber_id, bribe in self.bribes.items():
             for customer, value in bribe.items():
                 bribers[briber_id].bribe(node_id=customer, amount=value)
+
+    def is_bribed(self, node_id):
+        if node_id in self.bribes:
+            return True, list(self.bribes[node_id].keys())
+        return False, []

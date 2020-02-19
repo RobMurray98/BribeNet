@@ -31,3 +31,8 @@ class SingleBriberyAction(BriberyAction):
                                                                          "available to briber"
         for customer, bribe in self.bribes.items():
             self.briber.bribe(node_id=customer, amount=bribe)
+
+    def is_bribed(self, node_id):
+        if node_id in self.bribes:
+            return True, [self.briber.get_briber_id()]
+        return False, []
