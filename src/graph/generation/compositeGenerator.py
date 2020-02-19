@@ -2,7 +2,6 @@ from networkit.generators import BarabasiAlbertGenerator, WattsStrogatzGenerator
 from networkit.graph import Graph
 from random import gauss, sample, random
 from math import floor
-from tqdm import tqdm
 
 def generate_composite_graph(n: int, community_count: int, small_world_neighbours: int, rewiring: float, scale_free_k: int, probability_reduce: float = 0.05):
     # First, generate a scale free network, which acts as our community network.
@@ -11,7 +10,7 @@ def generate_composite_graph(n: int, community_count: int, small_world_neighbour
     nodes = communities.nodes()
     community_size = n / community_count
     # Then generate a small world graph for each node with size decided by a Gaussian distribution around the average node size.
-    for i in tqdm(range(len(nodes)-1, -1, -1)):
+    for i in range(len(nodes)-1, -1, -1):
         local_size = gauss(community_size, community_size / 3)
         local_n = min(round(local_size), n-i)
         # Cannot choose a local_n which is smaller than zero.
@@ -31,12 +30,12 @@ def generate_composite_graph(n: int, community_count: int, small_world_neighbour
     # To avoid neighbour sets having edges going both ways, delete references to nodes larger than themselves.
     for n in range(len(neighbours)):
         neighbours[n] = list(filter(lambda x: x < n, neighbours[n]))
-    for graph in tqdm(small_world_graphs.values()):
+    for graph in small_world_graphs.values():
         big_graph.append(graph)
         ranges.append(len(big_graph.nodes()))
         partition.append(list(range(ranges[-2], ranges[-1])))
     # Finally, connect these small world graphs where their parent nodes are connected.
-    for i in tqdm(range(len(neighbours))):
+    for i in range(len(neighbours)):
         for j in neighbours[i]:
             # Connect partitions i and j
             n1 = partition[i]

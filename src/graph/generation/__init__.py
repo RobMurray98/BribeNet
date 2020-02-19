@@ -1,6 +1,6 @@
 import networkit as nk
 import enum
-
+from graph.generation.compositeGenerator import generate_composite_graph
 
 class GraphGenerationAlgoNotDefinedException(Exception):
     pass
@@ -13,6 +13,7 @@ class GraphGeneratorAlgo(enum.Enum):
     """
     WATTS_STROGATZ = 0
     BARABASI_ALBERT = 1
+    COMPOSITE = 2
 
 
 def algo_to_constructor(g: GraphGeneratorAlgo):
@@ -26,5 +27,7 @@ def algo_to_constructor(g: GraphGeneratorAlgo):
         return nk.generators.WattsStrogatzGenerator
     if g == GraphGeneratorAlgo.BARABASI_ALBERT:
         return nk.generators.BarabasiAlbertGenerator
+    if g == GraphGeneratorAlgo.COMPOSITE:
+        return generate_composite_graph
     # Add more algorithms here if needed
     raise GraphGenerationAlgoNotDefinedException(f"{g} is not a member of the GraphGeneratorAlgo enum")
