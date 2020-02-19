@@ -1,34 +1,42 @@
-# TODO: write composite graph generation.
-
 from networkit.generators import BarabasiAlbertGenerator, WattsStrogatzGenerator
 from networkit.graph import Graph
 from random import gauss, sample, random
+from math import floor
+from tqdm import tqdm
 
-def generate_composite_graph(n: int, community_count: int, small_world_conn: int, rewiring: float, scale_free_k: int):
+def generate_composite_graph(n: int, community_count: int, small_world_neighbours: int, rewiring: float, scale_free_k: int, probability_reduce: float = 0.05):
     # First, generate a scale free network, which acts as our community network.
     communities = BarabasiAlbertGenerator(scale_free_k, community_count, 4, True).generate()
     small_world_graphs = {}
     nodes = communities.nodes()
     community_size = n / community_count
     # Then generate a small world graph for each node with size decided by a Gaussian distribution around the average node size.
-    for i in range(len(nodes)-1, -1, -1):
+    for i in tqdm(range(len(nodes)-1, -1, -1)):
         local_size = gauss(community_size, community_size / 3)
         local_n = min(round(local_size), n-i)
+        # Cannot choose a local_n which is smaller than zero.
         if local_n <= 0: local_n = 1
+        # If it's the last iteration, we much "use up" the rest of the nodes.
         if i == 0: local_n = n
-        small_world_graphs[nodes[i]] = WattsStrogatzGenerator(local_n, small_world_conn, rewiring).generate()
+        # There are many difficult parameters on connectivity, which should be checked by NetworKit but currently they aren't.
+        # As a result, we do the checks ourselves. (An issue has been filed.)
+        connectivity = max(0, min(floor(local_n / 2) - 1, small_world_neighbours))
+        small_world_graphs[nodes[i]] = WattsStrogatzGenerator(local_n, connectivity, rewiring).generate()
         n -= local_n
     # Build a merged graph.
     big_graph = Graph(0, False, False)
     ranges = [0]
     partition = []
-    neighbours = [list(communities.neighbors(node)) for node in communities]
-    for graph in small_world_graphs:
+    neighbours = [list(communities.neighbors(node)) for node in communities.nodes()]
+    # To avoid neighbour sets having edges going both ways, delete references to nodes larger than themselves.
+    for n in range(len(neighbours)):
+        neighbours[n] = list(filter(lambda x: x < n, neighbours[n]))
+    for graph in tqdm(small_world_graphs.values()):
         big_graph.append(graph)
         ranges.append(len(big_graph.nodes()))
         partition.append(list(range(ranges[-2], ranges[-1])))
     # Finally, connect these small world graphs where their parent nodes are connected.
-    for i in range(len(neighbours)):
+    for i in tqdm(range(len(neighbours))):
         for j in neighbours[i]:
             # Connect partitions i and j
             n1 = partition[i]
@@ -39,5 +47,12 @@ def generate_composite_graph(n: int, community_count: int, small_world_conn: int
                     # Connect with probability p
                     if random() <= p:
                         big_graph.addEdge(nc1, nc2)
-                        p = p * 0.6
+                        p = p * probability_reduce
     return big_graph
+
+if __name__ == '__main__':
+    import matplotlib.pyplot as plt
+    from networkit.viztasks import drawGraph
+    g = generate_composite_graph(4000, 15, 50, 0.1, 2)
+    drawGraph(g)
+    plt.show()
