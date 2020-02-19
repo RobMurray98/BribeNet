@@ -11,6 +11,11 @@ from graph.static.ratingGraph import DEFAULT_NON_VOTER_PROPORTION
 from graph.temporal.action.customerAction import CustomerAction
 from helpers.override import override
 
+DEFAULT_REMOVE_NON_VOTED = False
+DEFAULT_Q = 0.5
+DEFAULT_PAY = 1.0
+DEFAULT_APATHY = 0.0
+
 
 class TemporalRatingGraph(RatingGraph, abc.ABC):
 
@@ -26,6 +31,7 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
         self.__tmp_bribers = bribers
         self.__tmp_kwargs = kwargs
         self._last_bribery_action: Optional[BriberyAction] = None
+        self._last_customer_action: Optional[BriberyAction] = None
         self._time_step: int = 0
         super().__init__(bribers, generator, specifics=self.__specifics, **kwargs)
 
@@ -37,6 +43,22 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
             non_voter_proportion = self.__tmp_kwargs["non_voter_proportion"]
         else:
             non_voter_proportion = DEFAULT_NON_VOTER_PROPORTION
+        if "remove_non_voted" in self.__tmp_kwargs:
+            self._remove_no_vote: bool = self.__tmp_kwargs["remove_non_voted"]
+        else:
+            self._remove_no_vote: bool = DEFAULT_REMOVE_NON_VOTED
+        if "q" in self.__tmp_kwargs:
+            self._q: float = self.__tmp_kwargs["q"] * self._max_rating
+        else:
+            self._q: float = DEFAULT_Q * self._max_rating
+        if "pay" in self.__tmp_kwargs:
+            self._pay: float = self.__tmp_kwargs["pay"]
+        else:
+            self._pay: float = DEFAULT_PAY
+        if "apathy" in self.__tmp_kwargs:
+            self._apathy: float = self.__tmp_kwargs["apathy"]
+        else:
+            self._apathy: float = DEFAULT_APATHY
         for n in self._g.nodes():
             for b, _ in enumerate(self._bribers):
                 rating = random.uniform(0, self._max_rating)
@@ -62,8 +84,11 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
     def get_time_step(self):
         return self._time_step
 
-    def get_last_action(self):
+    def get_last_bribery_action(self):
         return self._last_bribery_action
+
+    def get_last_customer_action(self):
+        return self._last_customer_action
 
     @abc.abstractmethod
     def _customer_action(self) -> CustomerAction:
@@ -72,11 +97,9 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
         """
         raise NotImplementedError
 
-    def _bribery_action(self):
+    def _bribery_action(self) -> MultiBriberyAction:
         actions = [b.next_action() for b in self._bribers]
-        multi_action = MultiBriberyAction.make_multi_action_from_single_actions(actions)
-        multi_action.perform_action()
-        self._last_bribery_action = multi_action
+        return MultiBriberyAction.make_multi_action_from_single_actions(actions)
 
     def _update_trust(self, learning_rate: float = 0.1):
         """
@@ -99,8 +122,12 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
         Perform the next step, either bribery action of customer action and increment the time step
         """
         if self._time_step % 2 == 0:
-            self._bribery_action()
+            bribery_action = self._bribery_action()
+            bribery_action.perform_action()
+            self._last_bribery_action = bribery_action
         else:
-            self._customer_action()
+            customer_action = self._customer_action()
+            customer_action.perform_action(pay=self._pay)
+            self._last_customer_action = customer_action
             self._update_trust()
         self._time_step += 1

@@ -14,7 +14,11 @@ class TestThresholdGraph(TestCase):
     def tearDown(self) -> None:
         del self.rg
 
-    def test__customer_action_runs(self):
-        rg_copy = deepcopy(self.rg)
+    def test_customer_action_runs_successfully(self):
         self.rg.step()
-        return
+        self.rg.step()
+        action = self.rg.get_last_customer_action()
+        self.assertIsNotNone(action)
+        self.assertTrue(action.get_performed())
+
+    # TODO @nathan: further tests for unexplored paths through code

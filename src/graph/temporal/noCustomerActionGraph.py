@@ -1,4 +1,5 @@
 from graph.ratingGraph import DEFAULT_GEN
+from graph.temporal.action.customerAction import CustomerAction
 from graph.temporal.ratingGraph import TemporalRatingGraph
 
 
@@ -8,4 +9,4 @@ class NoCustomerActionGraph(TemporalRatingGraph):
         super().__init__(bribers, generator=generator, **kwargs)
 
     def _customer_action(self):
-        pass
+        return CustomerAction(self)

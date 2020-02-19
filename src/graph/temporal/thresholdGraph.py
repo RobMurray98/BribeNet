@@ -1,16 +1,14 @@
 from typing import List
 
 from graph.ratingGraph import DEFAULT_GEN
+from graph.temporal.action.actionType import ActionType
+from graph.temporal.action.customerAction import CustomerAction
 from graph.temporal.ratingGraph import TemporalRatingGraph
 
 import numpy as np
 import random
 
 DEFAULT_THRESHOLD = 0.5
-DEFAULT_REMOVE_NON_VOTED = False
-DEFAULT_Q = 0.5
-DEFAULT_PAY = 1.0
-DEFAULT_APATHY = 0.0
 
 
 class ThresholdGraph(TemporalRatingGraph):
@@ -32,28 +30,18 @@ class ThresholdGraph(TemporalRatingGraph):
             self._threshold: float = kwargs["threshold"]
         else:
             self._threshold: float = DEFAULT_THRESHOLD
-        if "remove_non_voted" in kwargs:
-            self._remove_no_vote: bool = kwargs["remove_non_voted"]
-        else:
-            self._remove_no_vote: bool = DEFAULT_REMOVE_NON_VOTED
-        if "q" in kwargs:
-            self._q: float = kwargs["q"] * self._max_rating
-        else:
-            self._q: float = DEFAULT_Q * self._max_rating
-        if "pay" in kwargs:
-            self._pay: float = kwargs["pay"]
-        else:
-            self._pay: float = DEFAULT_PAY
-        if "apathy" in kwargs:
-            self._apathy: float = kwargs["apathy"]
-        else:
-            self._apathy: float = DEFAULT_APATHY
 
     def _customer_action(self):
 
         # obtain customers ratings before any actions at this step, assumes all customers act simultaneously
-        curr_ratings: List[List[float]] = [[self.get_rating(n, b) for b in self._bribers] for n in self._g.nodes]
-        voted: List[List[bool]] = [[len(self._neighbours(n, b)) > 0 for b in self._bribers] for n in self._g.nodes]
+        curr_ratings: List[List[float]] = [[self.get_rating(n, b.get_briber_id()) for b in self._bribers]
+                                           for n in self.get_customers()]
+        voted: List[List[bool]] = [[len(self._neighbours(n, b.get_briber_id())) > 0 for b in self._bribers]
+                                   for n in self.get_customers()]
+
+        action = CustomerAction(self)
+        if self._last_bribery_action is not None:
+            action.set_bribed_from_bribery_action(self._last_bribery_action)
 
         # for each customer
         for n in self._g.nodes():
@@ -80,11 +68,10 @@ class ThresholdGraph(TemporalRatingGraph):
                 continue
 
             # select at random
-            selected = random.choices(range(0, len(self._bribers)), weights=weights)
+            selected = random.choices(range(0, len(self._bribers)), weights=weights)[0]
 
             if random.random() >= self._apathy:  # has no effect by default (DEFAULT_APATHY = 0.0)
-                # act on selection
-                if self._votes[n][selected] == np.nan:  # no previous vote or bribe
-                    self._votes[n][selected] = self._truths[n][selected]
+                if action.get_action_type(n) == ActionType.NONE:  # if not already selected or bribed
+                    action.set_select(n, selected)
 
-                self._bribers[selected].add_resources(self._pay)
+        return action

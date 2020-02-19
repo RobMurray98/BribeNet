@@ -40,6 +40,9 @@ class BriberyAction(ABC):
     def get_time_step(self):
         return self.__time_step
 
+    def get_performed(self):
+        return self.__performed
+
     @abstractmethod
     def _perform_action(self):
         """
