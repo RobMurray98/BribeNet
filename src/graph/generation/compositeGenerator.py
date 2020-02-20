@@ -5,7 +5,8 @@ from networkit.graph import Graph
 from random import gauss, sample, random
 from math import floor
 
-# TODO @finnbar @callum: refactor into instance of WeightedGraphGenerator
+# TODO @finnbar @callum: refactor into instance of networkit._NetworKit.StaticGraphGenerator
+#                        see https://networkit.github.io/dev-docs/python_api/generators.html
 
 
 def generate_composite_graph(n: int, community_count: int, small_world_neighbours: int, rewiring: float,
