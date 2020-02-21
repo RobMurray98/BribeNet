@@ -57,7 +57,7 @@ class GUI(tk.Tk):
 
     def generate_graph(self, gtype, btype):
         briber = switch_briber(btype)()
-        # noinspection PyUnresolvedReferences
+
         ba_gen = nk.generators.BarabasiAlbertGenerator(5, 30, 0, True)
         rg = StaticRatingGraph(briber) if gtype == "ws" else StaticRatingGraph(briber, generator=ba_gen)
         self.frames["GraphFrame"].set_graph(rg, briber)

@@ -15,6 +15,7 @@ class GraphGenerator(abc.ABC):
         self._algo = a
         self._args = args
         self._kwargs = kwargs
+        self._generator = algo_to_constructor(self._algo)(*args, **kwargs)
 
     @abc.abstractmethod
     def generate(self) -> nk.Graph:
