@@ -1,5 +1,5 @@
 import abc
-from graph.generation import GraphGeneratorAlgo
+from graph.generation import GraphGeneratorAlgo, algo_to_constructor
 import networkit as nk
 
 
