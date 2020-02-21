@@ -1,6 +1,7 @@
 from networkit.generators import BarabasiAlbertGenerator, WattsStrogatzGenerator
 from random import gauss, sample, random
 from math import floor
+from networkit import Graph
 
 
 class CompositeGenerator(object):
