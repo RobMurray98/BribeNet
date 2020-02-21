@@ -74,6 +74,6 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     from networkit.viztasks import drawGraph
 
-    g = CompositeGraph(4000, 15, 50, 0.1, 2).generate()
+    g = CompositeGenerator(4000, 15, 50, 0.1, 2).generate()
     drawGraph(g)
     plt.show()
