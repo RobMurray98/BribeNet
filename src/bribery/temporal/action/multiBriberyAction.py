@@ -49,6 +49,10 @@ class MultiBriberyAction(BriberyAction):
                 bribers[briber_id].bribe(node_id=customer, amount=value)
 
     def is_bribed(self, node_id):
-        if node_id in self.bribes:
-            return True, list(self.bribes[node_id].keys())
-        return False, []
+        bribers = []
+        for briber_id in self.bribes:
+            if node_id in self.bribes[briber_id]:
+                bribers.append(briber_id)
+        if not bribers:
+            return False, bribers
+        return True, bribers

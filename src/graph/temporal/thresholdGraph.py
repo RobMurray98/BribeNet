@@ -16,11 +16,11 @@ class ThresholdGraph(TemporalRatingGraph):
     def __init__(self, bribers, generator=DEFAULT_GEN, **kwargs):
         """
         Threshold model for temporal rating graph
-        :param bribers:
-        :param generator:
+        :param bribers: the bribers active on the network
+        :param generator: the generator to be used to generate the customer graph
         :param kwargs: additional parameters to the threshold temporal rating graph
         :keyword threshold: float - threshold for being considered
-        :keyword remove_non_voted: bool - whether to allow non voted restaurants
+        :keyword remove_no_vote: bool - whether to allow non voted restaurants
         :keyword q: float - percentage of max rating given to non voted restaurants
         :keyword pay: float - the amount of utility gained by a restaurant when a customer visits
         :keyword apathy: float - the probability a customer does not visit any restaurant
@@ -34,7 +34,7 @@ class ThresholdGraph(TemporalRatingGraph):
     def _customer_action(self):
 
         # obtain customers ratings before any actions at this step, assumes all customers act simultaneously
-        curr_ratings: List[List[float]] = [[self.get_rating(n, b.get_briber_id()) for b in self._bribers]
+        curr_ratings: List[List[float]] = [[self.get_rating(n, b.get_briber_id(), nan_default=0) for b in self._bribers]
                                            for n in self.get_customers()]
         voted: List[List[bool]] = [[len(self._neighbours(n, b.get_briber_id())) > 0 for b in self._bribers]
                                    for n in self.get_customers()]

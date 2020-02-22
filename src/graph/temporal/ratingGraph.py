@@ -11,7 +11,7 @@ from graph.static.ratingGraph import DEFAULT_NON_VOTER_PROPORTION
 from graph.temporal.action.customerAction import CustomerAction
 from helpers.override import override
 
-DEFAULT_REMOVE_NON_VOTED = False
+DEFAULT_REMOVE_NO_VOTE = False
 DEFAULT_Q = 0.5
 DEFAULT_PAY = 1.0
 DEFAULT_APATHY = 0.0
@@ -43,10 +43,10 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
             non_voter_proportion = self.__tmp_kwargs["non_voter_proportion"]
         else:
             non_voter_proportion = DEFAULT_NON_VOTER_PROPORTION
-        if "remove_non_voted" in self.__tmp_kwargs:
-            self._remove_no_vote: bool = self.__tmp_kwargs["remove_non_voted"]
+        if "remove_no_vote" in self.__tmp_kwargs:
+            self._remove_no_vote: bool = self.__tmp_kwargs["remove_no_vote"]
         else:
-            self._remove_no_vote: bool = DEFAULT_REMOVE_NON_VOTED
+            self._remove_no_vote: bool = DEFAULT_REMOVE_NO_VOTE
         if "q" in self.__tmp_kwargs:
             self._q: float = self.__tmp_kwargs["q"] * self._max_rating
         else:
