@@ -7,19 +7,18 @@ import networkit as nk
 import numpy as np
 
 from graph.ratingMethod import RatingMethod
+from graph.generation.unweightedGenerator import UnweightedGraphGenerator
+from graph.generation import GraphGeneratorAlgo
+from graph.generation.flatWeightGenerator import FlatWeightedGraphGenerator
 
-from graph.conversions import to_weighted
-
-# noinspection PyUnresolvedReferences
-DEFAULT_GEN = nk.generators.WattsStrogatzGenerator(30, 5, 0.3)
-
+DEFAULT_GEN = FlatWeightedGraphGenerator(GraphGeneratorAlgo.WATTS_STROGATZ, 30, 5, 0.3)
 
 class RatingGraph(ABC):
     """
     Representation of network graph which bribers interact with
     """
 
-    def __init__(self, bribers: Tuple[Any], generator=DEFAULT_GEN, specifics=None, **kwargs):
+    def __init__(self, bribers: Tuple[Any], generator: FlatWeightedGraphGenerator = DEFAULT_GEN, specifics=None, **kwargs):
         """
         Implementing classes should initialise self.__true_rating and self.__bribers
         :param generator: the graph generator used to instantiate the graph
@@ -29,7 +28,6 @@ class RatingGraph(ABC):
         """
         # Generate random ratings network
         self._g = generator.generate()
-        self._g = to_weighted(self._g)
         from bribery.briber import Briber
         self._bribers: Tuple[Briber] = bribers
         if "max_rating" in kwargs.keys():

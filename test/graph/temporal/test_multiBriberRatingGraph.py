@@ -63,7 +63,7 @@ class TestMultiBriberRatingGraph(TestCase):
             g_copy.bribe(u, 0, 0)
         # Then bribe one individual.
         g_copy.bribe(0, 1, 0)
-        # Check the trust between the bribed indivdual and another.
+        # Check the trust between the bribed individual and another.
         trust = g_copy.get_weight(0, 1)
         g_copy._update_trust()
         # Make sure that the trust goes down.
