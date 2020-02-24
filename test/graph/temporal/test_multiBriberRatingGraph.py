@@ -61,13 +61,13 @@ class TestMultiBriberRatingGraph(TestCase):
         g_copy = deepcopy(self.rg)
         for u in g_copy.get_customers():
             g_copy._votes[u][0] = 0
-        # Then bribe one individual.
         for c in g_copy.get_customers():
             g_copy_2 = deepcopy(g_copy)
+            # Then bribe one individual.
             g_copy_2.bribe(0, 1, 0)
-            # Check the trust between the bribed individual and another.
+            # Update the trust.
             g_copy_2._update_trust()
-            # Make sure that the trust goes down.
+            # Make sure that the trust goes down for each connected node.
             for n in g_copy.get_customers():
                 if self.rg._g.hasEdge(c, n):
                     initial_trust = g_copy.get_weight(c, n)
