@@ -15,7 +15,7 @@ DEFAULT_REMOVE_NO_VOTE = False
 DEFAULT_Q = 0.5
 DEFAULT_PAY = 1.0
 DEFAULT_APATHY = 0.0
-
+DEFAULT_D = 2 # number of rounds in a cycle (D-1 bribes and then one customer round)
 
 class TemporalRatingGraph(RatingGraph, abc.ABC):
 
@@ -59,6 +59,10 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
             self._apathy: float = self.__tmp_kwargs["apathy"]
         else:
             self._apathy: float = DEFAULT_APATHY
+        if "d" in self.__tmp_kwargs:
+            self._d: int = self.__tmp_kwargs["d"]
+        else:
+            self._d: int = DEFAULT_D
         for n in self._g.nodes():
             for b, _ in enumerate(self._bribers):
                 rating = random.uniform(0, self._max_rating)
@@ -119,9 +123,10 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
 
     def step(self):
         """
-        Perform the next step, either bribery action of customer action and increment the time step
+        Perform the next step, either bribery action or customer action and increment the time step
+        We do d-1 bribery steps (self._time_step starts at 0) and then a customer step.
         """
-        if self._time_step % 2 == 0:
+        if not self._time_step % self._d == self._d - 1:
             bribery_action = self._bribery_action()
             bribery_action.perform_action()
             self._last_bribery_action = bribery_action
