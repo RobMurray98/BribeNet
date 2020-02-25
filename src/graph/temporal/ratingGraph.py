@@ -15,7 +15,8 @@ DEFAULT_REMOVE_NO_VOTE = False
 DEFAULT_Q = 0.5
 DEFAULT_PAY = 1.0
 DEFAULT_APATHY = 0.0
-DEFAULT_D = 2 # number of rounds in a cycle (D-1 bribes and then one customer round)
+DEFAULT_D = 2  # number of rounds in a cycle (D-1 bribes and then one customer round)
+
 
 class TemporalRatingGraph(RatingGraph, abc.ABC):
 
@@ -79,11 +80,11 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
         """
         Perform assertions that ensure everything is initialised
         """
-        super()._finalise_init()
         from bribery.temporal.briber import TemporalBriber
         for briber in self._bribers:
             assert issubclass(briber.__class__, TemporalBriber), "member of graph bribers not an instance of a " \
                                                                  "subclass of TemporalBriber"
+        super()._finalise_init()
 
     def get_time_step(self):
         return self._time_step

@@ -25,11 +25,11 @@ class StaticRatingGraph(RatingGraph):
         """
         Perform assertions that ensure everything is initialised
         """
-        super()._finalise_init()
         from bribery.static.briber import StaticBriber
         for briber in self._bribers:
             assert issubclass(briber.__class__, StaticBriber), "member of graph bribers not an instance of a " \
                                                                "subclass of StaticBriber"
+        super()._finalise_init()
 
     def __specifics(self):
         from bribery.static.briber import StaticBriber

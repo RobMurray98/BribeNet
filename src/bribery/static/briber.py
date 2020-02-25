@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from bribery.briber import Briber, BriberyGraphAlreadySetException
+from bribery.briber import Briber, BriberyGraphAlreadySetException, BriberyGraphNotSetException
 
 
 class StaticBriber(Briber, ABC):
@@ -15,9 +15,7 @@ class StaticBriber(Briber, ABC):
     def _set_graph(self, g):
         from graph.static.ratingGraph import StaticRatingGraph
         assert issubclass(g.__class__, StaticRatingGraph), "graph must be subclass of StaticRatingGraph"
-        if self._g is not None:
-            raise BriberyGraphAlreadySetException()
-        self._g = g
+        super()._set_graph(g)
 
     @abstractmethod
     def _next_bribe(self):
