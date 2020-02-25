@@ -284,9 +284,6 @@ class RatingGraph(ABC):
         """
         votes1 = self.get_vote(node1_id)
         votes2 = self.get_vote(node2_id)
-        # TODO @finnbar: should they both be using votes? What if someone is bribed and their vote is max but their
-        #                ground truth is not, should they not use their ground truth?
-        #                e.g. trust(x, y) may not equal trust(y, x)?
         differences = votes1 - votes2
         nans = np.isnan(differences)
         differences[nans] = 0

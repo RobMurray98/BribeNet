@@ -56,18 +56,20 @@ class TestMultiBriberRatingGraph(TestCase):
         for b in range(len(self.rg.get_bribers())):
             self.assertGreaterEqual(self.rg.eval_graph(b), 0)
 
-    def test_update_trust_reduces_trust_when_bribed(self):
+    def test_trust_update(self):
         # Set all votes to 0.
         g_copy = deepcopy(self.rg)
         for u in g_copy.get_customers():
             g_copy._votes[u][0] = 0
-        # Then bribe one individual.
-        g_copy.bribe(0, 1, 0)
-        # Check the trust between the bribed individual and another.
-        trust = g_copy.get_weight(0, 1)
-        g_copy._update_trust()
-        # Make sure that the trust goes down.
-        self.assertGreater(trust, g_copy.get_weight(0, 1))
-        for _ in range(5):
-            g_copy._update_trust()
-            self.assertGreater(trust, g_copy.get_weight(0, 1))
+        for c in g_copy.get_customers():
+            g_copy_2 = deepcopy(g_copy)
+            # Then bribe one individual.
+            g_copy_2.bribe(0, 1, 0)
+            # Update the trust.
+            g_copy_2._update_trust()
+            # Make sure that the trust goes down for each connected node.
+            for n in g_copy.get_customers():
+                if self.rg._g.hasEdge(c, n):
+                    initial_trust = g_copy.get_weight(c, n)
+                    updated_trust = g_copy_2.get_weight(c, n)
+                    self.assertGreater(initial_trust, updated_trust)

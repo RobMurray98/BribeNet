@@ -32,9 +32,3 @@ class TestParameterPrediction(TestCase):
         l_values, c_values, l0, c0 = ParameterPrediction.generate_example_graphs(50, 6, logspace(-5, 0, 64, False, 10))
         self.assertTrue(l0 > 0)
         self.assertTrue(c0 > 0)
-        # tests below occasionally fail
-        # TODO: put sensible assertions here?
-        # self.assertTrue(max(l_values) <= 1)
-        # self.assertTrue(min(l_values) >= 0)
-        # self.assertTrue(max(c_values) <= 1)
-        # self.assertTrue(min(c_values) >= 0)
