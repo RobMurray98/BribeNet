@@ -28,12 +28,10 @@ class InfluentialNodeBriber(TemporalBriber):
         self._previous_rating = self._current_rating
 
     def next_action(self) -> SingleBriberyAction:
-        """ Returns next action of briber
-
-        Returns: SingleBriberyAction for the briber to take in the next temporal time step
-
         """
-        # TODO @callum: docstring to describe nature of action returned
+        Next action of briber, either to gain information or to fully bribe an influential node
+        :return: SingleBriberyAction for the briber to take in the next temporal time step
+        """
         self._current_rating = self._g.eval_graph(self.get_briber_id())
         next_act = SingleBriberyAction(self)
         if self._current_rating > self._previous_rating:

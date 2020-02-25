@@ -1,7 +1,7 @@
 from copy import deepcopy
 
 from bribery.temporal.influentialNodeBriber import InfluentialNodeBriber
-from graph.temporal.ratingGraph import TemporalRatingGraph
+from graph.temporal.noCustomerActionGraph import NoCustomerActionGraph
 from test.bribery.temporal.briberTestCase import BriberTestCase
 from unittest.mock import MagicMock
 
@@ -10,7 +10,7 @@ class TestRandomBriber(BriberTestCase):
 
     def setUp(self) -> None:
         self.briber = InfluentialNodeBriber(10)
-        self.rg = TemporalRatingGraph(self.briber)
+        self.rg = NoCustomerActionGraph(self.briber)
 
     def test_next_action_increases_p_rating(self):
         graph = self.briber._g
@@ -34,7 +34,6 @@ class TestRandomBriber(BriberTestCase):
         graph = self.briber._g
         self.briber._previous_rating = 1
         graph.eval_graph = MagicMock(return_value=1)  # will never be influential
-        graph.get_vote = MagicMock(return_value=1.0)  # will always be affordable
         prev_nodes = []
         for i in range(graph.customer_count()):
             action = self.briber.next_action()
@@ -46,7 +45,6 @@ class TestRandomBriber(BriberTestCase):
         graph = self.briber._g
         self.briber._previous_rating = 1
         graph.eval_graph = MagicMock(return_value=1)  # will never be influential
-        graph.get_vote = MagicMock(return_value=1.0)  # will always be affordable
         prev_nodes = []
         for i in range(graph.customer_count() + 1):
             action = self.briber.next_action()

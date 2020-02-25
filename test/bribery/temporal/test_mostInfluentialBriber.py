@@ -1,7 +1,7 @@
 from copy import deepcopy
 
 from bribery.temporal.mostInfluentialNodeBriber import MostInfluentialNodeBriber
-from graph.temporal.ratingGraph import TemporalRatingGraph
+from graph.temporal.noCustomerActionGraph import NoCustomerActionGraph
 from test.bribery.temporal.briberTestCase import BriberTestCase
 from unittest.mock import MagicMock
 
@@ -12,7 +12,7 @@ class TestRandomBriber(BriberTestCase):
 
     def setUp(self) -> None:
         self.briber = MostInfluentialNodeBriber(10, i=TEST_I)
-        self.rg = TemporalRatingGraph(self.briber)
+        self.rg = NoCustomerActionGraph(self.briber)
 
     def test_next_action_increases_p_rating(self):
         graph = self.briber._g
@@ -31,7 +31,6 @@ class TestRandomBriber(BriberTestCase):
             for prev_node in prev_nodes:
                 self.assertNotIn(prev_node, action.bribes)
             prev_nodes.append(self.briber._next_node)
-        # TODO @callum: currently failing, need memory of failed nodes
 
     def test_next_action_performs_bribe_on_best_node(self):
         self.briber._c = self.briber._i
@@ -52,3 +51,25 @@ class TestRandomBriber(BriberTestCase):
         action = self.briber.next_action()
         self.assertIn(3, action.bribes)
         self.assertEqual(self.briber._max_rating_increase, 9)
+
+    def test_next_action_does_not_fail_if_no_nodes_influential_within_i_step(self):
+        graph = self.briber._g
+        self.briber._previous_rating = 1
+        graph.eval_graph = MagicMock(return_value=1)  # will never be influential
+        prev_nodes = []
+        for i in range(TEST_I + 1):
+            action = self.briber.next_action()
+            for prev_node in prev_nodes:
+                self.assertNotIn(prev_node, action.bribes)
+            prev_nodes.append(self.briber._next_node)
+
+    def test_next_action_does_not_fail_if_no_nodes_influential_at_all(self):
+        graph = self.briber._g
+        self.briber._previous_rating = 1
+        graph.eval_graph = MagicMock(return_value=1)  # will never be influential
+        prev_nodes = []
+        for i in range(graph.customer_count() + 1):
+            action = self.briber.next_action()
+            for prev_node in prev_nodes:
+                self.assertNotIn(prev_node, action.bribes)
+            prev_nodes.append(self.briber._next_node)

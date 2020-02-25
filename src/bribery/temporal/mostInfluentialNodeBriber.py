@@ -1,6 +1,7 @@
 from bribery.temporal.briber import TemporalBriber
 from bribery.temporal.action.singleBriberyAction import SingleBriberyAction
 import random
+import sys
 
 
 class MostInfluentialNodeBriber(TemporalBriber):
@@ -9,7 +10,7 @@ class MostInfluentialNodeBriber(TemporalBriber):
         """
         Constructor
         :param u0: initial utility
-        :param k: cost if information
+        :param k: cost of information
         :param i: maximum loop iterations for finding most influential node
         """
         super().__init__(u0)
@@ -19,9 +20,11 @@ class MostInfluentialNodeBriber(TemporalBriber):
         self._current_rating = 0
         self._previous_rating = 0
         self._max_rating_increase = 0
-        self._best_node = 0
+        self._best_node = None
         self._next_node = 0
         self._last_node = 0
+        self._info_gained = set()
+        self._bribed = set()
 
     def _set_graph(self, g):
         super()._set_graph(g)
@@ -31,26 +34,36 @@ class MostInfluentialNodeBriber(TemporalBriber):
         self._previous_rating = self._current_rating
 
     def next_action(self) -> SingleBriberyAction:
-        """ Returns next action of briber
-
-        Returns: SingleBriberyAction for the briber to take in the next temporal time step
-
         """
-        # TODO @callum: docstring to describe nature of action returned
+        Next action of briber, either to gain information or to fully bribe the most influential node
+        :return: SingleBriberyAction for the briber to take in the next temporal time step
+        """
         self._current_rating = self._g.eval_graph(self.get_briber_id())
         next_act = SingleBriberyAction(self)
-        self._next_node = self._g.get_random_customer()
+        try:
+            self._next_node = self._g.get_random_customer(excluding=self._info_gained | self._bribed)
+        except IndexError:
+            print(f"WARNING: {self.__class__.__name__} found no influential nodes, not acting...", file=sys.stderr)
+            return next_act
         if self._current_rating - self._previous_rating > self._max_rating_increase:
             self._best_node = self._last_node
             self._max_rating_increase = self._current_rating - self._previous_rating
-        if self._c >= self._i:
+        if self._c >= self._i and self._best_node is not None:
             next_act.add_bribe(self._best_node, min(self.get_resources(),
-                                                    self._g.get_max_rating() - self._g.get_vote(self._best_node)))
+                                                    self._g.get_max_rating()
+                                                    - self._g.get_vote(self._best_node)[self.get_briber_id()]))
+            self._bribed.add(self._best_node)
+            self._info_gained = set()
             self._c = 0
             self._max_rating_increase = 0
             self._best_node = 0
         else:
+            if self._c >= self._i:
+                print(f"WARNING: {self.__class__.__name__} has not found an influential node in {self._c} tries "
+                      f"(intended maximum tries {self._i}), continuiung search...",
+                      file=sys.stderr)
             next_act.add_bribe(self._next_node, self._k)
+            self._info_gained.add(self._next_node)
             self._c = self._c + 1
         self._last_node = self._next_node
         self._previous_rating = self._current_rating
