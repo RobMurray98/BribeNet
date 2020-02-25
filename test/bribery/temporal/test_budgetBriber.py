@@ -36,22 +36,32 @@ class TestRandomBriber(BriberTestCase):
         graph.eval_graph = MagicMock(return_value=1)  # will never be influential
         graph.get_vote = MagicMock(return_value=1.0)  # will always be affordable
         prev_nodes = []
-        for i in range(graph.customer_count() - 1):
+        for i in range(graph.customer_count()):
             action = self.briber.next_action()
             for prev_node in prev_nodes:
                 self.assertNotIn(prev_node, action.bribes)
             prev_nodes.append(self.briber._next_node)
-        # TODO @callum: currently failing, need memory of failed nodes
 
     def test_next_action_moves_on_if_not_in_budget(self):
         graph = self.briber._g
         graph.eval_graph = MagicMock(return_value=1)
         graph.get_vote = MagicMock(return_value=0.0)  # will always be not in budget
         prev_nodes = []
-        for i in range(graph.customer_count() - 1):
+        for i in range(graph.customer_count()):
             self.briber._previous_rating = 0  # will always be influential
             action = self.briber.next_action()
             for prev_node in prev_nodes:
                 self.assertNotIn(prev_node, action.bribes)
             prev_nodes.append(self.briber._next_node)
-        # TODO @callum: currently failing, need memory of failed nodes
+
+    def test_next_action_does_not_fail_if_no_nodes_influential(self):
+        graph = self.briber._g
+        self.briber._previous_rating = 1
+        graph.eval_graph = MagicMock(return_value=1)  # will never be influential
+        graph.get_vote = MagicMock(return_value=1.0)  # will always be affordable
+        prev_nodes = []
+        for i in range(graph.customer_count() + 1):
+            action = self.briber.next_action()
+            for prev_node in prev_nodes:
+                self.assertNotIn(prev_node, action.bribes)
+            prev_nodes.append(self.briber._next_node)

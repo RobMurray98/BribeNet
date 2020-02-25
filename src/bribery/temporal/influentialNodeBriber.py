@@ -1,6 +1,7 @@
 from bribery.temporal.briber import TemporalBriber
 from bribery.temporal.action.singleBriberyAction import SingleBriberyAction
 import random
+import sys
 
 
 class InfluentialNodeBriber(TemporalBriber):
@@ -16,6 +17,8 @@ class InfluentialNodeBriber(TemporalBriber):
         self._current_rating = 0
         self._previous_rating = 0
         self._next_node = 0
+        self._info_gained = set()
+        self._bribed = set()
 
     def _set_graph(self, g):
         super()._set_graph(g)
@@ -36,8 +39,15 @@ class InfluentialNodeBriber(TemporalBriber):
         if self._current_rating > self._previous_rating:
             next_act.add_bribe(self._next_node, min(self.get_resources(),
                                                     self._g.get_max_rating() - self._g.get_vote(self._next_node)))
+            self._bribed.add(self._next_node)
+            self._info_gained = set()
         else:
-            self._next_node = self._g.get_random_customer()
+            try:
+                self._next_node = self._g.get_random_customer(excluding=self._info_gained | self._bribed)
+            except IndexError:
+                print(f"WARNING: {self.__class__.__name__} found no influential nodes, not acting...", file=sys.stderr)
+                return next_act
             next_act.add_bribe(self._next_node, self._k)
+            self._info_gained.add(self._next_node)
         self._previous_rating = self._current_rating
         return next_act
