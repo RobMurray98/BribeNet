@@ -30,7 +30,7 @@ class RatingGraph(ABC):
         self._g = generator.generate()
         from bribery.briber import Briber
         self._bribers: Tuple[Briber] = bribers
-        if "max_rating" in kwargs.keys():
+        if "max_rating" in kwargs:
             self._max_rating: float = kwargs["max_rating"]
         else:
             self._max_rating: float = 1.0
@@ -206,7 +206,7 @@ class RatingGraph(ABC):
         ns = [n for n in self._g.nodes() if not np.isnan(self._votes[n][briber_id])]
         return sum(self.get_vote(n)[briber_id] for n in ns) / len(ns)
 
-    def is_influential(self, node_id: int, k: float = 0.2, briber_id: int = 0,
+    def is_influential(self, node_id: int, k: float = 0.1, briber_id: int = 0,
                        rating_method: Optional[RatingMethod] = None, charge_briber: bool = True) -> float:
         """
         Determines if a node is influential using a small bribe
@@ -284,9 +284,6 @@ class RatingGraph(ABC):
         """
         votes1 = self.get_vote(node1_id)
         votes2 = self.get_vote(node2_id)
-        # TODO @finnbar: should they both be using votes? What if someone is bribed and their vote is max but their
-        #                ground truth is not, should they not use their ground truth?
-        #                e.g. trust(x, y) may not equal trust(y, x)?
         differences = votes1 - votes2
         nans = np.isnan(differences)
         differences[nans] = 0

@@ -3,13 +3,13 @@ from unittest import TestCase
 
 from bribery.temporal.nonBriber import NonBriber
 from bribery.temporal.randomBriber import RandomBriber
-from graph.temporal.ratingGraph import TemporalRatingGraph
+from graph.temporal.noCustomerActionGraph import NoCustomerActionGraph
 
 
 class TestMultiBriberRatingGraph(TestCase):
 
     def setUp(self) -> None:
-        self.rg = TemporalRatingGraph((RandomBriber(10), NonBriber(10)))
+        self.rg = NoCustomerActionGraph((RandomBriber(10), NonBriber(10)))
 
     def tearDown(self) -> None:
         del self.rg

@@ -3,7 +3,7 @@ from unittest import TestCase
 from bribery.temporal.action.multiBriberyAction import MultiBriberyAction
 from bribery.temporal.action.singleBriberyAction import SingleBriberyAction
 from bribery.temporal.nonBriber import NonBriber
-from graph.temporal.ratingGraph import TemporalRatingGraph
+from graph.temporal.noCustomerActionGraph import NoCustomerActionGraph
 from unittest.mock import MagicMock
 
 
@@ -12,7 +12,7 @@ class TestMultiBriberyAction(TestCase):
     def setUp(self) -> None:
         self.bribers = (NonBriber(1), NonBriber(1), NonBriber(1), NonBriber(1))
         self.valid_action_dict = {0: {0: 0.5}, 2: {0: 0.5}, 3: {0: 0.5}}
-        self.graph = TemporalRatingGraph(self.bribers)
+        self.graph = NoCustomerActionGraph(self.bribers)
 
     def tearDown(self) -> None:
         del self.bribers, self.graph
@@ -83,7 +83,7 @@ class TestMultiBriberyAction(TestCase):
         try:
             other_briber = NonBriber(1)
             # noinspection PyUnusedLocal
-            other_graph = TemporalRatingGraph(other_briber)
+            other_graph = NoCustomerActionGraph(other_briber)
             action0 = SingleBriberyAction(other_briber)
             action1 = SingleBriberyAction(self.bribers[0])
             MultiBriberyAction.make_multi_action_from_single_actions([action0, action1])
