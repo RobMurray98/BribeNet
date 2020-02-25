@@ -26,7 +26,7 @@ class OneMoveInfluentialNodeBriber(StaticBriber):
             if reward > 0:
                 self.influencers.append((reward, c))
         # Sort based on highest reward
-        self.influencers = sorted(self.influencers, key=lambda x: -x[0])
+        self.influencers = sorted(self.influencers, reverse=True)
 
     # returns node bribed number
     def next_bribe(self):
