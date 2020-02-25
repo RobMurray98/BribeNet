@@ -57,3 +57,12 @@ class TestMultiBriberRatingGraph(TestCase):
     def test_eval_graph(self):
         for b in range(len(self.rg.get_bribers())):
             self.assertGreaterEqual(self.rg.eval_graph(b), 0)
+    
+    def test_trust(self):
+        for u in self.rg.get_customers():
+            for v in self.rg.get_customers():
+                trust1 = self.rg.trust(u, v)
+                trust2 = self.rg.trust(v, u)
+                self.assertEqual(trust1, trust2)
+                self.assertGreaterEqual(trust1, 0)
+                self.assertLessEqual(trust1, 1)

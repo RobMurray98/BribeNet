@@ -30,8 +30,8 @@ class MultiBriberyAction(BriberyAction):
         assert bribe > 0, "bribe quantity must be greater than 0"
         assert node_id in self.graph.get_customers(), "node not present in graph"
         assert briber_id in range(len(self.graph.get_bribers())), "briber not present"
-        if briber_id in self.bribes.keys():
-            if node_id in self.bribes[briber_id].keys():
+        if briber_id in self.bribes:
+            if node_id in self.bribes[briber_id]:
                 print("WARNING: node bribed twice in single time step, combining...", file=sys.stderr)
                 self.bribes[briber_id][node_id] += bribe
             else:
@@ -47,3 +47,12 @@ class MultiBriberyAction(BriberyAction):
         for briber_id, bribe in self.bribes.items():
             for customer, value in bribe.items():
                 bribers[briber_id].bribe(node_id=customer, amount=value)
+
+    def is_bribed(self, node_id):
+        bribers = []
+        for briber_id in self.bribes:
+            if node_id in self.bribes[briber_id]:
+                bribers.append(briber_id)
+        if not bribers:
+            return False, bribers
+        return True, bribers

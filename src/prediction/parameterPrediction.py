@@ -1,10 +1,10 @@
-# noinspection PyUnresolvedReferences
+
 from networkit.generators import WattsStrogatzGenerator
 from numpy import logspace
 from numpy import sum as np_sum
-# noinspection PyUnresolvedReferences
+
 from networkit.centrality import LocalClusteringCoefficient
-# noinspection PyUnresolvedReferences
+
 from networkit.distance import APSP
 
 TRIALS = 5

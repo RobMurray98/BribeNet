@@ -31,6 +31,6 @@ class MostInfluentialNodeBriber(StaticBriber):
                 influencers.append((reward, c))
 
         # Sort based on highest reward
-        influencers = sorted(influencers, key=lambda x: -x[0])
+        influencers = sorted(influencers, reverse=True)
         for (_, c) in influencers:
             self.bribe(c, self._g.get_max_rating() - self._g.get_vote(c))

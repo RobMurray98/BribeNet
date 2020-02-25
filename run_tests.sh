@@ -4,4 +4,4 @@ if ! [[ $PYTHONPATH =~ $SCRIPTPATH ]]
 then
   export PYTHONPATH=$PYTHONPATH:$SCRIPTPATH/src
 fi
-python -m unittest discover -s "$SCRIPTPATH"/test -t "$SCRIPTPATH"
+python3 -m unittest discover -s "$SCRIPTPATH"/test -t "$SCRIPTPATH"

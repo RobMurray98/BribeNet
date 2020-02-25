@@ -3,13 +3,13 @@ from unittest import TestCase
 
 from bribery.temporal.nonBriber import NonBriber
 from bribery.temporal.randomBriber import RandomBriber
-from graph.temporal.ratingGraph import TemporalRatingGraph
+from graph.temporal.noCustomerActionGraph import NoCustomerActionGraph
 
 
 class TestMultiBriberRatingGraph(TestCase):
 
     def setUp(self) -> None:
-        self.rg = TemporalRatingGraph((RandomBriber(10), NonBriber(10)))
+        self.rg = NoCustomerActionGraph((RandomBriber(10), NonBriber(10)))
 
     def tearDown(self) -> None:
         del self.rg
@@ -55,3 +55,21 @@ class TestMultiBriberRatingGraph(TestCase):
     def test_eval_graph(self):
         for b in range(len(self.rg.get_bribers())):
             self.assertGreaterEqual(self.rg.eval_graph(b), 0)
+
+    def test_trust_update(self):
+        # Set all votes to 0.
+        g_copy = deepcopy(self.rg)
+        for u in g_copy.get_customers():
+            g_copy._votes[u][0] = 0
+        for c in g_copy.get_customers():
+            g_copy_2 = deepcopy(g_copy)
+            # Then bribe one individual.
+            g_copy_2.bribe(0, 1, 0)
+            # Update the trust.
+            g_copy_2._update_trust()
+            # Make sure that the trust goes down for each connected node.
+            for n in g_copy.get_customers():
+                if self.rg._g.hasEdge(c, n):
+                    initial_trust = g_copy.get_weight(c, n)
+                    updated_trust = g_copy_2.get_weight(c, n)
+                    self.assertGreater(initial_trust, updated_trust)
