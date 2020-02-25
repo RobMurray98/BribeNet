@@ -17,9 +17,7 @@ class InfluentialNodeBriber(StaticBriber):
         # Make sure that k is set such that there are enough resources left to actually bribe people.
         self.k = min(self.k, 0.5 * (self._u / self._g.customer_count()))
 
-    def next_bribe(self):
-        if self._g is None:
-            raise BriberyGraphNotSetException()
+    def _next_bribe(self):
         for c in self._g.get_customers():
             reward = self._g.is_influential(c, k=self.k, briber_id=self.get_briber_id())
             if reward > 0:

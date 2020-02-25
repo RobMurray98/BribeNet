@@ -29,9 +29,7 @@ class OneMoveInfluentialNodeBriber(StaticBriber):
         self.influencers = sorted(self.influencers, reverse=True)
 
     # returns node bribed number
-    def next_bribe(self):
-        if self._g is None:
-            raise BriberyGraphNotSetException()
+    def _next_bribe(self):
         self._get_influencers()
         if self.influencers:
             (r, c) = self.influencers[0]

@@ -20,8 +20,13 @@ class StaticBriber(Briber, ABC):
         self._g = g
 
     @abstractmethod
-    def next_bribe(self):
+    def _next_bribe(self):
         """
         Statically perform some bribery action on the graph
         """
         raise NotImplementedError
+
+    def next_bribe(self):
+        if self._g is None:
+            raise BriberyGraphNotSetException()
+        self._next_bribe()
