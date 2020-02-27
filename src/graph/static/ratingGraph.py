@@ -38,8 +38,8 @@ class StaticRatingGraph(RatingGraph):
         from bribery.static.briber import StaticBriber
         for briber in self._bribers:
             if not issubclass(briber.__class__, StaticBriber):
-                raise BriberNotSubclassOfBriberException(f"{briber.__class__.__name__} is not a subclass of "
-                                                         "StaticBriber")
+                raise BriberNotSubclassOfStaticBriberException(f"{briber.__class__.__name__} is not a subclass of "
+                                                               "StaticBriber")
         super()._finalise_init()
 
     def __specifics(self):

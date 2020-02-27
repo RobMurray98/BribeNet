@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from bribery.briber import Briber
+from bribery.briber import Briber, BriberyGraphNotSetException
 from bribery.temporal.action.singleBriberyAction import SingleBriberyAction
 
 
