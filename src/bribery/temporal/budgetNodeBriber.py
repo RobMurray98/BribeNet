@@ -29,7 +29,7 @@ class BudgetNodeBriber(TemporalBriber):
         self._current_rating = self._g.eval_graph(self.get_briber_id())
         self._previous_rating = self._current_rating
 
-    def next_action(self) -> SingleBriberyAction:
+    def _next_action(self) -> SingleBriberyAction:
         """
         Next action of briber, either to gain information or to fully bribe an influential node
         :return: SingleBriberyAction for the briber to take in the next temporal time step
