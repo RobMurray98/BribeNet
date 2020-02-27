@@ -1,7 +1,7 @@
 import random
 from abc import ABC
 from copy import deepcopy
-from typing import Tuple, Optional, List, Any
+from typing import Tuple, Optional, List, Any, Set
 
 import networkit as nk
 import numpy as np
@@ -171,6 +171,16 @@ class RatingGraph(ABC):
         :return: the number of nodes in the graph
         """
         return len(self._g.nodes())
+
+    def get_random_customer(self, excluding: Optional[Set[int]] = None) -> int:
+        """
+        Gets the id of a random customer
+        :param excluding: set of customer ids not to be returned
+        :return: random node id in the graph
+        """
+        if excluding is None:
+            excluding = set()
+        return random.choice(tuple(set(self._g.nodes()) - excluding))
 
     def get_vote(self, idx: int):
         """

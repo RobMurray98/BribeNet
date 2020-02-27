@@ -4,19 +4,21 @@ import random
 import sys
 
 
-class InfluentialNodeBriber(TemporalBriber):
+class BudgetNodeBriber(TemporalBriber):
 
-    def __init__(self, u0: float, k: float = 0.1):
+    def __init__(self, u0: float, k: float = 0.1, b: float = 0.5):
         """
         Constructor
         :param u0: initial utility
         :param k: cost of information
+        :param b: budget, a maximum they are willing to spend on any single bribe
         """
         super().__init__(u0)
         self._k = k
         self._current_rating = 0
         self._previous_rating = 0
         self._next_node = 0
+        self._budget = b
         self._info_gained = set()
         self._bribed = set()
 
@@ -34,9 +36,10 @@ class InfluentialNodeBriber(TemporalBriber):
         """
         self._current_rating = self._g.eval_graph(self.get_briber_id())
         next_act = SingleBriberyAction(self)
-        if self._current_rating > self._previous_rating:
-            next_act.add_bribe(self._next_node, min(self.get_resources(),
-                                                    self._g.get_max_rating() - self._g.get_vote(self._next_node)))
+        maximum_bribe = (self._g.get_max_rating() - self._g.get_vote(self._next_node))
+        if self._current_rating > self._previous_rating and min(self._u, maximum_bribe) <= self._budget \
+                and self._next_node not in self._bribed:
+            next_act.add_bribe(self._next_node, min(self._u, maximum_bribe))
             self._bribed.add(self._next_node)
             self._info_gained = set()
         else:
