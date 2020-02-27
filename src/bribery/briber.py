@@ -14,16 +14,24 @@ class BriberNotRegisteredOnGraphException(Exception):
     pass
 
 
-# abstract briber class
+class GraphNotSubclassOfRatingGraphException(Exception):
+    pass
+
+
 class Briber(ABC):
     def __init__(self, u0: float):
-        self._u = u0  # resources of briber to spend
+        """
+        Abstract class for bribing actors
+        :param u0: the initial utility available to the briber
+        """
+        self._u = u0
         from graph.ratingGraph import RatingGraph
-        self._g: Optional[RatingGraph] = None  # network for agent
+        self._g: Optional[RatingGraph] = None
 
     def _set_graph(self, g):
         from graph.ratingGraph import RatingGraph
-        assert issubclass(g.__class__, RatingGraph), "graph must be subclass of RatingGraph"
+        if not issubclass(g.__class__, RatingGraph):
+            raise GraphNotSubclassOfRatingGraphException(f"{g.__class__.__name__} is not a subclass of RatingGraph")
         if self._g is not None:
             raise BriberyGraphAlreadySetException()
         self._g = g

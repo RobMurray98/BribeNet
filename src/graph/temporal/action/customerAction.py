@@ -2,6 +2,8 @@ from typing import Dict, Any, Tuple, List
 
 from bribery.temporal.action.briberyAction import BriberyAction
 from graph.temporal.action.actionType import ActionType
+from bribery.temporal.briber import GraphNotSubclassOfTemporalRatingGraphException
+
 import numpy as np
 
 
@@ -16,9 +18,10 @@ class CustomerActionTimeNotCorrectException(Exception):
 class CustomerAction(object):
 
     def __init__(self, graph):
-
         from graph.temporal.ratingGraph import TemporalRatingGraph  # local import to remove cyclic dependency
-        assert issubclass(graph.__class__, TemporalRatingGraph)
+        if not issubclass(graph.__class__, TemporalRatingGraph):
+            raise GraphNotSubclassOfTemporalRatingGraphException(f"{graph.__class__.__name__} is not a subclass of "
+                                                                 "TemporalRatingGraph")
         self.graph = graph
         self._actions: Dict[int, Tuple[ActionType, Any]] = {c: (ActionType.NONE, None)
                                                             for c in self.graph.get_customers()}

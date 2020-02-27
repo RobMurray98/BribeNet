@@ -10,7 +10,10 @@ class SingleBriberyAction(BriberyAction):
 
     def __init__(self, briber, bribes: Optional[Dict[int, float]] = None):
         from bribery.temporal.briber import TemporalBriber
-        assert issubclass(briber.__class__, TemporalBriber)
+        from graph.temporal.ratingGraph import BriberNotSubclassOfTemporalBriberException
+        if not issubclass(briber.__class__, TemporalBriber):
+            raise BriberNotSubclassOfTemporalBriberException(f"{briber.__class__.__name__} is not a subclass of "
+                                                             "TemporalBriber")
         super().__init__(graph=briber.get_graph())
         if bribes is not None:
             for _, bribe in bribes.items():

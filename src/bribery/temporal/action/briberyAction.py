@@ -15,7 +15,10 @@ class BriberyAction(ABC):
     def __init__(self, graph):
 
         from graph.temporal.ratingGraph import TemporalRatingGraph  # local import to remove cyclic dependency
-        assert issubclass(graph.__class__, TemporalRatingGraph)
+        from bribery.temporal.briber import GraphNotSubclassOfTemporalRatingGraphException
+        if not issubclass(graph.__class__, TemporalRatingGraph):
+            raise GraphNotSubclassOfTemporalRatingGraphException(f"{graph.__class__.__name__} is not a subclass of "
+                                                                 "TemporalRatingGraph")
         self.graph = graph
         self.__time_step = self.graph.get_time_step()
         self.__performed = False
