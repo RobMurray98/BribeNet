@@ -88,6 +88,9 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
     def get_time_step(self):
         return self._time_step
 
+    def get_d(self):
+        return self._d
+
     def get_last_bribery_action(self):
         return self._last_bribery_action
 
