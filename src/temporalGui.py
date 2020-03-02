@@ -13,16 +13,22 @@ from networkit.viztasks import drawGraph
 from networkx import spring_layout
 
 # Import Bribing Agents
-from bribery.temporal.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
+from bribery.temporal.mostInfluentialNodeBriber import MostInfluentialNodeBriber
 from bribery.temporal.oneMoveRandomBriber import OneMoveRandomBriber
 from bribery.temporal.nonBriber import NonBriber
 from graph.temporal.thresholdGraph import ThresholdGraph
+
+from graph.generation import GraphGeneratorAlgo
+from graph.generation.flatWeightGenerator import FlatWeightedGraphGenerator
+
+from graph.temporal.action.actionType import ActionType
+
 
 
 def switch_briber(argument):
     switcher = {
         "random": OneMoveRandomBriber(10),
-        "influential": OneMoveInfluentialNodeBriber(10),
+        "influential": MostInfluentialNodeBriber(10),
         "non": NonBriber(10)
     }
     return switcher.get(argument)
@@ -65,7 +71,7 @@ class GUI(tk.Tk):
         if self.bribers == []:
             raise RuntimeError("No Bribers added to graph") # @TODO replace with better error
 
-        ba_gen = nk.generators.BarabasiAlbertGenerator(5, 30, 0, True)
+        ba_gen = FlatWeightedGraphGenerator(GraphGeneratorAlgo.BARABASI_ALBERT, 5, 30, 0)
 
         self.g = ThresholdGraph(tuple(self.bribers)) if gtype == "ws" else ThresholdGraph(tuple(self.bribers), generator=ba_gen)
         for b in self.bribers:
@@ -90,12 +96,19 @@ class GUI(tk.Tk):
 
         info = ""
         if self.g.get_time_step() % 2 == 1:
-            info = "Bribes\n"
+            info = "BRIBES\n"
             for brbr, brb in self.g.get_last_bribery_action().bribes.items():
                 for c, n in brb.items():
                     info += f"Briber {brbr + 1}: {c} --> {n}\n"
         else:
-            info = self.g.get_last_customer_action()
+            info = "CUSTOMERS\n"
+            for c, a in self.g.get_last_customer_action().actions.items():
+                if a[0] == ActionType.NONE:
+                    info += f"Customer {c}: No Action\n"
+                elif a[0] == ActionType.BRIBED:
+                    info += f"Customer {c}: Bribed to {a[1]}\n"
+                elif a[0] == ActionType.SELECT:
+                    info += f"Customer {c}: Going to {a[1]}\n"
 
         self.frames["GraphFrame"].draw_graph(self.g)
         self.frames["GraphFrame"].set_info(info)

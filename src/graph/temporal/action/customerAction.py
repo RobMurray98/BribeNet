@@ -20,7 +20,7 @@ class CustomerAction(object):
         from graph.temporal.ratingGraph import TemporalRatingGraph  # local import to remove cyclic dependency
         assert issubclass(graph.__class__, TemporalRatingGraph)
         self.graph = graph
-        self._actions: Dict[int, Tuple[ActionType, Any]] = {c: (ActionType.NONE, None)
+        self.actions: Dict[int, Tuple[ActionType, Any]] = {c: (ActionType.NONE, None)
                                                             for c in self.graph.get_customers()}
         self.__time_step = self.graph.get_time_step()
         self.__performed = False
@@ -32,19 +32,19 @@ class CustomerAction(object):
         return self.__performed
 
     def get_action_type(self, node_id: int):
-        return self._actions[node_id][0]
+        return self.actions[node_id][0]
 
     def set_bribed(self, node_id: int, briber_ids: List[int]):
-        self._actions[node_id] = (ActionType.BRIBED, briber_ids)
+        self.actions[node_id] = (ActionType.BRIBED, briber_ids)
 
     def set_none(self, node_id: int):
-        self._actions[node_id] = (ActionType.NONE, 0)
+        self.actions[node_id] = (ActionType.NONE, 0)
 
     def set_select(self, node_id: int, briber_id):
-        self._actions[node_id] = (ActionType.SELECT, briber_id)
+        self.actions[node_id] = (ActionType.SELECT, briber_id)
 
     def set_bribed_from_bribery_action(self, bribery_action: BriberyAction):
-        for c in self._actions:
+        for c in self.actions:
             bribed, bribers = bribery_action.is_bribed(c)
             if bribed:
                 self.set_bribed(c, bribers)
@@ -57,9 +57,9 @@ class CustomerAction(object):
         """
         if not self.__performed:
             if self.__time_step == self.graph.get_time_step():
-                for c in self._actions:
-                    if self._actions[c][0] == ActionType.SELECT:
-                        selected = self._actions[c][1]
+                for c in self.actions:
+                    if self.actions[c][0] == ActionType.SELECT:
+                        selected = self.actions[c][1]
                         if self.graph._votes[c][selected] == np.nan:  # no previous vote or bribe
                             self.graph._votes[c][selected] = self.graph._truths[c][selected]
                         self.graph._bribers[selected].add_resources(pay)
