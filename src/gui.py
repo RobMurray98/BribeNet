@@ -91,6 +91,7 @@ class StartPage(tk.Frame):
         b.grid(row=1, column=2)
 
     def on_button(self, gtype, btype):
+
         self.controller.generate_graph(gtype, btype)
         self.controller.show_frame("GraphFrame")
 
@@ -131,7 +132,7 @@ class GraphFrame(tk.Frame):
         self.display_graph()
 
     def to_results(self):
-        self.controller.plot_results(self.results)
+        self.controller.plot_results(self.results
         self.results = []
         self.controller.show_frame("ResultsFrame")
 
