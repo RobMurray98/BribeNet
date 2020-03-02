@@ -13,33 +13,21 @@ from networkit.viztasks import drawGraph
 from networkx import spring_layout
 
 # Import Bribing Agents
-<<<<<<< HEAD
 from bribery.temporal.mostInfluentialNodeBriber import MostInfluentialNodeBriber
-=======
-from bribery.temporal.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
->>>>>>> bd51ade182c3661bc84f1fecd89feb765153ace0
 from bribery.temporal.oneMoveRandomBriber import OneMoveRandomBriber
 from bribery.temporal.nonBriber import NonBriber
 from graph.temporal.thresholdGraph import ThresholdGraph
 
-<<<<<<< HEAD
 from graph.generation import GraphGeneratorAlgo
 from graph.generation.flatWeightGenerator import FlatWeightedGraphGenerator
 
 from graph.temporal.action.actionType import ActionType
 
 
-=======
->>>>>>> bd51ade182c3661bc84f1fecd89feb765153ace0
-
 def switch_briber(argument):
     switcher = {
         "random": OneMoveRandomBriber(10),
-<<<<<<< HEAD
         "influential": MostInfluentialNodeBriber(10),
-=======
-        "influential": OneMoveInfluentialNodeBriber(10),
->>>>>>> bd51ade182c3661bc84f1fecd89feb765153ace0
         "non": NonBriber(10)
     }
     return switcher.get(argument)
@@ -82,11 +70,7 @@ class GUI(tk.Tk):
         if self.bribers == []:
             raise RuntimeError("No Bribers added to graph") # @TODO replace with better error
 
-<<<<<<< HEAD
         ba_gen = FlatWeightedGraphGenerator(GraphGeneratorAlgo.BARABASI_ALBERT, 5, 30, 0)
-=======
-        ba_gen = nk.generators.BarabasiAlbertGenerator(5, 30, 0, True)
->>>>>>> bd51ade182c3661bc84f1fecd89feb765153ace0
 
         self.g = ThresholdGraph(tuple(self.bribers)) if gtype == "ws" else ThresholdGraph(tuple(self.bribers), generator=ba_gen)
         for b in self.bribers:
@@ -111,16 +95,12 @@ class GUI(tk.Tk):
 
         info = ""
         if self.g.get_time_step() % 2 == 1:
-<<<<<<< HEAD
+
             info = "BRIBES\n"
-=======
-            info = "Bribes\n"
->>>>>>> bd51ade182c3661bc84f1fecd89feb765153ace0
             for brbr, brb in self.g.get_last_bribery_action().bribes.items():
                 for c, n in brb.items():
                     info += f"Briber {brbr + 1}: {c} --> {n}\n"
         else:
-<<<<<<< HEAD
             info = "CUSTOMERS\n"
             for c, a in self.g.get_last_customer_action().actions.items():
                 if a[0] == ActionType.NONE:
@@ -129,9 +109,7 @@ class GUI(tk.Tk):
                     info += f"Customer {c}: Bribed to {a[1]}\n"
                 elif a[0] == ActionType.SELECT:
                     info += f"Customer {c}: Going to {a[1]}\n"
-=======
-            info = self.g.get_last_customer_action()
->>>>>>> bd51ade182c3661bc84f1fecd89feb765153ace0
+
 
         self.frames["GraphFrame"].draw_graph(self.g)
         self.frames["GraphFrame"].set_info(info)
