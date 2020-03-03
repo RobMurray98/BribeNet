@@ -65,11 +65,10 @@ class GUI(tk.Tk):
     def add_briber(self, b, u0):
         self.bribers.append(switch_briber(b, u0=u0))
 
-    def add_graph(self, gtype, args):
+    def add_graph(self, gtype, args, params):
 
         if self.bribers == []:
             raise RuntimeError("No Bribers added to graph") # @TODO replace with better error
-
 
         gen = FlatWeightedGraphGenerator(
             GraphGeneratorAlgo.WATTS_STROGATZ,
@@ -79,26 +78,32 @@ class GUI(tk.Tk):
             args[0], args[1], args[2]
         )
 
-        self.g = ThresholdGraph(tuple(self.bribers), generator=gen)
-        for b in self.bribers:
-            print(b.get_graph())
+        self.g = ThresholdGraph(
+            tuple(self.bribers),
+            generator=gen,
+            threshold=params[0],
+            d=params[1],
+            q=params[2],
+            apathy=params[3]
+        )
 
         self.frames["GraphFrame"].set_pos(spring_layout(nk2nx(self.g.graph())))
-        self.results.append(self.g.eval_graph())
+        self.results.append([self.g.eval_graph(briber_id=b) for b in range(0, len(self.bribers))])
 
-        print(self.g.eval_graph())
         for i in range(0, 10):
             print(f"{i}: -->{self.g.get_vote(i)}")
 
         self.frames["GraphFrame"].add_briber_buttons(self.bribers)
         self.frames["GraphFrame"].draw_graph(self.g)
 
-    def plot_results(self, results):
-        self.frames["ResultsFrame"].plot_results(results)
+    def plot_results(self):
+        self.frames["ResultsFrame"].plot_results(self.results)
+        self.results = []
 
     def next_step(self):
 
         self.g.step()
+        self.results.append([self.g.eval_graph(briber_id=b) for b in range(0, len(self.bribers))])
 
         info = ""
         if self.g.get_time_step() % self.g.get_d() == self.g.get_d() - 1:
@@ -132,7 +137,7 @@ class StartPage(tk.Frame):
         btype = tk.StringVar()
         btype.set("L")
 
-        tk.Label(self, text="SELECT GRAPH\n------").grid(row=0, column=0)
+        tk.Label(self, text="SELECT GRAPH GENERATOR\n------").grid(row=0, column=0)
 
         rb1 = tk.Radiobutton(self, variable=gtype, value="ws", text="Watts-Strogatz")
         self.arg1_vars = [tk.IntVar(value=30), tk.IntVar(value=5), tk.DoubleVar(value=0.3)]
@@ -161,12 +166,11 @@ class StartPage(tk.Frame):
             tk.Entry(self, textvariable=a).grid(row=6, column=i)
 
         self.bribers_txt = tk.StringVar(value="")
-        tk.Label(self, text="BRIBERS\n------").grid(row=7, column=0)
-        tk.Label(self, textvariable=self.bribers_txt).grid(row=8, column=0)
+        tk.Label(self, text="BRIBERS\n------").grid(row=12, column=4)
+        tk.Label(self, textvariable=self.bribers_txt).grid(row=13, column=4)
 
         briber_ns = ["random", "influential", "non"]
         briber_var = tk.StringVar(value="random")
-
 
         tk.Label(self, text="SELECT BRIBERS\n------").grid(row=0, column=4)
 
@@ -180,6 +184,26 @@ class StartPage(tk.Frame):
         add_briber = tk.Button(self, text="add", command=lambda: self.add_briber(briber_var.get(), u0_var.get()))
         add_briber.grid(row=5, column=4)
 
+        tk.Label(self, text="GRAPH PARAMETERS\n------").grid(row=8, column=0)
+
+        self.graph_params = [
+            tk.DoubleVar(value=0.5),
+            tk.IntVar(value=2),
+            tk.DoubleVar(value=0.5),
+            tk.DoubleVar(value=0.0)
+        ]
+        graph_lbls = [
+            tk.Label(self, text="Threshold"),
+            tk.Label(self, text="D (num bribe rounds)"),
+            tk.Label(self, text="Q"),
+            tk.Label(self, text="Apathy"),
+        ]
+        for i, a in enumerate(graph_lbls):
+            a.grid(row=(i+9), column=0)
+        for i, a in enumerate(self.graph_params):
+            tk.Entry(self, textvariable=a).grid(row=(i+9), column=1)
+
+
         b = tk.Button(self, text="Graph + Test", command=lambda: self.on_button(gtype.get()))
         b.grid(row=8, column=5)
 
@@ -190,8 +214,8 @@ class StartPage(tk.Frame):
         self.bribers_txt.set(txt)
 
     def on_button(self, gtype):
-        #check some bribers on graph
-        if self.bribers_txt.get()=="":
+        # check some bribers on graph
+        if self.bribers_txt.get() == "":
             tk.messagebox.showerror(messgae="Graph needs one or more bribers")
             return
 
@@ -199,11 +223,12 @@ class StartPage(tk.Frame):
         if gtype == "ws":
             args = [x.get() for x in self.arg1_vars]
         elif gtype == "ba":
-            [x.get() for x in self.arg2_vars]
+            args = [x.get() for x in self.arg2_vars]
 
-        self.controller.add_graph(gtype, args)
+        params = [x.get() for x in self.graph_params]
+
+        self.controller.add_graph(gtype, args, params)
         self.controller.show_frame("GraphFrame")
-
 
 
 # page for displaying and running graph
@@ -264,8 +289,7 @@ class GraphFrame(tk.Frame):
 
 
     def to_results(self):
-        self.controller.plot_results(self.results)
-        self.results = []
+        self.controller.plot_results()
         self.controller.show_frame("ResultsFrame")
 
     def draw_graph(self, graph, **kwargs):
@@ -295,7 +319,8 @@ class GraphFrame(tk.Frame):
 
         self.ax.clear()
 
-        drawGraph(graph.graph(),
+        drawGraph(
+            graph.graph(),
             node_size=400,
             node_color=colors,
             edge_color=edge_colors,
@@ -314,9 +339,9 @@ class GraphFrame(tk.Frame):
                     rating = round(graph.get_vote(c)[b], 2)
 
                 self.ax.annotate(
-                    str(c) + ":\n" +
-                    "Rating: " + str(rating) + "\n" +
-                    "PRating: " + str(round(graph.get_rating(c), 2)),
+                    str(c) + ":\n"
+                    + "Rating: " + str(rating) + "\n"
+                    + "PRating: " + str(round(graph.get_rating(c), 2)),
                     xy=(self.pos[c][0], self.pos[c][1]),
                     bbox=dict(boxstyle="round", fc="w", ec="0.5", alpha=0.9)
                 )
@@ -333,19 +358,6 @@ class GraphFrame(tk.Frame):
                 ))
 
         self.canvas.draw()
-
-        # avp = str(round(graph.eval_graph(), 2))
-        # if last < 0:
-        #     self.txt.set("Average P-Rating: " + avp + " \nLast Bribed: --")
-        # else:
-        #     self.txt.set("Average P-Rating: " + avp + " \nLast Bribed: " + str(last))
-
-    # def next_bribe(self):
-    #     c = self.briber.next_bribe()
-    #     self.display_graph(last=c)
-    #     avp = self.graph.eval_graph()
-    #     self.results.append(avp)
-    #     self.canvas.draw()
 
     # def show_influential(self):
     #     cmap = plt.get_cmap("Purples")
@@ -392,7 +404,11 @@ class ResultsFrame(tk.Frame):
     def plot_results(self, results):
         xs = [i for i in range(0, len(results))]
         self.ax.clear()
-        self.ax.plot(xs, results)
+        # for each briber
+        for b in range(0, len(results[0])):
+            ys = [r[b] for r in results]
+            self.ax.plot(xs, ys)
+
         self.ax.set_xlabel("Moves over time")
         self.ax.set_ylabel("Average P-rating")
         self.canvas.draw()
