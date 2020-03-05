@@ -60,7 +60,7 @@ class GUI(tk.Tk):
         briber = switch_briber(btype)()
 
         ba_gen = nk.generators.BarabasiAlbertGenerator(5, 30, 0, True)
-        comp_gen = CompositeGenerator(500, 5, 6, 0.1, 1)
+        comp_gen = CompositeGenerator(50, 5, 2, 0.1, 3, 0.05)
 
         print(gtype)
 

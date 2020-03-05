@@ -178,13 +178,13 @@ class StartPage(tk.Frame):
         briber_menu.grid(row=1, column=4)
 
         u0_var = tk.DoubleVar(value=10)
-        tk.Label(self, text="u0").grid(row=3, column=3)
+        tk.Label(self, text="u0 (starting money)").grid(row=3, column=3)
         tk.Entry(self, textvariable=u0_var).grid(row=3, column=4)
 
         add_briber = tk.Button(self, text="add", command=lambda: self.add_briber(briber_var.get(), u0_var.get()))
         add_briber.grid(row=5, column=4)
 
-        tk.Label(self, text="GRAPH PARAMETERS\n------").grid(row=8, column=0)
+        tk.Label(self, text="MODEL PARAMETERS\n------").grid(row=8, column=0)
 
         self.graph_params = [
             tk.DoubleVar(value=0.5),
@@ -324,7 +324,8 @@ class GraphFrame(tk.Frame):
             node_size=400,
             node_color=colors,
             edge_color=edge_colors,
-            ax=self.ax, pos=self.pos
+            ax=self.ax, pos=self.pos,
+            with_labels=True
         )
 
         if "briber" in kwargs:
@@ -340,7 +341,7 @@ class GraphFrame(tk.Frame):
 
                 self.ax.annotate(
                     str(c) + ":\n"
-                    + "Rating: " + str(rating) + "\n"
+                    + "Vote: " + str(rating) + "\n"
                     + "PRating: " + str(round(graph.get_rating(c), 2)),
                     xy=(self.pos[c][0], self.pos[c][1]),
                     bbox=dict(boxstyle="round", fc="w", ec="0.5", alpha=0.9)
@@ -407,10 +408,11 @@ class ResultsFrame(tk.Frame):
         # for each briber
         for b in range(0, len(results[0])):
             ys = [r[b] for r in results]
-            self.ax.plot(xs, ys)
+            self.ax.plot(xs, ys, label=b)
 
         self.ax.set_xlabel("Moves over time")
         self.ax.set_ylabel("Average P-rating")
+        self.ax.legend()
         self.canvas.draw()
 
     def exit(self):
