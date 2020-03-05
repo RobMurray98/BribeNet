@@ -9,18 +9,42 @@ import numpy as np
 from graph.ratingMethod import RatingMethod
 from graph.generation.unweightedGenerator import UnweightedGraphGenerator
 from graph.generation import GraphGeneratorAlgo
+from graph.generation.generator import GraphGenerator
 from graph.generation.flatWeightGenerator import FlatWeightedGraphGenerator
 
 DEFAULT_GEN = FlatWeightedGraphGenerator(GraphGeneratorAlgo.WATTS_STROGATZ, 30, 5, 0.3)
+
+
+class BribersAreNotTupleException(Exception):
+    pass
+
+
+class NoBriberGivenException(Exception):
+    pass
+
+
+class BriberNotSubclassOfBriberException(Exception):
+    pass
+
+
+class VotesNotInstantiatedBySpecificsException(Exception):
+    pass
+
+
+class TruthsNotInstantiatedBySpecificsException(Exception):
+    pass
+
 
 class RatingGraph(ABC):
     """
     Representation of network graph which bribers interact with
     """
 
-    def __init__(self, bribers: Tuple[Any], generator: FlatWeightedGraphGenerator = DEFAULT_GEN, specifics=None, **kwargs):
+    def __init__(self, bribers: Tuple[Any], generator: GraphGenerator = DEFAULT_GEN, specifics=None,
+                 **kwargs):
         """
-        Implementing classes should initialise self.__true_rating and self.__bribers
+        Abstract class for rating graphs
+        :param bribers:   the bribing actors on the graph
         :param generator: the graph generator used to instantiate the graph
         :param specifics: function in implementing class to call after the superclass initialisation,
                           but prior to _finalise_init (template design pattern)
@@ -29,7 +53,16 @@ class RatingGraph(ABC):
         # Generate random ratings network
         self._g = generator.generate()
         from bribery.briber import Briber
-        self._bribers: Tuple[Briber] = bribers
+        if issubclass(bribers.__class__, Briber):
+            bribers = tuple([bribers])
+        if not isinstance(bribers, tuple):
+            raise BribersAreNotTupleException()
+        if not bribers:
+            raise NoBriberGivenException()
+        for b in bribers:
+            if not issubclass(b.__class__, Briber):
+                raise BriberNotSubclassOfBriberException(f"{b.__class__.__name__} is not a subclass of Briber")
+        self._bribers = bribers
         if "max_rating" in kwargs:
             self._max_rating: float = kwargs["max_rating"]
         else:
@@ -45,17 +78,19 @@ class RatingGraph(ABC):
         """
         Perform assertions that ensure everything is initialised
         """
-        assert isinstance(self._bribers, tuple), "specifics of implementing class did not instantiate self._bribers " \
-                                                 "as a tuple"
+        if not isinstance(self._bribers, tuple):
+            raise BribersAreNotTupleException("specifics of implementing class did not instantiate self._bribers "
+                                              "as a tuple")
         from bribery.briber import Briber
         for briber in self._bribers:
-            assert issubclass(briber.__class__, Briber)
+            if not issubclass(briber.__class__, Briber):
+                raise BriberNotSubclassOfBriberException(f"{briber.__class__.__name__} is not a subclass of Briber")
             # noinspection PyProtectedMember
             briber._set_graph(self)
-        assert isinstance(self._votes, np.ndarray), "specifics of implementing class did not instantiate self._votes " \
-                                                    "to an ndarray"
-        assert isinstance(self._truths, np.ndarray), "specifics of implementing class did not instantiate " \
-                                                     "self._truths to an ndarray"
+        if not isinstance(self._votes, np.ndarray):
+            raise VotesNotInstantiatedBySpecificsException()
+        if not isinstance(self._truths, np.ndarray):
+            raise TruthsNotInstantiatedBySpecificsException()
 
     def get_bribers(self) -> Tuple[Any]:
         """

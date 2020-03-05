@@ -28,7 +28,7 @@ class TestRandomBriber(BriberTestCase):
         graph.get_vote = MagicMock(return_value=0.5)
         self.briber._next_node = 0
         action = self.briber.next_action()
-        self.assertDictEqual(action.bribes, {0: 0.5})
+        self.assertDictEqual(action._bribes, {0: 0.5})
 
     def test_next_action_moves_on_if_not_influential(self):
         graph = self.briber._g
@@ -38,7 +38,7 @@ class TestRandomBriber(BriberTestCase):
         for i in range(graph.customer_count()):
             action = self.briber.next_action()
             for prev_node in prev_nodes:
-                self.assertNotIn(prev_node, action.bribes)
+                self.assertNotIn(prev_node, action._bribes)
             prev_nodes.append(self.briber._next_node)
 
     def test_next_action_does_not_fail_if_no_nodes_influential(self):
@@ -49,6 +49,6 @@ class TestRandomBriber(BriberTestCase):
         for i in range(graph.customer_count() + 1):
             action = self.briber.next_action()
             for prev_node in prev_nodes:
-                self.assertNotIn(prev_node, action.bribes)
+                self.assertNotIn(prev_node, action._bribes)
             prev_nodes.append(self.briber._next_node)
 

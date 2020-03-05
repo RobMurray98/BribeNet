@@ -2,10 +2,14 @@ import random
 import numpy as np
 from typing import Tuple, Union, Any
 
-from graph.ratingGraph import RatingGraph, DEFAULT_GEN
+from graph.ratingGraph import RatingGraph, DEFAULT_GEN, BribersAreNotTupleException, NoBriberGivenException
 from helpers.override import override
 
 DEFAULT_NON_VOTER_PROPORTION = 0.2
+
+
+class BriberNotSubclassOfStaticBriberException(Exception):
+    pass
 
 
 class StaticRatingGraph(RatingGraph):
@@ -14,8 +18,14 @@ class StaticRatingGraph(RatingGraph):
         from bribery.static.briber import StaticBriber
         if issubclass(bribers.__class__, StaticBriber):
             bribers = tuple([bribers])
-        assert isinstance(bribers, tuple), "bribers must be a tuple of instances of subclasses of StaticRatingBriber"
-        assert len(bribers) > 0, "should be at least one briber"
+        if not isinstance(bribers, tuple):
+            raise BribersAreNotTupleException()
+        if not bribers:
+            raise NoBriberGivenException()
+        for b in bribers:
+            if not issubclass(b.__class__, StaticBriber):
+                raise BriberNotSubclassOfStaticBriberException(f"{b.__class__.__name__} is not a subclass of "
+                                                               "StaticBriber")
         self.__tmp_bribers = bribers
         self.__tmp_kwargs = kwargs
         super().__init__(bribers, generator=generator, specifics=self.__specifics, **kwargs)
@@ -25,11 +35,12 @@ class StaticRatingGraph(RatingGraph):
         """
         Perform assertions that ensure everything is initialised
         """
-        super()._finalise_init()
         from bribery.static.briber import StaticBriber
         for briber in self._bribers:
-            assert issubclass(briber.__class__, StaticBriber), "member of graph bribers not an instance of a " \
-                                                               "subclass of StaticBriber"
+            if not issubclass(briber.__class__, StaticBriber):
+                raise BriberNotSubclassOfStaticBriberException(f"{briber.__class__.__name__} is not a subclass of "
+                                                               "StaticBriber")
+        super()._finalise_init()
 
     def __specifics(self):
         from bribery.static.briber import StaticBriber

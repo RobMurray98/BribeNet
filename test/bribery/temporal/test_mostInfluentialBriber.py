@@ -27,9 +27,9 @@ class TestRandomBriber(BriberTestCase):
         prev_nodes = []
         for i in range(TEST_I - 1):
             action = self.briber.next_action()
-            self.assertEqual(len(action.bribes), 1)
+            self.assertEqual(len(action._bribes), 1)
             for prev_node in prev_nodes:
-                self.assertNotIn(prev_node, action.bribes)
+                self.assertNotIn(prev_node, action._bribes)
             prev_nodes.append(self.briber._next_node)
 
     def test_next_action_performs_bribe_on_best_node(self):
@@ -38,7 +38,7 @@ class TestRandomBriber(BriberTestCase):
         graph = self.briber._g
         graph.eval_graph = MagicMock(return_value=0)
         action = self.briber.next_action()
-        self.assertIn(1, action.bribes)
+        self.assertIn(1, action._bribes)
         self.assertEqual(self.briber._c, 0)
         self.assertEqual(self.briber._max_rating_increase, 0)
 
@@ -49,7 +49,7 @@ class TestRandomBriber(BriberTestCase):
         self.briber._previous_rating = 1
         self.briber._max_rating_increase = 0
         action = self.briber.next_action()
-        self.assertIn(3, action.bribes)
+        self.assertIn(3, action._bribes)
         self.assertEqual(self.briber._max_rating_increase, 9)
 
     def test_next_action_does_not_fail_if_no_nodes_influential_within_i_step(self):
@@ -60,7 +60,7 @@ class TestRandomBriber(BriberTestCase):
         for i in range(TEST_I + 1):
             action = self.briber.next_action()
             for prev_node in prev_nodes:
-                self.assertNotIn(prev_node, action.bribes)
+                self.assertNotIn(prev_node, action._bribes)
             prev_nodes.append(self.briber._next_node)
 
     def test_next_action_does_not_fail_if_no_nodes_influential_at_all(self):
@@ -71,5 +71,5 @@ class TestRandomBriber(BriberTestCase):
         for i in range(graph.customer_count() + 1):
             action = self.briber.next_action()
             for prev_node in prev_nodes:
-                self.assertNotIn(prev_node, action.bribes)
+                self.assertNotIn(prev_node, action._bribes)
             prev_nodes.append(self.briber._next_node)

@@ -4,5 +4,5 @@ from bribery.temporal.action.singleBriberyAction import SingleBriberyAction
 
 class NonBriber(TemporalBriber):
 
-    def next_action(self) -> SingleBriberyAction:
+    def _next_action(self) -> SingleBriberyAction:
         return SingleBriberyAction(self)

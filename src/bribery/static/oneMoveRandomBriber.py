@@ -7,9 +7,7 @@ from bribery.static.briber import StaticBriber
 
 class OneMoveRandomBriber(StaticBriber):
 
-    def next_bribe(self):
-        if self._g is None:
-            raise BriberyGraphNotSetException()
+    def _next_bribe(self):
         customers = self._g.get_customers()
         # pick random customer from list
         c = random.choice(customers)
