@@ -8,9 +8,7 @@ from bribery.temporal.action.singleBriberyAction import SingleBriberyAction
 
 class OneMoveRandomBriber(TemporalBriber):
 
-    def next_action(self) -> SingleBriberyAction:
-        if self._g is None:
-            raise BriberyGraphNotSetException()
+    def _next_action(self) -> SingleBriberyAction:
         customers = self._g.get_customers()
         # pick random customer from list
         c = random.choice(customers)

@@ -9,9 +9,7 @@ DELTA = 0.001  # ensures total bribes do not exceed budget
 
 class RandomBriber(TemporalBriber):
 
-    def next_action(self) -> SingleBriberyAction:
-        if self._g is None:
-            raise BriberyGraphNotSetException()
+    def _next_action(self) -> SingleBriberyAction:
         customers = self._g.get_customers()
         # array of random bribes
         bribes = [random.uniform(0.0, 1.0) for _ in customers]

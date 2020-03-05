@@ -6,7 +6,7 @@ import numpy as np
 
 from bribery.temporal.action.briberyAction import BriberyAction
 from bribery.temporal.action.multiBriberyAction import MultiBriberyAction
-from graph.ratingGraph import DEFAULT_GEN, RatingGraph
+from graph.ratingGraph import DEFAULT_GEN, RatingGraph, BribersAreNotTupleException, NoBriberGivenException
 from graph.static.ratingGraph import DEFAULT_NON_VOTER_PROPORTION
 from graph.temporal.action.customerAction import CustomerAction
 from helpers.override import override
@@ -15,7 +15,12 @@ DEFAULT_REMOVE_NO_VOTE = False
 DEFAULT_Q = 0.5
 DEFAULT_PAY = 1.0
 DEFAULT_APATHY = 0.0
-DEFAULT_D = 2 # number of rounds in a cycle (D-1 bribes and then one customer round)
+DEFAULT_D = 2  # number of rounds in a cycle (D-1 bribes and then one customer round)
+
+
+class BriberNotSubclassOfTemporalBriberException(Exception):
+    pass
+
 
 class TemporalRatingGraph(RatingGraph, abc.ABC):
 
@@ -23,11 +28,14 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
         from bribery.temporal.briber import TemporalBriber
         if issubclass(bribers.__class__, TemporalBriber):
             bribers = tuple([bribers])
-        assert isinstance(bribers, tuple), "bribers must be a tuple of instances of subclasses of TemporalRatingBriber"
-        assert len(bribers) > 0, "should be at least one briber"
+        if not isinstance(bribers, tuple):
+            raise BribersAreNotTupleException("bribers must be a tuple of instances of subclasses of TemporalBriber")
+        if not bribers:
+            raise NoBriberGivenException("must be at least one briber")
         for b in bribers:
-            assert issubclass(b.__class__, TemporalBriber), "member of bribers tuple not an instance of a subclass " \
-                                                            "of TemporalBriber"
+            if not issubclass(b.__class__, TemporalBriber):
+                raise BriberNotSubclassOfTemporalBriberException(f"{b.__class__.__name__} is not a subclass of "
+                                                                 "TemporalBriber")
         self.__tmp_bribers = bribers
         self.__tmp_kwargs = kwargs
         self._last_bribery_action: Optional[BriberyAction] = None
@@ -79,11 +87,12 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
         """
         Perform assertions that ensure everything is initialised
         """
-        super()._finalise_init()
         from bribery.temporal.briber import TemporalBriber
         for briber in self._bribers:
-            assert issubclass(briber.__class__, TemporalBriber), "member of graph bribers not an instance of a " \
-                                                                 "subclass of TemporalBriber"
+            if not issubclass(briber.__class__, TemporalBriber):
+                raise BriberNotSubclassOfTemporalBriberException("member of graph bribers not an instance of a "
+                                                                 "subclass of TemporalBriber")
+        super()._finalise_init()
 
     def get_time_step(self):
         return self._time_step
