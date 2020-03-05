@@ -132,7 +132,7 @@ class GraphFrame(tk.Frame):
         self.display_graph()
 
     def to_results(self):
-        self.controller.plot_results(self.results
+        self.controller.plot_results(self.results)
         self.results = []
         self.controller.show_frame("ResultsFrame")
 
