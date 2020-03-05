@@ -20,6 +20,7 @@ from networkx import spring_layout
 from bribery.static.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
 from bribery.static.oneMoveRandomBriber import OneMoveRandomBriber
 from graph.static.ratingGraph import StaticRatingGraph
+from graph.generation.algo.compositeGenerator import CompositeGenerator
 
 
 def switch_briber(argument):
@@ -59,7 +60,16 @@ class GUI(tk.Tk):
         briber = switch_briber(btype)()
 
         ba_gen = nk.generators.BarabasiAlbertGenerator(5, 30, 0, True)
-        rg = StaticRatingGraph(briber) if gtype == "ws" else StaticRatingGraph(briber, generator=ba_gen)
+        comp_gen = CompositeGenerator(500, 5, 6, 0.1, 1)
+
+        print(gtype)
+
+        if gtype == "ba":
+            rg = StaticRatingGraph(briber, generator=ba_gen)
+        elif gtype == "cg":
+            rg = StaticRatingGraph(briber, generator=comp_gen)
+        else:
+            rg = StaticRatingGraph(briber)
         self.frames["GraphFrame"].set_graph(rg, briber)
 
     def plot_results(self, results):
@@ -79,8 +89,10 @@ class StartPage(tk.Frame):
 
         rb1 = tk.Radiobutton(self, variable=gtype, value="ws", text="Watts-Strogatz")
         rb2 = tk.Radiobutton(self, variable=gtype, value="ba", text="Barabási–Albert")
+        rb3 = tk.Radiobutton(self, variable=gtype, value="cg", text="Composite Generator")
         rb1.grid(row=0, column=0)
         rb2.grid(row=1, column=0)
+        rb3.grid(row=2, column=0)
 
         rba = tk.Radiobutton(self, variable=btype, value="r", text="Random")
         rbb = tk.Radiobutton(self, variable=btype, value="i", text="Influential")
