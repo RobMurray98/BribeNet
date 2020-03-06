@@ -1,6 +1,10 @@
 import tkinter as tk
+import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.colors import rgb2hex
+from networkit.nxadapter import nk2nx
+from networkx import spring_layout
 from networkit.viztasks import drawGraph
 
 
@@ -21,7 +25,7 @@ class GraphFrame(tk.Frame):
         button4 = tk.Button(self, text="Results", command=lambda: self.to_results())
         button4.grid(row=4, column=2)
 
-        button1 = tk.Button(self, text="Exit", command=lambda: self.controller.show_frame("StartPage"))
+        button1 = tk.Button(self, text="Exit", command=lambda: self.controller.show_frame("WizardFrame"))
         button1.grid(row=7, column=2)
 
         slide = tk.Scale(self, from_=1, to=100, orient=tk.HORIZONTAL)
@@ -189,4 +193,4 @@ class ResultsFrame(tk.Frame):
 
     def exit(self):
         self.results = []
-        self.controller.show_frame("StartPage")
+        self.controller.show_frame("WizardFrame")

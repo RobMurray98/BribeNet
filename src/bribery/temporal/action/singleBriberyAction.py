@@ -44,3 +44,6 @@ class SingleBriberyAction(BriberyAction):
         if node_id in self._bribes:
             return True, [self.briber.get_briber_id()]
         return False, []
+
+    def get_bribes(self):
+        return self._bribes

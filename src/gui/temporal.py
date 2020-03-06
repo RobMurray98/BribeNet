@@ -13,10 +13,16 @@ from graph.generation.flatWeightGenerator import FlatWeightedGraphGenerator
 
 from graph.temporal.action.actionType import ActionType
 
-from gui.frames.temporal.wizard import TemporalWizard
+from gui.frames.temporal.wizard import WizardFrame
 from gui.frames.temporal.graph import ResultsFrame, GraphFrame
 
 from helpers.override import override
+
+
+FRAMES_CLASSES = [WizardFrame,
+                  GraphFrame,
+                  ResultsFrame]
+FRAMES_DICT = {i: c.__class__.__name__ for (i, c) in enumerate(FRAMES_CLASSES)}
 
 
 def switch_briber(argument, u0=10):
@@ -41,14 +47,14 @@ class TemporalGUI(tk.Tk):
 
         # frame for each displayed page
         self.frames = {}
-        for F in [TemporalWizard, GraphFrame, ResultsFrame]:
+        for F in FRAMES_CLASSES:
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
 
             frame.grid(row=0, column=0, sticky="nsew")
 
-        self.show_frame("TemporalWizard")
+        self.show_frame("WizardFrame")
         self.bribers = []
         self.results = []
 
@@ -61,7 +67,7 @@ class TemporalGUI(tk.Tk):
 
     def add_graph(self, gtype, args, params):
 
-        if self.bribers == []:
+        if not self.bribers:
             raise RuntimeError("No Bribers added to graph")  # TODO replace with better error
 
         gen = FlatWeightedGraphGenerator(
@@ -85,7 +91,7 @@ class TemporalGUI(tk.Tk):
         self.results.append([self.g.eval_graph(briber_id=b) for b in range(0, len(self.bribers))])
 
         for i in range(0, 10):
-            print(f"{i}: -->{self.g.get_vote(i)}")
+            print(f"{i}: --> {self.g.get_vote(i)}")
 
         self.frames["GraphFrame"].add_briber_buttons(self.bribers)
         self.frames["GraphFrame"].draw_graph(self.g)
@@ -103,9 +109,9 @@ class TemporalGUI(tk.Tk):
         if self.g.get_time_step() % self.g.get_d() == self.g.get_d() - 1:
 
             info = "BRIBES\n"
-            for brbr, brb in self.g.get_last_bribery_action().bribes.items():
-                for c, n in brb.items():
-                    info += f"Briber {brbr + 1}: {c} --> {n}\n"
+            for bribers, bribe in self.g.get_last_bribery_action().get_bribes().items():
+                for c, n in bribe.items():
+                    info += f"Briber {bribers + 1}: {c} --> {n}\n"
         else:
             info = "CUSTOMERS\n"
             for c, a in self.g.get_last_customer_action().actions.items():

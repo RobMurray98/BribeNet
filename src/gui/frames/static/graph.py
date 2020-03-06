@@ -20,7 +20,7 @@ class GraphFrame(tk.Frame):
         self.canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
         self.results = []
 
-        button1 = tk.Button(self, text="Exit", command=lambda: self.controller.show_frame("StartPage"))
+        button1 = tk.Button(self, text="Exit", command=lambda: self.controller.show_frame("WizardFrame"))
         button1.pack()
 
         button2 = tk.Button(self, text="Show Influential Nodes", command=lambda: self.show_influential())
@@ -49,7 +49,7 @@ class GraphFrame(tk.Frame):
         self.results = []
         self.controller.show_frame("ResultsFrame")
 
-    def display_graph(self, last=-1):
+    def display_graph(self, last=None):
 
         cmap = plt.get_cmap("Purples")
         colors = []
@@ -76,7 +76,7 @@ class GraphFrame(tk.Frame):
                 xy=(self.pos[c][0], self.pos[c][1]),
                 bbox=dict(boxstyle="round", fc="w", ec="0.5", alpha=0.9)
             )
-        if last >= 0:
+        if last is not None:
             self.ax.add_artist(plt.Circle(
                 (self.pos[last][0], self.pos[last][1]), 0.1,
                 color="r",
@@ -85,7 +85,7 @@ class GraphFrame(tk.Frame):
             ))
         self.canvas.draw()
         avp = str(round(self.graph.eval_graph(), 2))
-        if last < 0:
+        if last is not None:
             self.txt.set("Average P-Rating: " + avp + " \nLast Bribed: --")
         else:
             self.txt.set("Average P-Rating: " + avp + " \nLast Bribed: " + str(last))

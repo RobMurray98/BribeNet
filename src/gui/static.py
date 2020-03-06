@@ -36,7 +36,7 @@ class StaticGUI(tk.Tk):
         self.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        for F in [WizardFrame, GraphFrame, ResultsFrame]:
+        for F in FRAMES_CLASSES:
             page_name = F.__name__
             frame = F(parent=self, controller=self)
             self.frames[page_name] = frame

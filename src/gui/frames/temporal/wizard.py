@@ -1,7 +1,7 @@
 import tkinter as tk
 
 
-class TemporalWizard(tk.Frame):
+class WizardFrame(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
@@ -73,10 +73,9 @@ class TemporalWizard(tk.Frame):
             tk.Label(self, text="Apathy"),
         ]
         for i, a in enumerate(graph_lbls):
-            a.grid(row=(i+9), column=0)
+            a.grid(row=(i + 9), column=0)
         for i, a in enumerate(self.graph_params):
-            tk.Entry(self, textvariable=a).grid(row=(i+9), column=1)
-
+            tk.Entry(self, textvariable=a).grid(row=(i + 9), column=1)
 
         b = tk.Button(self, text="Graph + Test", command=lambda: self.on_button(gtype.get()))
         b.grid(row=8, column=5)

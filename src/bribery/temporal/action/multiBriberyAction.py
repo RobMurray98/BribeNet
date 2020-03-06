@@ -82,3 +82,6 @@ class MultiBriberyAction(BriberyAction):
         if not bribers:
             return False, bribers
         return True, bribers
+
+    def get_bribes(self):
+        return self._bribes
