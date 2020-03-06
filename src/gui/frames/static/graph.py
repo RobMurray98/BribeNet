@@ -1,114 +1,15 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Nov 19 20:36:51 2019
-@author: callum
-"""
-
 import tkinter as tk
-
 import matplotlib.pyplot as plt
-import networkit as nk
-import numpy as np
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from networkx import spring_layout
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.colors import rgb2hex
 from networkit.nxadapter import nk2nx
 from networkit.viztasks import drawGraph
 from networkx import spring_layout
-
-# Import Bribing Agents
-from bribery.static.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
-from bribery.static.oneMoveRandomBriber import OneMoveRandomBriber
-from graph.static.ratingGraph import StaticRatingGraph
-from graph.generation.algo.compositeGenerator import CompositeGenerator
+import numpy as np
 
 
-def switch_briber(argument):
-    switcher = {
-        "r": lambda: OneMoveRandomBriber(10),
-        "i": lambda: OneMoveInfluentialNodeBriber(10)
-    }
-    return switcher.get(argument)
-
-
-# outer layer of application
-# links start page with graph page
-class GUI(tk.Tk):
-    def __init__(self, *args, **kwargs):
-        tk.Tk.__init__(self, *args, **kwargs)
-
-        container = tk.Frame(self)
-        container.pack(side="top", fill="both", expand=True)
-        container.grid_rowconfigure(0, weight=1)
-        container.grid_columnconfigure(0, weight=1)
-
-        self.frames = {}
-        for F in [StartPage, GraphFrame, ResultsFrame]:
-            page_name = F.__name__
-            frame = F(parent=container, controller=self)
-            self.frames[page_name] = frame
-
-            frame.grid(row=0, column=0, sticky="nsew")
-
-        self.show_frame("StartPage")
-
-    def show_frame(self, page):
-        frame = self.frames[page]
-        frame.tkraise()
-
-    def generate_graph(self, gtype, btype):
-        briber = switch_briber(btype)()
-
-        ba_gen = nk.generators.BarabasiAlbertGenerator(5, 30, 0, True)
-        comp_gen = CompositeGenerator(50, 5, 2, 0.1, 3, 0.05)
-
-        print(gtype)
-
-        if gtype == "ba":
-            rg = StaticRatingGraph(briber, generator=ba_gen)
-        elif gtype == "cg":
-            rg = StaticRatingGraph(briber, generator=comp_gen)
-        else:
-            rg = StaticRatingGraph(briber)
-        self.frames["GraphFrame"].set_graph(rg, briber)
-
-    def plot_results(self, results):
-        self.frames["ResultsFrame"].plot_results(results)
-
-
-# page for selection of graph and bribery method
-class StartPage(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        self.controller = controller
-
-        gtype = tk.StringVar()
-        gtype.set("L")
-        btype = tk.StringVar()
-        btype.set("L")
-
-        rb1 = tk.Radiobutton(self, variable=gtype, value="ws", text="Watts-Strogatz")
-        rb2 = tk.Radiobutton(self, variable=gtype, value="ba", text="Barabási–Albert")
-        rb3 = tk.Radiobutton(self, variable=gtype, value="cg", text="Composite Generator")
-        rb1.grid(row=0, column=0)
-        rb2.grid(row=1, column=0)
-        rb3.grid(row=2, column=0)
-
-        rba = tk.Radiobutton(self, variable=btype, value="r", text="Random")
-        rbb = tk.Radiobutton(self, variable=btype, value="i", text="Influential")
-        rba.grid(row=0, column=1)
-        rbb.grid(row=1, column=1)
-
-        b = tk.Button(self, text="Graph + Test", command=lambda: self.on_button(gtype.get(), btype.get()))
-        b.grid(row=1, column=2)
-
-    def on_button(self, gtype, btype):
-
-        self.controller.generate_graph(gtype, btype)
-        self.controller.show_frame("GraphFrame")
-
-
-# page for displaying and running graph
 class GraphFrame(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -225,32 +126,3 @@ class GraphFrame(tk.Frame):
             )
         drawGraph(self.graph.graph(), node_size=500, node_color=colors, ax=self.ax, pos=self.pos)
         self.canvas.draw()
-
-
-class ResultsFrame(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        self.controller = controller
-        self.fig = plt.figure(figsize=(8, 8))
-        self.ax = self.fig.add_subplot(111)
-        self.canvas = FigureCanvasTkAgg(self.fig, master=self)
-        self.canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
-        button1 = tk.Button(self, text="Exit", command=lambda: self.exit())
-        button1.pack()
-
-    def plot_results(self, results):
-        xs = [i for i in range(0, len(results))]
-        self.ax.clear()
-        self.ax.plot(xs, results)
-        self.ax.set_xlabel("Moves over time")
-        self.ax.set_ylabel("Average P-rating")
-        self.canvas.draw()
-
-    def exit(self):
-        self.results = []
-        self.controller.show_frame("StartPage")
-
-
-if __name__ == '__main__':
-    app = GUI()
-    app.mainloop()
