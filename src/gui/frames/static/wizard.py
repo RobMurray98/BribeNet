@@ -6,9 +6,9 @@ class WizardFrame(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
-        gtype = tk.StringVar()
+        gtype = tk.StringVar(parent)
         gtype.set("L")
-        btype = tk.StringVar()
+        btype = tk.StringVar(parent)
         btype.set("L")
 
         rb1 = tk.Radiobutton(self, variable=gtype, value="ws", text="Watts-Strogatz")

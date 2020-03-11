@@ -6,9 +6,9 @@ class WizardFrame(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
-        gtype = tk.StringVar()
+        gtype = tk.StringVar(parent)
         gtype.set("L")
-        btype = tk.StringVar()
+        btype = tk.StringVar(parent)
         btype.set("L")
 
         tk.Label(self, text="SELECT GRAPH GENERATOR\n------").grid(row=0, column=0)
@@ -39,19 +39,19 @@ class WizardFrame(tk.Frame):
         for i, a in enumerate(self.arg2_vars):
             tk.Entry(self, textvariable=a).grid(row=6, column=i)
 
-        self.bribers_txt = tk.StringVar(value="")
+        self.bribers_txt = tk.StringVar(parent, value="")
         tk.Label(self, text="BRIBERS\n------").grid(row=12, column=4)
         tk.Label(self, textvariable=self.bribers_txt).grid(row=13, column=4)
 
         briber_ns = ["random", "influential", "non"]
-        briber_var = tk.StringVar(value="random")
+        briber_var = tk.StringVar(parent, value="random")
 
         tk.Label(self, text="SELECT BRIBERS\n------").grid(row=0, column=4)
 
         briber_menu = tk.OptionMenu(self, briber_var, *briber_ns)
         briber_menu.grid(row=1, column=4)
 
-        u0_var = tk.DoubleVar(value=10)
+        u0_var = tk.DoubleVar(parent, value=10)
         tk.Label(self, text="u0 (starting money)").grid(row=3, column=3)
         tk.Entry(self, textvariable=u0_var).grid(row=3, column=4)
 
@@ -89,7 +89,7 @@ class WizardFrame(tk.Frame):
     def on_button(self, gtype):
         # check some bribers on graph
         if self.bribers_txt.get() == "":
-            tk.messagebox.showerror(messgae="Graph needs one or more bribers")
+            tk.messagebox.showerror(message="Graph needs one or more bribers")
             return
 
         args = []
@@ -97,6 +97,8 @@ class WizardFrame(tk.Frame):
             args = [x.get() for x in self.arg1_vars]
         elif gtype == "ba":
             args = [x.get() for x in self.arg2_vars]
+        print(gtype)
+        print(args)
 
         params = [x.get() for x in self.graph_params]
 
