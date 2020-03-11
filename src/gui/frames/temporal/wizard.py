@@ -39,6 +39,23 @@ class WizardFrame(tk.Frame):
         for i, a in enumerate(self.arg2_vars):
             tk.Entry(self, textvariable=a).grid(row=6, column=i)
 
+        rb3 = tk.Radiobutton(self, variable=gtype, value="cg", text="Composite Generator")
+        self.arg3_vars = [tk.IntVar(value=50), tk.IntVar(value=5), tk.IntVar(value=2), tk.DoubleVar(value=0.1),
+                          tk.IntVar(value=3), tk.DoubleVar(value=0.05)]
+        arg3_lbls = [
+            tk.Label(self, text="n_nodes"),
+            tk.Label(self, text="community_count"),
+            tk.Label(self, text="small_world_neighbours"),
+            tk.Label(self, text="rewiring_prob"),
+            tk.Label(self, text="scale_free_k"),
+            tk.Label(self, text="probability_reduce"),
+        ]
+        rb3.grid(row=7, column=0)
+        for i, a in enumerate(arg3_lbls):
+            a.grid(row=8, column=i)
+        for i, a in enumerate(self.arg3_vars):
+            tk.Entry(self, textvariable=a).grid(row=9, column=i)
+
         self.bribers_txt = tk.StringVar(parent, value="")
         tk.Label(self, text="BRIBERS\n------").grid(row=12, column=4)
         tk.Label(self, textvariable=self.bribers_txt).grid(row=13, column=4)
@@ -58,7 +75,7 @@ class WizardFrame(tk.Frame):
         add_briber = tk.Button(self, text="add", command=lambda: self.add_briber(briber_var.get(), u0_var.get()))
         add_briber.grid(row=5, column=4)
 
-        tk.Label(self, text="MODEL PARAMETERS\n------").grid(row=8, column=0)
+        tk.Label(self, text="MODEL PARAMETERS\n------").grid(row=10, column=0)
 
         self.graph_params = [
             tk.DoubleVar(value=0.5),
@@ -73,12 +90,12 @@ class WizardFrame(tk.Frame):
             tk.Label(self, text="Apathy"),
         ]
         for i, a in enumerate(graph_lbls):
-            a.grid(row=(i + 9), column=0)
+            a.grid(row=(i + 11), column=0)
         for i, a in enumerate(self.graph_params):
-            tk.Entry(self, textvariable=a).grid(row=(i + 9), column=1)
+            tk.Entry(self, textvariable=a).grid(row=(i + 11), column=1)
 
         b = tk.Button(self, text="Graph + Test", command=lambda: self.on_button(gtype.get()))
-        b.grid(row=8, column=5)
+        b.grid(row=11, column=5)
 
     def add_briber(self, b_type, u0):
         self.controller.add_briber(b_type, u0)
@@ -97,6 +114,8 @@ class WizardFrame(tk.Frame):
             args = [x.get() for x in self.arg1_vars]
         elif gtype == "ba":
             args = [x.get() for x in self.arg2_vars]
+        elif gtype == "cg":
+            args = [x.get() for x in self.arg3_vars]
         print(gtype)
         print(args)
 

@@ -70,13 +70,19 @@ class TemporalGUI(tk.Tk):
         if not self.bribers:
             raise RuntimeError("No Bribers added to graph")  # TODO replace with better error
 
-        gen = FlatWeightedGraphGenerator(
-            GraphGeneratorAlgo.WATTS_STROGATZ,
-            args[0], args[1], args[2]
-        ) if gtype == "ws" else FlatWeightedGraphGenerator(
+        if gtype == "ba":
+            gen = FlatWeightedGraphGenerator(
             GraphGeneratorAlgo.BARABASI_ALBERT,
-            args[0], args[1], args[2]
-        )
+            args[0], args[1], args[2])
+        elif gtype == "cg":
+            gen = FlatWeightedGraphGenerator(
+                GraphGeneratorAlgo.COMPOSITE,
+                args[0], args[1], args[2], args[3], args[4], args[5])
+        else:
+            gen = FlatWeightedGraphGenerator(
+                GraphGeneratorAlgo.WATTS_STROGATZ,
+                args[0], args[1], args[2])
+
 
         self.g = ThresholdGraph(
             tuple(self.bribers),
