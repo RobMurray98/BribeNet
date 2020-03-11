@@ -14,7 +14,7 @@ class WizardFrame(tk.Frame):
         tk.Label(self, text="SELECT GRAPH GENERATOR\n------").grid(row=0, column=0)
 
         rb1 = tk.Radiobutton(self, variable=gtype, value="ws", text="Watts-Strogatz")
-        self.arg1_vars = [tk.IntVar(value=30), tk.IntVar(value=5), tk.DoubleVar(value=0.3)]
+        self.arg1_vars = [tk.IntVar(parent, value=30), tk.IntVar(parent, value=5), tk.DoubleVar(parent, value=0.3)]
         arg1_lbls = [
             tk.Label(self, text="n_nodes"),
             tk.Label(self, text="n_neighbours"),
@@ -27,7 +27,7 @@ class WizardFrame(tk.Frame):
             tk.Entry(self, textvariable=a).grid(row=3, column=i)
 
         rb2 = tk.Radiobutton(self, variable=gtype, value="ba", text="Barabási–Albert")
-        self.arg2_vars = [tk.IntVar(value=5), tk.IntVar(value=30), tk.IntVar(value=0)]
+        self.arg2_vars = [tk.IntVar(parent, value=5), tk.IntVar(parent, value=30), tk.IntVar(parent, value=0)]
         arg2_lbls = [
             tk.Label(self, text="k"),
             tk.Label(self, text="n_max"),
@@ -40,8 +40,8 @@ class WizardFrame(tk.Frame):
             tk.Entry(self, textvariable=a).grid(row=6, column=i)
 
         rb3 = tk.Radiobutton(self, variable=gtype, value="cg", text="Composite Generator")
-        self.arg3_vars = [tk.IntVar(value=50), tk.IntVar(value=5), tk.IntVar(value=2), tk.DoubleVar(value=0.1),
-                          tk.IntVar(value=3), tk.DoubleVar(value=0.05)]
+        self.arg3_vars = [tk.IntVar(parent, value=50), tk.IntVar(parent, value=5), tk.IntVar(parent, value=2),
+                          tk.DoubleVar(parent, value=0.1), tk.IntVar(parent, value=3), tk.DoubleVar(parent, value=0.05)]
         arg3_lbls = [
             tk.Label(self, text="n_nodes"),
             tk.Label(self, text="community_count"),
@@ -78,10 +78,10 @@ class WizardFrame(tk.Frame):
         tk.Label(self, text="MODEL PARAMETERS\n------").grid(row=10, column=0)
 
         self.graph_params = [
-            tk.DoubleVar(value=0.5),
-            tk.IntVar(value=2),
-            tk.DoubleVar(value=0.5),
-            tk.DoubleVar(value=0.0)
+            tk.DoubleVar(parent, value=0.5),
+            tk.IntVar(parent, value=2),
+            tk.DoubleVar(parent, value=0.5),
+            tk.DoubleVar(parent, value=0.0)
         ]
         graph_lbls = [
             tk.Label(self, text="Threshold"),
