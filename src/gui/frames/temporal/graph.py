@@ -13,6 +13,7 @@ class GraphFrame(tk.Frame):
 
         tk.Frame.__init__(self, parent)
         self.controller = controller
+        self.parent = parent
         self.fig = plt.figure(figsize=(8, 8))
         self.ax = self.fig.add_subplot(111)
         self.canvas = FigureCanvasTkAgg(self.fig, master=self)
@@ -58,9 +59,11 @@ class GraphFrame(tk.Frame):
         none_bt = tk.Button(self, text="none", command=lambda: self.draw_graph(self.controller.g, trust=1))
         none_bt.grid(row=3, column=1)
 
+        print(self.controller)
+
         for i, c in enumerate(self.controller.bribers):
 
-            bribe_bt = tk.Button(self, text=str(i+1), command=lambda i=i: self.draw_graph(self.controller.g, briber=i,
+            bribe_bt = tk.Button(self, text=self.controller.briber_names[i], command=lambda i=i: self.draw_graph(self.controller.g, briber=i,
                                                                                           trust=1))
             bribe_bt.grid(row=(i+4), column=1)
 

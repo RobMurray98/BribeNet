@@ -57,6 +57,7 @@ class TemporalGUI(tk.Tk):
         self.show_frame("WizardFrame")
         self.bribers = []
         self.results = []
+        self.briber_names = []
 
     def show_frame(self, page):
         frame = self.frames[page]
@@ -64,6 +65,7 @@ class TemporalGUI(tk.Tk):
 
     def add_briber(self, b, u0):
         self.bribers.append(switch_briber(b, u0=u0))
+        self.briber_names.append(f"{b}: u0={u0}")
 
     def add_graph(self, gtype, args, params):
 
