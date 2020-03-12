@@ -65,7 +65,7 @@ class TemporalGUI(tk.Tk):
 
     def add_briber(self, b, u0):
         self.bribers.append(switch_briber(b, u0=u0))
-        self.briber_names.append(f"{b}: u0={u0}")
+        self.briber_names.append(f"Briber{len(self.bribers)}: {b}: u0={u0}")
 
     def add_graph(self, gtype, args, params):
 
