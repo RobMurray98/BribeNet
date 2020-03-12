@@ -33,7 +33,7 @@ class GraphFrame(tk.Frame):
         button5 = tk.Button(self, text="Perform n steps", command=lambda: self.n_steps(slide.get()))
         button5.grid(row=5, column=2)
 
-        self.info = tk.StringVar()
+        self.info = tk.StringVar(parent)
         lbl = tk.Label(self, textvariable=self.info)
         lbl.grid(row=1, column=1, columnspan=2)
         self.info.set("--")
@@ -50,17 +50,18 @@ class GraphFrame(tk.Frame):
 
     def add_briber_buttons(self, bribers):
 
-        view_txt = tk.StringVar()
+        view_txt = tk.StringVar(self)
         lbl = tk.Label(self, textvariable=view_txt)
         lbl.grid(row=2, column=1)
         view_txt.set("View rating for briber")
 
-        none_bt = tk.Button(self, text="none", command=lambda: self.draw_graph(self.controller.g))
+        none_bt = tk.Button(self, text="none", command=lambda: self.draw_graph(self.controller.g, trust=1))
         none_bt.grid(row=3, column=1)
 
         for i, c in enumerate(self.controller.bribers):
 
-            bribe_bt = tk.Button(self, text=str(i+1), command=lambda i=i: self.draw_graph(self.controller.g, briber=i))
+            bribe_bt = tk.Button(self, text=str(i+1), command=lambda i=i: self.draw_graph(self.controller.g, briber=i,
+                                                                                          trust=1))
             bribe_bt.grid(row=(i+4), column=1)
 
 
@@ -74,7 +75,7 @@ class GraphFrame(tk.Frame):
         if "briber" in kwargs:
             b = kwargs["briber"]
 
-            # set clolours for nodes
+            # set colours for nodes
             cmap = plt.get_cmap("Purples")
             colors = []
             for c in graph.get_customers():
@@ -193,4 +194,5 @@ class ResultsFrame(tk.Frame):
 
     def exit(self):
         self.results = []
-        self.controller.show_frame("WizardFrame")
+        self.controller.show_frame("GraphFrame")
+

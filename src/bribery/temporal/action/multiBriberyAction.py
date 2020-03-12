@@ -31,7 +31,7 @@ class MultiBriberyAction(BriberyAction):
         if bribes is not None:
             for _, bribe in bribes.items():
                 for _, value in bribe.items():
-                    if value <= 0:
+                    if value < 0:
                         raise BribeMustBeGreaterThanZeroException()
         self._bribes: Dict[int, Dict[int, float]] = bribes or {}
 

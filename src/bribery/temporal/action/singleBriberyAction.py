@@ -17,14 +17,14 @@ class SingleBriberyAction(BriberyAction):
         super().__init__(graph=briber.get_graph())
         if bribes is not None:
             for _, bribe in bribes.items():
-                if bribe <= 0:
+                if bribe < 0:
                     raise BribeMustBeGreaterThanZeroException()
         self.briber = briber
         self._bribes: Dict[int, float] = bribes or {}
         self.__time = self.briber.get_graph().get_time_step()
 
     def add_bribe(self, node_id: int, bribe: float):
-        if bribe <= 0:
+        if bribe < 0:
             raise BribeMustBeGreaterThanZeroException()
         if node_id not in self.briber.get_graph().get_customers():
             raise NodeDoesNotExistException()
