@@ -60,7 +60,7 @@ class WizardFrame(tk.Frame):
         tk.Label(self, text="BRIBERS\n------").grid(row=12, column=4)
         tk.Label(self, textvariable=self.bribers_txt).grid(row=13, column=4)
 
-        briber_ns = ["random", "influential", "non"]
+        briber_ns = ["random", "influential", "non", "even"]
         briber_var = tk.StringVar(parent, value="random")
 
         tk.Label(self, text="SELECT BRIBERS\n------").grid(row=0, column=4)

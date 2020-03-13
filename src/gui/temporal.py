@@ -5,6 +5,7 @@ from networkx import spring_layout
 
 from bribery.temporal.mostInfluentialNodeBriber import MostInfluentialNodeBriber
 from bribery.temporal.oneMoveRandomBriber import OneMoveRandomBriber
+from bribery.temporal.oneMoveEvenBriber import OneMoveEvenBriber
 from bribery.temporal.nonBriber import NonBriber
 from graph.temporal.thresholdGraph import ThresholdGraph
 
@@ -29,7 +30,8 @@ def switch_briber(argument, u0=10):
     switcher = {
         "random": OneMoveRandomBriber(u0),
         "influential": MostInfluentialNodeBriber(u0),
-        "non": NonBriber(u0)
+        "non": NonBriber(u0),
+        "even": OneMoveEvenBriber(u0)
     }
     return switcher.get(argument)
 
