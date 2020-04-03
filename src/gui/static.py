@@ -4,6 +4,8 @@ import networkit as nk
 
 from bribery.static.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
 from bribery.static.oneMoveRandomBriber import OneMoveRandomBriber
+from graph.generation import GraphGeneratorAlgo
+from graph.generation.flatWeightGenerator import FlatWeightedGraphGenerator
 from graph.static.ratingGraph import StaticRatingGraph
 from graph.generation.algo.compositeGenerator import CompositeGenerator
 
@@ -29,6 +31,10 @@ def switch_briber(argument):
 
 
 class StaticGUI(tk.Tk):
+    """
+    Window for the static wizard and running environment
+    """
+
     def __init__(self, controller, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
         self.controller = controller
@@ -52,8 +58,8 @@ class StaticGUI(tk.Tk):
     def generate_graph(self, gtype, btype):
         briber = switch_briber(btype)()
 
-        ba_gen = nk.generators.BarabasiAlbertGenerator(5, 30, 0, True)
-        comp_gen = CompositeGenerator(50, 5, 2, 0.1, 3, 0.05)
+        ba_gen = FlatWeightedGraphGenerator(GraphGeneratorAlgo.BARABASI_ALBERT, 5, 30, 0, True)
+        comp_gen = FlatWeightedGraphGenerator(GraphGeneratorAlgo.COMPOSITE, 50, 5, 2, 0.1, 3, 0.05)
 
         print(gtype)
 

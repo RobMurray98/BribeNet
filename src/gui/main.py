@@ -6,11 +6,16 @@ from helpers.override import override
 
 
 class GUI(tk.Tk):
+    """
+    Main menu window for the GUI
+    Self-withdraws when model wizard opened, and deiconifies when wizard closed
+    """
 
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
         self.main_frame = Main(self)
-        self.main_frame.pack()
+        self.main_frame.pack(anchor=tk.CENTER, expand=tk.YES)
+        self.minsize(400, 400)
         self.static_gui = None
         self.temporal_gui = None
 

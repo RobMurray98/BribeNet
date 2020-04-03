@@ -1,16 +1,14 @@
 import tkinter as tk
+
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
 class ResultsFrame(tk.Frame):
-    """
-    Frame for showing the current results of the static model being run
-    """
-
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
+        self.parent = parent
         self.fig = plt.figure(figsize=(8, 8))
         self.ax = self.fig.add_subplot(111)
         self.canvas = FigureCanvasTkAgg(self.fig, master=self)
@@ -21,11 +19,17 @@ class ResultsFrame(tk.Frame):
     def plot_results(self, results):
         xs = [i for i in range(0, len(results))]
         self.ax.clear()
-        self.ax.plot(xs, results)
+        # for each briber
+        for b in range(0, len(results[0])):
+            ys = [r[b] for r in results]
+            self.ax.plot(xs, ys, label=self.controller.briber_names[b])
+
         self.ax.set_xlabel("Moves over time")
         self.ax.set_ylabel("Average P-rating")
+        self.ax.legend()
         self.canvas.draw()
 
     def exit(self):
         self.results = []
-        self.controller.show_frame("WizardFrame")
+        self.controller.show_frame("GraphFrame")
+

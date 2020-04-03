@@ -13,16 +13,17 @@ from graph.generation import GraphGeneratorAlgo
 from graph.generation.flatWeightGenerator import FlatWeightedGraphGenerator
 
 from graph.temporal.action.actionType import ActionType
+from gui.frames.temporal.result import ResultsFrame
 
 from gui.frames.temporal.wizard import WizardFrame
-from gui.frames.temporal.graph import ResultsFrame, GraphFrame
+from gui.frames.temporal.graph import GraphFrame
 
 from helpers.override import override
-
 
 FRAMES_CLASSES = [WizardFrame,
                   GraphFrame,
                   ResultsFrame]
+
 FRAMES_DICT = {i: c.__class__.__name__ for (i, c) in enumerate(FRAMES_CLASSES)}
 
 
@@ -37,6 +38,10 @@ def switch_briber(argument, u0=10):
 
 
 class TemporalGUI(tk.Tk):
+    """
+    Window for the temporal wizard and running environment
+    """
+
     def __init__(self, controller, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
         self.controller = controller
@@ -60,6 +65,7 @@ class TemporalGUI(tk.Tk):
         self.bribers = []
         self.results = []
         self.briber_names = []
+        self.g = None
 
     def show_frame(self, page):
         frame = self.frames[page]
@@ -70,14 +76,13 @@ class TemporalGUI(tk.Tk):
         self.briber_names.append(f"Briber{len(self.bribers)}: {b}: u0={u0}")
 
     def add_graph(self, gtype, args, params):
-
         if not self.bribers:
             raise RuntimeError("No Bribers added to graph")  # TODO replace with better error
 
         if gtype == "ba":
             gen = FlatWeightedGraphGenerator(
-            GraphGeneratorAlgo.BARABASI_ALBERT,
-            args[0], args[1], args[2])
+                GraphGeneratorAlgo.BARABASI_ALBERT,
+                args[0], args[1], args[2])
         elif gtype == "cg":
             gen = FlatWeightedGraphGenerator(
                 GraphGeneratorAlgo.COMPOSITE,
@@ -86,7 +91,6 @@ class TemporalGUI(tk.Tk):
             gen = FlatWeightedGraphGenerator(
                 GraphGeneratorAlgo.WATTS_STROGATZ,
                 args[0], args[1], args[2])
-
 
         self.g = ThresholdGraph(
             tuple(self.bribers),
@@ -115,9 +119,7 @@ class TemporalGUI(tk.Tk):
         self.g.step()
         self.results.append([self.g.eval_graph(briber_id=b) for b in range(0, len(self.bribers))])
 
-        info = ""
         if self.g.get_time_step() % self.g.get_d() == self.g.get_d() - 1:
-
             info = "BRIBES\n"
             for bribers, bribe in self.g.get_last_bribery_action().get_bribes().items():
                 for c, n in bribe.items():

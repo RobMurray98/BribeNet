@@ -11,6 +11,10 @@ import numpy as np
 
 
 class GraphFrame(tk.Frame):
+    """
+    Frame for showing the current state and actions that can be taken for the static model being run
+    """
+
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller

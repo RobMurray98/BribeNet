@@ -1,7 +1,9 @@
-from networkit.generators import BarabasiAlbertGenerator, WattsStrogatzGenerator
-from random import gauss, sample, random
 from math import floor
+from random import gauss, sample, random
+
+# noinspection PyUnresolvedReferences
 from networkit import Graph
+from networkit.generators import BarabasiAlbertGenerator, WattsStrogatzGenerator
 
 
 class CompositeGenerator(object):
