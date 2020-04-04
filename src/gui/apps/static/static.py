@@ -9,9 +9,9 @@ from graph.generation.flatWeightGenerator import FlatWeightedGraphGenerator
 from graph.static.ratingGraph import StaticRatingGraph
 from graph.generation.algo.compositeGenerator import CompositeGenerator
 
-from gui.frames.static.wizard import WizardFrame
-from gui.frames.static.graph import GraphFrame
-from gui.frames.static.result import ResultsFrame
+from gui.apps.static.wizard.wizard import WizardFrame
+from gui.apps.static.graph import GraphFrame
+from gui.apps.static.result import ResultsFrame
 
 from helpers.override import override
 

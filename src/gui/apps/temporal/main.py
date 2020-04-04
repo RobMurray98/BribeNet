@@ -13,16 +13,14 @@ from graph.generation import GraphGeneratorAlgo
 from graph.generation.flatWeightGenerator import FlatWeightedGraphGenerator
 
 from graph.temporal.action.actionType import ActionType
-from gui.frames.temporal.result import ResultsFrame
+from gui.apps.temporal.result import ResultsFrame
 
-from gui.frames.temporal.wizard import WizardFrame
-from gui.frames.temporal.graph import GraphFrame
+from gui.apps.temporal.wizard.wizard import WizardFrame
+from gui.apps.temporal.graph import GraphFrame
 
 from helpers.override import override
 
-FRAMES_CLASSES = [WizardFrame,
-                  GraphFrame,
-                  ResultsFrame]
+FRAMES_CLASSES = (WizardFrame, GraphFrame, ResultsFrame)
 
 FRAMES_DICT = {i: c.__class__.__name__ for (i, c) in enumerate(FRAMES_CLASSES)}
 
@@ -61,7 +59,7 @@ class TemporalGUI(tk.Tk):
 
             frame.grid(row=0, column=0, sticky="nsew")
 
-        self.show_frame("WizardFrame")
+        self.show_frame(WizardFrame.__name__)
         self.bribers = []
         self.results = []
         self.briber_names = []

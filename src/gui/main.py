@@ -1,7 +1,7 @@
 import tkinter as tk
-from gui.static import StaticGUI
-from gui.temporal import TemporalGUI
-from gui.frames.main import Main
+from gui.apps.static.static import StaticGUI
+from gui.apps.temporal.main import TemporalGUI
+from gui.apps.main import Main
 from helpers.override import override
 
 
