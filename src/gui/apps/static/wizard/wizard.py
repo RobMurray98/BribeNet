@@ -33,4 +33,4 @@ class WizardFrame(tk.Frame):
     def on_button(self, gtype, btype):
 
         self.controller.generate_graph(gtype, btype)
-        self.controller.show_frame("GraphFrame")
+        self.controller.show_subframe("GraphFrame")

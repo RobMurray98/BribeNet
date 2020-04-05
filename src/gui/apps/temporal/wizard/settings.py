@@ -20,4 +20,8 @@ class TemporalSettings(tk.Frame):
         for i, a in enumerate(graph_lbls):
             a.grid(row=(i + 11), column=0)
         for i, a in enumerate(self.graph_params):
-            tk.Entry(self, textvariable=a).grid(row=(i + 11), column=1)
+            entry = tk.Entry(self, textvariable=a)
+            entry.grid(row=(i + 11), column=1)
+
+    def get_graph_params(self):
+        return [x.get() for x in self.graph_params]

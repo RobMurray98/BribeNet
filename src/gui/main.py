@@ -14,7 +14,9 @@ class GUI(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
         self.main_frame = Main(self)
-        self.main_frame.pack(anchor=tk.CENTER, expand=tk.YES)
+        self.main_frame.grid(row=1, column=1)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_columnconfigure(1, weight=1)
         self.minsize(400, 400)
         self.static_gui = None
         self.temporal_gui = None

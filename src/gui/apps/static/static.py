@@ -44,7 +44,7 @@ class StaticGUI(tk.Tk):
         self.frames = {}
         for F in FRAMES_CLASSES:
             page_name = F.__name__
-            frame = F(parent=self, controller=self)
+            frame = F(parent=self, controller=controller)
             self.frames[page_name] = frame
 
             frame.grid(row=0, column=0, sticky="nsew")

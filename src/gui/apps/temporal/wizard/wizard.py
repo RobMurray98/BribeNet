@@ -15,6 +15,7 @@ class WizardFrame(tk.Frame):
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
+        self.parent = parent
         self.controller = controller
 
         self.subframes = {}
@@ -28,8 +29,8 @@ class WizardFrame(tk.Frame):
         self.subframes[TemporalBribers.__name__].grid(row=0, column=1, sticky="nsew")
         self.subframes[TemporalGeneration.__name__].grid(row=1, column=0, sticky="nsew")
 
-        b = tk.Button(self, text="Graph + Test", command=lambda: self.on_button())
-        b.grid(row=1, column=1)
+        run_button = tk.Button(self, text="Run", command=lambda: self.on_button())
+        run_button.grid(row=1, column=1)
 
     def add_briber(self, b_type, u0):
         self.controller.add_briber(b_type, u0)
@@ -38,23 +39,14 @@ class WizardFrame(tk.Frame):
         self.subframes[TemporalBribers.__name__].bribers_txt.set(txt)
 
     def on_button(self):
-        gtype = self.subframes[TemporalGeneration.__name__].gtype.get()
+        gtype = self.subframes[TemporalGeneration.__name__].get_graph_type()
+        args = self.subframes[TemporalGeneration.__name__].get_args()
         # check some bribers on graph
         if self.subframes[TemporalBribers.__name__].bribers_txt.get() == "":
             tk.messagebox.showerror(message="Graph needs one or more bribers")
             return
 
-        args = []
-        if gtype == "ws":
-            args = [x.get() for x in self.subframes[TemporalGeneration.__name__].arg1_vars]
-        elif gtype == "ba":
-            args = [x.get() for x in self.subframes[TemporalGeneration.__name__].arg2_vars]
-        elif gtype == "cg":
-            args = [x.get() for x in self.subframes[TemporalGeneration.__name__].arg3_vars]
-        print(gtype)
-        print(args)
-
-        params = [x.get() for x in self.subframes[TemporalSettings.__name__].graph_params]
+        params = self.subframes[TemporalSettings.__name__].get_graph_params()
 
         self.controller.add_graph(gtype, args, params)
         self.controller.show_frame("GraphFrame")

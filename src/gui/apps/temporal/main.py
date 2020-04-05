@@ -13,6 +13,8 @@ from graph.generation import GraphGeneratorAlgo
 from graph.generation.flatWeightGenerator import FlatWeightedGraphGenerator
 
 from graph.temporal.action.actionType import ActionType
+from gui.apps.static.wizard.algos.barabasi_albert import BarabasiAlbert
+from gui.apps.static.wizard.algos.composite import Composite
 from gui.apps.temporal.result import ResultsFrame
 
 from gui.apps.temporal.wizard.wizard import WizardFrame
@@ -46,7 +48,7 @@ class TemporalGUI(tk.Tk):
 
         # application window
         container = tk.Frame(self)
-        container.pack(side="top", fill="both", expand=True)
+        container.grid(row=0, column=0, sticky='nsew')
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
 
@@ -66,8 +68,7 @@ class TemporalGUI(tk.Tk):
         self.g = None
 
     def show_frame(self, page):
-        frame = self.frames[page]
-        frame.tkraise()
+        self.frames[page].tkraise()
 
     def add_briber(self, b, u0):
         self.bribers.append(switch_briber(b, u0=u0))
@@ -77,11 +78,11 @@ class TemporalGUI(tk.Tk):
         if not self.bribers:
             raise RuntimeError("No Bribers added to graph")  # TODO replace with better error
 
-        if gtype == "ba":
+        if gtype == BarabasiAlbert.name:
             gen = FlatWeightedGraphGenerator(
                 GraphGeneratorAlgo.BARABASI_ALBERT,
                 args[0], args[1], args[2])
-        elif gtype == "cg":
+        elif gtype == Composite.name:
             gen = FlatWeightedGraphGenerator(
                 GraphGeneratorAlgo.COMPOSITE,
                 args[0], args[1], args[2], args[3], args[4], args[5])

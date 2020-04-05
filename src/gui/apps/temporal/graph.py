@@ -29,7 +29,7 @@ class GraphFrame(tk.Frame):
         button4 = tk.Button(self, text="Results", command=lambda: self.to_results())
         button4.grid(row=4, column=2)
 
-        button1 = tk.Button(self, text="Exit", command=lambda: self.controller.show_frame("WizardFrame"))
+        button1 = tk.Button(self, text="Exit", command=lambda: self.controller.show_subframe("WizardFrame"))
         button1.grid(row=7, column=2)
 
         slide = tk.Scale(self, from_=1, to=100, orient=tk.HORIZONTAL)
@@ -73,7 +73,7 @@ class GraphFrame(tk.Frame):
 
     def to_results(self):
         self.controller.plot_results()
-        self.controller.show_frame("ResultsFrame")
+        self.controller.show_subframe("ResultsFrame")
 
     def draw_graph(self, graph, **kwargs):
 
