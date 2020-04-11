@@ -18,11 +18,17 @@ class TemporalBribers(tk.Frame):
         self.bribers_listbox = tk.Listbox(self)
         self.bribers_listbox.grid(row=2, column=1, rowspan=3)
 
+        scrollbar = tk.Scrollbar(self, orient="vertical")
+        scrollbar.config(command=self.bribers_listbox.yview)
+        scrollbar.grid(row=2, column=2, rowspan=3, sticky="ns")
+
+        self.bribers_listbox.config(yscrollcommand=scrollbar.set)
+
         self.add_briber_button = tk.Button(self, text="Add", command=self.open_briber_wizard)
-        self.add_briber_button.grid(row=2, column=2)
+        self.add_briber_button.grid(row=2, column=3)
 
         self.delete_briber_button = tk.Button(self, text="Delete", command=self.delete_selected_briber)
-        self.delete_briber_button.grid(row=3, column=2)
+        self.delete_briber_button.grid(row=3, column=3)
 
     def open_briber_wizard(self):
         if self.briber_wizard is None:

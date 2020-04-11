@@ -60,7 +60,7 @@ class MostInfluentialNodeBriber(TemporalBriber):
         else:
             if self._c >= self._i:
                 print(f"WARNING: {self.__class__.__name__} has not found an influential node in {self._c} tries "
-                      f"(intended maximum tries {self._i}), continuiung search...",
+                      f"(intended maximum tries {self._i}), continuing search...",
                       file=sys.stderr)
             next_act.add_bribe(self._next_node, self._k)
             self._info_gained.add(self._next_node)
