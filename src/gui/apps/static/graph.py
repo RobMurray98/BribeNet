@@ -24,7 +24,7 @@ class GraphFrame(tk.Frame):
         self.canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
         self.results = []
 
-        button1 = tk.Button(self, text="Exit", command=lambda: self.controller.show_subframe("WizardFrame"))
+        button1 = tk.Button(self, text="Exit", command=lambda: self.master.show_frame("WizardFrame"))
         button1.pack()
 
         button2 = tk.Button(self, text="Show Influential Nodes", command=lambda: self.show_influential())
@@ -49,9 +49,9 @@ class GraphFrame(tk.Frame):
         self.display_graph()
 
     def to_results(self):
-        self.controller.plot_results(self.results)
+        self.master.plot_results(self.results)
         self.results = []
-        self.controller.show_subframe("ResultsFrame")
+        self.master.show_frame("ResultsFrame")
 
     def display_graph(self, last=None):
 

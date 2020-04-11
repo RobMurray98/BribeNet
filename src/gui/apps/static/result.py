@@ -28,4 +28,4 @@ class ResultsFrame(tk.Frame):
 
     def exit(self):
         self.results = []
-        self.controller.show_subframe("WizardFrame")
+        self.master.show_frame("WizardFrame")
