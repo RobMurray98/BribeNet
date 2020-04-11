@@ -36,7 +36,7 @@ class BudgetNodeBriber(TemporalBriber):
         """
         self._current_rating = self._g.eval_graph(self.get_briber_id())
         next_act = SingleBriberyAction(self)
-        maximum_bribe = (self._g.get_max_rating() - self._g.get_vote(self._next_node))
+        maximum_bribe = (self._g.get_max_rating() - self._g.get_vote(self._next_node)[self.get_briber_id()])
         if self._current_rating > self._previous_rating and min(self._u, maximum_bribe) <= self._budget \
                 and self._next_node not in self._bribed:
             next_act.add_bribe(self._next_node, min(self._u, maximum_bribe))

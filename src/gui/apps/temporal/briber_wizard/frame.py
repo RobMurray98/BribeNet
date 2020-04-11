@@ -1,11 +1,12 @@
 import tkinter as tk
 
+from gui.apps.temporal.briber_wizard.strategies.budget import BudgetFrame
 from gui.apps.temporal.briber_wizard.strategies.even import EvenFrame
 from gui.apps.temporal.briber_wizard.strategies.influential import InfluentialFrame
 from gui.apps.temporal.briber_wizard.strategies.non import NonFrame
 from gui.apps.temporal.briber_wizard.strategies.random import RandomFrame
 
-STRAT_SUBFRAMES = (NonFrame, RandomFrame, InfluentialFrame, EvenFrame)
+STRAT_SUBFRAMES = (NonFrame, RandomFrame, InfluentialFrame, EvenFrame, BudgetFrame)
 STRAT_DICT = {v: k for k, v in enumerate([a.name for a in STRAT_SUBFRAMES])}
 
 

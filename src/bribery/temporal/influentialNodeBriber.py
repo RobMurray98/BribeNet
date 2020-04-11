@@ -35,8 +35,9 @@ class InfluentialNodeBriber(TemporalBriber):
         self._current_rating = self._g.eval_graph(self.get_briber_id())
         next_act = SingleBriberyAction(self)
         if self._current_rating > self._previous_rating:
-            next_act.add_bribe(self._next_node, min(self.get_resources(),
-                                                    self._g.get_max_rating() - self._g.get_vote(self._next_node)))
+            next_act.add_bribe(self._next_node,
+                               min(self.get_resources(), self._g.get_max_rating()
+                                   - self._g.get_vote(self._next_node)[self.get_briber_id()]))
             self._bribed.add(self._next_node)
             self._info_gained = set()
         else:

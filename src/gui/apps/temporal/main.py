@@ -3,6 +3,7 @@ import tkinter as tk
 from networkit.nxadapter import nk2nx
 from networkx import spring_layout
 
+from bribery.temporal.budgetNodeBriber import BudgetNodeBriber
 from bribery.temporal.mostInfluentialNodeBriber import MostInfluentialNodeBriber
 from bribery.temporal.oneMoveRandomBriber import OneMoveRandomBriber
 from bribery.temporal.oneMoveEvenBriber import OneMoveEvenBriber
@@ -15,6 +16,7 @@ from graph.generation.flatWeightGenerator import FlatWeightedGraphGenerator
 from graph.temporal.action.actionType import ActionType
 from gui.apps.static.wizard.algos.barabasi_albert import BarabasiAlbert
 from gui.apps.static.wizard.algos.composite import Composite
+from gui.apps.temporal.briber_wizard.strategies.budget import BudgetFrame
 from gui.apps.temporal.briber_wizard.strategies.even import EvenFrame
 from gui.apps.temporal.briber_wizard.strategies.influential import InfluentialFrame
 from gui.apps.temporal.briber_wizard.strategies.non import NonFrame
@@ -36,7 +38,8 @@ def switch_briber(strat_type, *args):
         RandomFrame.name: OneMoveRandomBriber,
         InfluentialFrame.name: MostInfluentialNodeBriber,
         NonFrame.name: NonBriber,
-        EvenFrame.name: OneMoveEvenBriber
+        EvenFrame.name: OneMoveEvenBriber,
+        BudgetFrame.name: BudgetNodeBriber
     }
     return switcher.get(strat_type)(*args)
 
