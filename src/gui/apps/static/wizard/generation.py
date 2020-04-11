@@ -18,7 +18,7 @@ class StaticGeneration(tk.Frame):
         self.options = tuple(f.get_name() for f in self.subframes)
 
         self.dropdown = tk.OptionMenu(self, self.graph_type, *self.options)
-        self.dropdown.grid(row=0, column=0)
+        self.dropdown.grid(row=0, column=0, pady=10, sticky='nsew')
 
         self.graph_type.set(self.options[0])
         for f in self.subframes:
