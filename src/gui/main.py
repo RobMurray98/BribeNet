@@ -13,6 +13,7 @@ class GUI(tk.Tk):
 
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
+        self.title("Bribery Networks")
         self.main_frame = Main(self)
         self.main_frame.grid(row=1, column=1)
         self.grid_rowconfigure(1, weight=1)

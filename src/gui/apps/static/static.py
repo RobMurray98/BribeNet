@@ -37,6 +37,7 @@ class StaticGUI(tk.Tk):
 
     def __init__(self, controller, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
+        self.title("Static Model")
         self.controller = controller
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
@@ -60,8 +61,6 @@ class StaticGUI(tk.Tk):
 
         ba_gen = FlatWeightedGraphGenerator(GraphGeneratorAlgo.BARABASI_ALBERT, 5, 30, 0, True)
         comp_gen = FlatWeightedGraphGenerator(GraphGeneratorAlgo.COMPOSITE, 50, 5, 2, 0.1, 3, 0.05)
-
-        print(gtype)
 
         if gtype == "ba":
             rg = StaticRatingGraph(briber, generator=ba_gen)

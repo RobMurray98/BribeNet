@@ -2,7 +2,7 @@ import abc
 import tkinter as tk
 
 
-class GeneratorAlgoFrame(tk.Frame, abc.ABC):
+class StrategyFrame(tk.Frame, abc.ABC):
 
     name = "ABC"
 

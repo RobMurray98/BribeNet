@@ -29,24 +29,27 @@ class WizardFrame(tk.Frame):
         self.subframes[TemporalBribers.__name__].grid(row=0, column=1, sticky="nsew")
         self.subframes[TemporalGeneration.__name__].grid(row=1, column=0, sticky="nsew")
 
-        run_button = tk.Button(self, text="Run", command=lambda: self.on_button())
+        run_button = tk.Button(self, text="Run", command=self.on_button)
         run_button.grid(row=1, column=1)
 
     def add_briber(self, b_type, u0):
         self.controller.add_briber(b_type, u0)
-        txt = self.subframes[TemporalBribers.__name__].bribers_txt.get()
-        txt += f"\n{b_type}: u0={u0}"
-        self.subframes[TemporalBribers.__name__].bribers_txt.set(txt)
 
     def on_button(self):
-        gtype = self.subframes[TemporalGeneration.__name__].get_graph_type()
-        args = self.subframes[TemporalGeneration.__name__].get_args()
-        # check some bribers on graph
-        if self.subframes[TemporalBribers.__name__].bribers_txt.get() == "":
+        graph_type = self.subframes[TemporalGeneration.__name__].get_graph_type()
+        graph_args = self.subframes[TemporalGeneration.__name__].get_args()
+        bribers = self.subframes[TemporalBribers.__name__].get_all_bribers()
+
+        if not bribers:
             tk.messagebox.showerror(message="Graph needs one or more bribers")
             return
 
+        for briber in bribers:
+            strat_type = briber[0]
+            briber_args = briber[1:]
+            self.controller.add_briber(strat_type, *briber_args)
+
         params = self.subframes[TemporalSettings.__name__].get_graph_params()
 
-        self.controller.add_graph(gtype, args, params)
+        self.controller.add_graph(graph_type, graph_args, params)
         self.controller.show_frame("GraphFrame")

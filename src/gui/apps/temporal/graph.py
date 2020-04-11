@@ -29,7 +29,7 @@ class GraphFrame(tk.Frame):
         button4 = tk.Button(self, text="Results", command=lambda: self.to_results())
         button4.grid(row=4, column=2)
 
-        button1 = tk.Button(self, text="Exit", command=lambda: self.controller.show_subframe("WizardFrame"))
+        button1 = tk.Button(self, text="Exit", command=lambda: self.controller.show_frame("WizardFrame"))
         button1.grid(row=7, column=2)
 
         slide = tk.Scale(self, from_=1, to=100, orient=tk.HORIZONTAL)
@@ -62,18 +62,15 @@ class GraphFrame(tk.Frame):
         none_bt = tk.Button(self, text="none", command=lambda: self.draw_graph(self.controller.g, trust=1))
         none_bt.grid(row=3, column=1)
 
-        print(self.controller)
-
         for i, c in enumerate(self.controller.bribers):
 
             bribe_bt = tk.Button(self, text=self.controller.briber_names[i], command=lambda i=i: self.draw_graph(self.controller.g, briber=i,
                                                                                           trust=1))
             bribe_bt.grid(row=(i+4), column=1)
 
-
     def to_results(self):
         self.controller.plot_results()
-        self.controller.show_subframe("ResultsFrame")
+        self.controller.show_frame("ResultsFrame")
 
     def draw_graph(self, graph, **kwargs):
 

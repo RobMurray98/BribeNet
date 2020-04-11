@@ -15,6 +15,10 @@ from graph.generation.flatWeightGenerator import FlatWeightedGraphGenerator
 from graph.temporal.action.actionType import ActionType
 from gui.apps.static.wizard.algos.barabasi_albert import BarabasiAlbert
 from gui.apps.static.wizard.algos.composite import Composite
+from gui.apps.temporal.briber_wizard.strategies.even import EvenFrame
+from gui.apps.temporal.briber_wizard.strategies.influential import InfluentialFrame
+from gui.apps.temporal.briber_wizard.strategies.non import NonFrame
+from gui.apps.temporal.briber_wizard.strategies.random import RandomFrame
 from gui.apps.temporal.result import ResultsFrame
 
 from gui.apps.temporal.wizard.wizard import WizardFrame
@@ -27,14 +31,14 @@ FRAMES_CLASSES = (WizardFrame, GraphFrame, ResultsFrame)
 FRAMES_DICT = {i: c.__class__.__name__ for (i, c) in enumerate(FRAMES_CLASSES)}
 
 
-def switch_briber(argument, u0=10):
+def switch_briber(strat_type, *args):
     switcher = {
-        "random": OneMoveRandomBriber(u0),
-        "influential": MostInfluentialNodeBriber(u0),
-        "non": NonBriber(u0),
-        "even": OneMoveEvenBriber(u0)
+        RandomFrame.name: OneMoveRandomBriber,
+        InfluentialFrame.name: MostInfluentialNodeBriber,
+        NonFrame.name: NonBriber,
+        EvenFrame.name: OneMoveEvenBriber
     }
-    return switcher.get(argument)
+    return switcher.get(strat_type)(*args)
 
 
 class TemporalGUI(tk.Tk):
@@ -44,6 +48,7 @@ class TemporalGUI(tk.Tk):
 
     def __init__(self, controller, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
+        self.title("Temporal Model")
         self.controller = controller
 
         # application window
@@ -70,26 +75,20 @@ class TemporalGUI(tk.Tk):
     def show_frame(self, page):
         self.frames[page].tkraise()
 
-    def add_briber(self, b, u0):
-        self.bribers.append(switch_briber(b, u0=u0))
-        self.briber_names.append(f"Briber{len(self.bribers)}: {b}: u0={u0}")
+    def add_briber(self, b, *args):
+        self.bribers.append(switch_briber(b, *args))
+        self.briber_names.append(f"Briber{len(self.bribers)}: {b}: u0={args[0]}")
 
     def add_graph(self, gtype, args, params):
         if not self.bribers:
             raise RuntimeError("No Bribers added to graph")  # TODO replace with better error
 
         if gtype == BarabasiAlbert.name:
-            gen = FlatWeightedGraphGenerator(
-                GraphGeneratorAlgo.BARABASI_ALBERT,
-                args[0], args[1], args[2])
+            gen = FlatWeightedGraphGenerator(GraphGeneratorAlgo.BARABASI_ALBERT, *args)
         elif gtype == Composite.name:
-            gen = FlatWeightedGraphGenerator(
-                GraphGeneratorAlgo.COMPOSITE,
-                args[0], args[1], args[2], args[3], args[4], args[5])
+            gen = FlatWeightedGraphGenerator(GraphGeneratorAlgo.COMPOSITE, *args)
         else:
-            gen = FlatWeightedGraphGenerator(
-                GraphGeneratorAlgo.WATTS_STROGATZ,
-                args[0], args[1], args[2])
+            gen = FlatWeightedGraphGenerator(GraphGeneratorAlgo.WATTS_STROGATZ, *args)
 
         self.g = ThresholdGraph(
             tuple(self.bribers),
