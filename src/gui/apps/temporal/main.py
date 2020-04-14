@@ -75,6 +75,12 @@ class TemporalGUI(tk.Tk):
         self.briber_names = []
         self.g = None
 
+    def clear_graph(self):
+        self.bribers = []
+        self.results = []
+        self.briber_names = []
+        self.g = None
+
     def show_frame(self, page):
         self.frames[page].tkraise()
 

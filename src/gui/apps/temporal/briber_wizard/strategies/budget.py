@@ -12,7 +12,7 @@ class BudgetFrame(StrategyFrame):
 
         self.params = {
             'u_0': tk.DoubleVar(self, value=10),
-            'k': tk.IntVar(self, value=0.1),
+            'k': tk.DoubleVar(self, value=0.1),
             'b': tk.DoubleVar(self, value=0.5)
         }
 

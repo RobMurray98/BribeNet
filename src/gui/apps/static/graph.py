@@ -27,13 +27,13 @@ class GraphFrame(tk.Frame):
         button1 = tk.Button(self, text="Exit", command=lambda: self.master.show_frame("WizardFrame"))
         button1.pack()
 
-        button2 = tk.Button(self, text="Show Influential Nodes", command=lambda: self.show_influential())
+        button2 = tk.Button(self, text="Show Influential Nodes", command=self.show_influential)
         button2.pack()
 
-        button3 = tk.Button(self, text="Bribe", command=lambda: self.next_bribe())
+        button3 = tk.Button(self, text="Bribe", command=self.next_bribe)
         button3.pack()
 
-        button4 = tk.Button(self, text="Results", command=lambda: self.to_results())
+        button4 = tk.Button(self, text="Results", command=self.to_results)
         button4.pack()
 
         self.txt = tk.StringVar()

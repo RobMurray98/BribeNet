@@ -23,13 +23,13 @@ class GraphFrame(tk.Frame):
         self.canvas.get_tk_widget().grid(row=1, column=0)
         self.results = []
 
-        button3 = tk.Button(self, text="Next Step", command=lambda: self.controller.next_step())
+        button3 = tk.Button(self, text="Next Step", command=self.controller.next_step)
         button3.grid(row=3, column=2)
 
-        button4 = tk.Button(self, text="Results", command=lambda: self.to_results())
+        button4 = tk.Button(self, text="Results", command=self.to_results)
         button4.grid(row=4, column=2)
 
-        button1 = tk.Button(self, text="Exit", command=lambda: self.controller.show_frame("WizardFrame"))
+        button1 = tk.Button(self, text="Exit", command=self.return_to_wizard)
         button1.grid(row=7, column=2)
 
         slide = tk.Scale(self, from_=1, to=100, orient=tk.HORIZONTAL)
@@ -41,6 +41,10 @@ class GraphFrame(tk.Frame):
         lbl = tk.Label(self, textvariable=self.info)
         lbl.grid(row=1, column=1, columnspan=2)
         self.info.set("--")
+
+    def return_to_wizard(self):
+        self.controller.clear_graph()
+        self.controller.show_frame("WizardFrame")
 
     def set_info(self, s):
         self.info.set(s)

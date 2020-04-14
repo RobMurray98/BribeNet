@@ -15,7 +15,7 @@ class ResultsFrame(tk.Frame):
         self.ax = self.fig.add_subplot(111)
         self.canvas = FigureCanvasTkAgg(self.fig, master=self)
         self.canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
-        button1 = tk.Button(self, text="Exit", command=lambda: self.exit())
+        button1 = tk.Button(self, text="Exit", command=self.exit)
         button1.pack()
 
     def plot_results(self, results):
