@@ -43,6 +43,8 @@ class GraphFrame(tk.Frame):
         self.info.set("--")
 
     def return_to_wizard(self):
+        self.results = []
+        self.info.set("--")
         self.controller.clear_graph()
         self.controller.show_frame("WizardFrame")
 

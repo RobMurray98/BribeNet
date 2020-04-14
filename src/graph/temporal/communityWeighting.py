@@ -1,19 +1,24 @@
+# noinspection PyUnresolvedReferences
 from networkit import Graph
+# noinspection PyUnresolvedReferences
 from networkit.community import LPDegreeOrdered
 import networkit as nk
 import random
 
-def get_communities(graph : Graph) -> [int]:
+
+def get_communities(graph: Graph) -> [int]:
     communities = LPDegreeOrdered(graph).run().getPartition()
     return [communities.getMembers(i) for i in communities.getSubsetIds()]
+
 
 def gauss_constrained(mean: float, std: float) -> float:
     return max(0, min(1, random.gauss(mean, std)))
 
+
 # Generate a standard deviation based on the fraction of the total number
 # of nodes in this particular community.
 def get_stdev(total_size: int, comm_size: int) -> float:
-    ratio = comm_size / total_size # range 0 to 1.
+    ratio = comm_size / total_size  # range 0 to 1.
     # We want a larger standard deviation for a smaller ratio.
     # Thus we take 1/ratio, which goes from total_size (for comm_size=1) to 1
     # (for ratio = 1). We divide this by total_size to get a normalised value,
@@ -21,7 +26,8 @@ def get_stdev(total_size: int, comm_size: int) -> float:
     # without leaving the range.
     return (1 / ratio) / (total_size * 3)
 
-def assign_community_weights(graph : Graph, mean : float) -> [float]:
+
+def assign_community_weights(graph: Graph, mean: float) -> [float]:
     weights = [0 for i in graph.nodes()]
     communities = get_communities(graph)
     total_size = len(weights)
