@@ -9,6 +9,7 @@ from bribery.temporal.action.multiBriberyAction import MultiBriberyAction
 from graph.ratingGraph import DEFAULT_GEN, RatingGraph, BribersAreNotTupleException, NoBriberGivenException
 from graph.static.ratingGraph import DEFAULT_NON_VOTER_PROPORTION
 from graph.temporal.action.customerAction import CustomerAction
+from graph.temporal.weighting.traverseWeighting import assign_traverse_averaged
 from helpers.override import override
 
 DEFAULT_REMOVE_NO_VOTE = False
@@ -16,7 +17,8 @@ DEFAULT_Q = 0.5
 DEFAULT_PAY = 1.0
 DEFAULT_APATHY = 0.0
 DEFAULT_D = 2  # number of rounds in a cycle (D-1 bribes and then one customer round)
-
+DEFAULT_TRUE_AVERAGE = 0.5
+DEFAULT_TRUE_STDEV = 0.2
 
 class BriberNotSubclassOfTemporalBriberException(Exception):
     pass
@@ -71,9 +73,20 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
             self._d: int = self.__tmp_kwargs["d"]
         else:
             self._d: int = DEFAULT_D
+        if "true_average" in self.__tmp_kwargs:
+            self._true_average: float = self.__tmp_kwargs["true_average"]
+        else:
+            self._true_average: float = DEFAULT_TRUE_AVERAGE
+        if "true_stdev" in self.__tmp_kwargs:
+            self._true_stdev: float = self.__tmp_kwargs["true_stdev"]
+        else:
+            self._true_stdev: float = DEFAULT_TRUE_STDEV
+        community_weights = {}
+        for b, _ in enumerate(self._bribers):
+            community_weights[b] = assign_traverse_averaged(self._g, self._true_average, self._true_stdev)
         for n in self._g.nodes():
             for b, _ in enumerate(self._bribers):
-                rating = random.uniform(0, self._max_rating)
+                rating = community_weights[b][n]
                 self._truths[n][b] = rating
                 if random.random() > non_voter_proportion:
                     self._votes[n][b] = rating
