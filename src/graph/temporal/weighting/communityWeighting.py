@@ -28,7 +28,6 @@ def get_stdev(total_size: int, comm_size: int) -> float:
     ratio = comm_size / total_size # range 0 to 1.
     return (1 / ratio) / (total_size * 3)
 
-# NOTE: when backporting, need to add stdev notion
 def assign_community_weights(graph : Graph, mean : float, stdev : float=0.05) -> [float]:
     """
     For each community, assign it a mean and then give values within it a

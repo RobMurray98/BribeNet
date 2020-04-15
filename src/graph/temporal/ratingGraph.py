@@ -46,8 +46,8 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
         super().__init__(bribers, generator, specifics=self.__specifics, **kwargs)
 
     def __specifics(self):
-        self._votes = np.zeros((len(self._g.nodes()), len(self._bribers)))
-        self._truths = np.zeros((len(self._g.nodes()), len(self._bribers)))
+        self._votes = np.zeros((self._g.numberOfNodes(), len(self._bribers)))
+        self._truths = np.zeros((self._g.numberOfNodes(), len(self._bribers)))
         # Generate random ratings network
         if "non_voter_proportion" in self.__tmp_kwargs:
             non_voter_proportion = self.__tmp_kwargs["non_voter_proportion"]
@@ -84,7 +84,7 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
         community_weights = {}
         for b, _ in enumerate(self._bribers):
             community_weights[b] = assign_traverse_averaged(self._g, self._true_average, self._true_stdev)
-        for n in self._g.nodes():
+        for n in self._g.iterNodes():
             for b, _ in enumerate(self._bribers):
                 rating = community_weights[b][n]
                 self._truths[n][b] = rating
