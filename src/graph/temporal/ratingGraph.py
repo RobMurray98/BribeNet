@@ -9,7 +9,6 @@ from bribery.temporal.action.multiBriberyAction import MultiBriberyAction
 from graph.ratingGraph import DEFAULT_GEN, RatingGraph, BribersAreNotTupleException, NoBriberGivenException
 from graph.static.ratingGraph import DEFAULT_NON_VOTER_PROPORTION
 from graph.temporal.action.customerAction import CustomerAction
-from graph.temporal.communityWeighting import assign_community_weights
 from helpers.override import override
 
 DEFAULT_REMOVE_NO_VOTE = False
@@ -72,13 +71,9 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
             self._d: int = self.__tmp_kwargs["d"]
         else:
             self._d: int = DEFAULT_D
-        # TODO: add this as a model parameter
-        community_weights = {}
-        for b, _ in enumerate(self._bribers):
-            community_weights[b] = assign_community_weights(self._g, 0.5)
         for n in self._g.nodes():
             for b, _ in enumerate(self._bribers):
-                rating = community_weights[b][n]
+                rating = random.uniform(0, self._max_rating)
                 self._truths[n][b] = rating
                 if random.random() > non_voter_proportion:
                     self._votes[n][b] = rating
