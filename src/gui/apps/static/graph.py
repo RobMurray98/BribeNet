@@ -1,13 +1,12 @@
 import tkinter as tk
+
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from networkx import spring_layout
+import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.colors import rgb2hex
 from networkit.nxadapter import nk2nx
 from networkit.viztasks import drawGraph
 from networkx import spring_layout
-import numpy as np
 
 
 class GraphFrame(tk.Frame):

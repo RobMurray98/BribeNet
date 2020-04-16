@@ -1,5 +1,6 @@
 import abc
 import random
+from sys import maxsize
 from typing import Tuple, Union, Any, Optional
 
 import numpy as np
@@ -7,7 +8,7 @@ import numpy as np
 from bribery.temporal.action.briberyAction import BriberyAction
 from bribery.temporal.action.multiBriberyAction import MultiBriberyAction
 from graph.ratingGraph import DEFAULT_GEN, RatingGraph, BribersAreNotTupleException, NoBriberGivenException
-from graph.static.ratingGraph import DEFAULT_NON_VOTER_PROPORTION
+from graph.static.ratingGraph import DEFAULT_NON_VOTER_PROPORTION  # (0.2)
 from graph.temporal.action.customerAction import CustomerAction
 from helpers.override import override
 
@@ -17,8 +18,16 @@ DEFAULT_PAY = 1.0
 DEFAULT_APATHY = 0.0
 DEFAULT_D = 2  # number of rounds in a cycle (D-1 bribes and then one customer round)
 
+KWARG_NAMES = ("non_voter_proportion", "remove_no_vote", "q", "pay", "apathy", "d")
+KWARG_LOWER_BOUNDS = dict(zip(KWARG_NAMES, (0, False, 0, 0, 0, 2)))
+KWARG_UPPER_BOUNDS = dict(zip(KWARG_NAMES, (1, True, 1, float('inf'), 1, maxsize)))
+
 
 class BriberNotSubclassOfTemporalBriberException(Exception):
+    pass
+
+
+class BriberKeywordArgumentOutOfBoundsException(Exception):
     pass
 
 
@@ -38,14 +47,30 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
                                                                  "TemporalBriber")
         self.__tmp_bribers = bribers
         self.__tmp_kwargs = kwargs
-        self._last_bribery_action: Optional[BriberyAction] = None
-        self._last_customer_action: Optional[BriberyAction] = None
         self._time_step: int = 0
         super().__init__(bribers, generator, specifics=self.__specifics, **kwargs)
+        # must come after super().__init__() such that bribers[0] has graph set
+        if len(bribers) == 1:
+            from bribery.temporal.action.singleBriberyAction import SingleBriberyAction
+            self._last_bribery_action: Optional[BriberyAction] = SingleBriberyAction.empty_action(bribers[0])
+            self._last_customer_action: Optional[CustomerAction] = CustomerAction.empty_action(self)
+        else:
+            self._last_bribery_action: Optional[BriberyAction] = MultiBriberyAction.empty_action(self)
+            self._last_customer_action: Optional[CustomerAction] = CustomerAction.empty_action(self)
+
+    @staticmethod
+    def kwarg_in_bounds(k, v):
+        return KWARG_LOWER_BOUNDS[k] <= v <= KWARG_UPPER_BOUNDS[k]
 
     def __specifics(self):
         self._votes = np.zeros((len(self._g.nodes()), len(self._bribers)))
         self._truths = np.zeros((len(self._g.nodes()), len(self._bribers)))
+        for kwarg in KWARG_NAMES:
+            if kwarg in self.__tmp_kwargs:
+                if not self.kwarg_in_bounds(kwarg, self.__tmp_kwargs[kwarg]):
+                    raise BriberKeywordArgumentOutOfBoundsException(
+                        f"{kwarg}={self.__tmp_kwargs[kwarg]} out of bounds ({KWARG_LOWER_BOUNDS[kwarg]}, "
+                        f"{KWARG_UPPER_BOUNDS[kwarg]})")
         # Generate random ratings network
         if "non_voter_proportion" in self.__tmp_kwargs:
             non_voter_proportion = self.__tmp_kwargs["non_voter_proportion"]

@@ -1,6 +1,5 @@
 import random
 
-from bribery.briber import BriberyGraphNotSetException
 from bribery.static.briber import StaticBriber
 
 DELTA = 0.001  # ensures total bribes do not exceed budget

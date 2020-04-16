@@ -1,9 +1,9 @@
 import random
+
 import numpy as np
 
-from bribery.briber import BriberyGraphNotSetException
-from bribery.temporal.briber import TemporalBriber
 from bribery.temporal.action.singleBriberyAction import SingleBriberyAction
+from bribery.temporal.briber import TemporalBriber
 
 
 class OneMoveEvenBriber(TemporalBriber):
@@ -19,4 +19,3 @@ class OneMoveEvenBriber(TemporalBriber):
         else:
             bribery_dict = {c: max_rating - vote}
         return SingleBriberyAction(self, bribes=bribery_dict)
-

@@ -1,7 +1,7 @@
 import networkit as nk
 import networkit.nxadapter as adap
 
-from graph.generation import GraphGeneratorAlgo, algo_to_constructor
+from graph.generation import GraphGeneratorAlgo
 from graph.generation.weightedGenerator import WeightedGraphGenerator
 
 

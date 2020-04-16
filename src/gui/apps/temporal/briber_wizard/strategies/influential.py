@@ -4,7 +4,6 @@ from gui.apps.temporal.briber_wizard.strategies.strategy_frame import StrategyFr
 
 
 class InfluentialFrame(StrategyFrame):
-
     name = "Influential"
 
     def __init__(self, parent):

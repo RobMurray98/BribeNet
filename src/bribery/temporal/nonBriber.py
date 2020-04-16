@@ -1,5 +1,5 @@
-from bribery.temporal.briber import TemporalBriber
 from bribery.temporal.action.singleBriberyAction import SingleBriberyAction
+from bribery.temporal.briber import TemporalBriber
 
 
 class NonBriber(TemporalBriber):

@@ -1,20 +1,14 @@
 import tkinter as tk
 
-import networkit as nk
-
 from bribery.static.oneMoveInfluentialNodeBriber import OneMoveInfluentialNodeBriber
 from bribery.static.oneMoveRandomBriber import OneMoveRandomBriber
 from graph.generation import GraphGeneratorAlgo
 from graph.generation.flatWeightGenerator import FlatWeightedGraphGenerator
 from graph.static.ratingGraph import StaticRatingGraph
-from graph.generation.algo.compositeGenerator import CompositeGenerator
-
-from gui.apps.static.wizard.wizard import WizardFrame
 from gui.apps.static.graph import GraphFrame
 from gui.apps.static.result import ResultsFrame
-
+from gui.apps.static.wizard.wizard import WizardFrame
 from helpers.override import override
-
 
 FRAMES_CLASSES = [WizardFrame,
                   GraphFrame,

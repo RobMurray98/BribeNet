@@ -1,9 +1,9 @@
 import sys
 from typing import Dict, Optional
 
-from bribery.temporal.action.briberyAction import BriberyAction
-from bribery.temporal.action import BribeMustBeGreaterThanZeroException, NodeDoesNotExistException,\
+from bribery.temporal.action import BribeMustBeGreaterThanZeroException, NodeDoesNotExistException, \
     BriberyActionExceedsAvailableUtilityException
+from bribery.temporal.action.briberyAction import BriberyAction
 
 
 class SingleBriberyAction(BriberyAction):
@@ -22,6 +22,10 @@ class SingleBriberyAction(BriberyAction):
         self.briber = briber
         self._bribes: Dict[int, float] = bribes or {}
         self.__time = self.briber.get_graph().get_time_step()
+
+    @classmethod
+    def empty_action(cls, briber):
+        return cls(briber, None)
 
     def add_bribe(self, node_id: int, bribe: float):
         if bribe < 0:

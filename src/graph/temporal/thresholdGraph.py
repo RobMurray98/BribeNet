@@ -1,14 +1,16 @@
+import random
 from typing import List
+
+import numpy as np
 
 from graph.ratingGraph import DEFAULT_GEN
 from graph.temporal.action.actionType import ActionType
 from graph.temporal.action.customerAction import CustomerAction
-from graph.temporal.ratingGraph import TemporalRatingGraph
-
-import numpy as np
-import random
+from graph.temporal.ratingGraph import TemporalRatingGraph, BriberKeywordArgumentOutOfBoundsException
 
 DEFAULT_THRESHOLD = 0.5
+MIN_THRESHOLD = 0.0
+MAX_THRESHOLD = 1.0
 
 
 class ThresholdGraph(TemporalRatingGraph):
@@ -27,7 +29,11 @@ class ThresholdGraph(TemporalRatingGraph):
         """
         super().__init__(bribers, generator=generator, **kwargs)
         if "threshold" in kwargs:
-            self._threshold: float = kwargs["threshold"]
+            threshold = kwargs["threshold"]
+            if not MIN_THRESHOLD <= threshold <= MAX_THRESHOLD:
+                raise BriberKeywordArgumentOutOfBoundsException(
+                    f"threshold={threshold} out of bounds ({MIN_THRESHOLD}, {MAX_THRESHOLD})")
+            self._threshold: float = threshold
         else:
             self._threshold: float = DEFAULT_THRESHOLD
 

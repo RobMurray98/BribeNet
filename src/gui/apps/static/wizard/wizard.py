@@ -31,6 +31,5 @@ class WizardFrame(tk.Frame):
         b.grid(row=1, column=2)
 
     def on_button(self, gtype, btype):
-
         self.master.generate_graph(gtype, btype)
         self.master.show_frame("GraphFrame")

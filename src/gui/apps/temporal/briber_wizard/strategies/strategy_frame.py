@@ -3,7 +3,6 @@ import tkinter as tk
 
 
 class StrategyFrame(tk.Frame, abc.ABC):
-
     name = "ABC"
 
     def __init__(self, parent):

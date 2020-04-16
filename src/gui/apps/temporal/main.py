@@ -5,15 +5,13 @@ from networkx import spring_layout
 
 from bribery.temporal.budgetNodeBriber import BudgetNodeBriber
 from bribery.temporal.mostInfluentialNodeBriber import MostInfluentialNodeBriber
-from bribery.temporal.oneMoveRandomBriber import OneMoveRandomBriber
-from bribery.temporal.oneMoveEvenBriber import OneMoveEvenBriber
 from bribery.temporal.nonBriber import NonBriber
-from graph.temporal.thresholdGraph import ThresholdGraph
-
+from bribery.temporal.oneMoveEvenBriber import OneMoveEvenBriber
+from bribery.temporal.oneMoveRandomBriber import OneMoveRandomBriber
 from graph.generation import GraphGeneratorAlgo
 from graph.generation.flatWeightGenerator import FlatWeightedGraphGenerator
-
 from graph.temporal.action.actionType import ActionType
+from graph.temporal.thresholdGraph import ThresholdGraph
 from gui.apps.static.wizard.algos.barabasi_albert import BarabasiAlbert
 from gui.apps.static.wizard.algos.composite import Composite
 from gui.apps.temporal.briber_wizard.strategies.budget import BudgetFrame
@@ -21,11 +19,9 @@ from gui.apps.temporal.briber_wizard.strategies.even import EvenFrame
 from gui.apps.temporal.briber_wizard.strategies.influential import InfluentialFrame
 from gui.apps.temporal.briber_wizard.strategies.non import NonFrame
 from gui.apps.temporal.briber_wizard.strategies.random import RandomFrame
-from gui.apps.temporal.result import ResultsFrame
-
-from gui.apps.temporal.wizard.wizard import WizardFrame
 from gui.apps.temporal.graph import GraphFrame
-
+from gui.apps.temporal.result import ResultsFrame
+from gui.apps.temporal.wizard.wizard import WizardFrame
 from helpers.override import override
 
 FRAMES_CLASSES = (WizardFrame, GraphFrame, ResultsFrame)

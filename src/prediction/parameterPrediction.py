@@ -1,11 +1,8 @@
-
+from networkit.centrality import LocalClusteringCoefficient
+from networkit.distance import APSP
 from networkit.generators import WattsStrogatzGenerator
 from numpy import logspace
 from numpy import sum as np_sum
-
-from networkit.centrality import LocalClusteringCoefficient
-
-from networkit.distance import APSP
 
 TRIALS = 5
 INFINITY = float("inf")

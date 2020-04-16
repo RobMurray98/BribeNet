@@ -7,7 +7,6 @@ from networkit.generators import BarabasiAlbertGenerator, WattsStrogatzGenerator
 
 
 class CompositeGenerator(object):
-
     """
     Pretend to extend inaccessible networkit._NetworKit.StaticGraphGenerator
     """

@@ -20,7 +20,7 @@ class GraphFrame(tk.Frame):
         self.fig = plt.figure(figsize=(8, 8))
         self.ax = self.fig.add_subplot(111)
         self.canvas = FigureCanvasTkAgg(self.fig, master=self)
-        self.canvas.get_tk_widget().grid(row=1, column=0)
+        self.canvas.get_tk_widget().grid(row=1, column=0, rowspan=10)
         self.results = []
 
         button3 = tk.Button(self, text="Next Step", command=self.controller.next_step)
@@ -33,7 +33,7 @@ class GraphFrame(tk.Frame):
         button1.grid(row=7, column=2)
 
         slide = tk.Scale(self, from_=1, to=100, orient=tk.HORIZONTAL)
-        slide.grid(row=6,  column=2)
+        slide.grid(row=6, column=2)
         button5 = tk.Button(self, text="Perform n steps", command=lambda: self.n_steps(slide.get()))
         button5.grid(row=5, column=2)
 
@@ -69,10 +69,10 @@ class GraphFrame(tk.Frame):
         none_bt.grid(row=3, column=1)
 
         for i, c in enumerate(self.controller.bribers):
-
-            bribe_bt = tk.Button(self, text=self.controller.briber_names[i], command=lambda i=i: self.draw_graph(self.controller.g, briber=i,
-                                                                                          trust=1))
-            bribe_bt.grid(row=(i+4), column=1)
+            bribe_bt = tk.Button(self, text=self.controller.briber_names[i],
+                                 command=lambda i=i: self.draw_graph(self.controller.g, briber=i,
+                                                                     trust=1))
+            bribe_bt.grid(row=(i + 4), column=1)
 
     def to_results(self):
         self.controller.plot_results()
@@ -93,7 +93,7 @@ class GraphFrame(tk.Frame):
                 else:
                     colors.append(rgb2hex(cmap(graph.get_vote(c)[b])[:3]))
 
-        #default edges black
+        # default edges black
         edge_colors = ["#000000" for e in graph.get_edges()]
 
         # set colours for edges proportional to trust

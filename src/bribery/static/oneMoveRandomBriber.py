@@ -1,7 +1,7 @@
 import random
+
 import numpy as np
 
-from bribery.briber import BriberyGraphNotSetException
 from bribery.static.briber import StaticBriber
 
 

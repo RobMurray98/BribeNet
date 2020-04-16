@@ -1,9 +1,9 @@
-from gui.apps.static.wizard.algos.algo_frame import GeneratorAlgoFrame
 import tkinter as tk
+
+from gui.apps.static.wizard.algos.algo_frame import GeneratorAlgoFrame
 
 
 class Composite(GeneratorAlgoFrame):
-
     name = "Composite"
 
     def __init__(self, parent):

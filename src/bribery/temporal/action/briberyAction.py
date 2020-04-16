@@ -23,6 +23,11 @@ class BriberyAction(ABC):
         self.__time_step = self.graph.get_time_step()
         self.__performed = False
 
+    @classmethod
+    @abstractmethod
+    def empty_action(cls, graph):
+        raise NotImplementedError
+
     def perform_action(self):
         """
         Perform the action safely

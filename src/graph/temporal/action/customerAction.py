@@ -1,10 +1,10 @@
 from typing import Dict, Any, Tuple, List
 
-from bribery.temporal.action.briberyAction import BriberyAction
-from graph.temporal.action.actionType import ActionType
-from bribery.temporal.briber import GraphNotSubclassOfTemporalRatingGraphException
-
 import numpy as np
+
+from bribery.temporal.action.briberyAction import BriberyAction
+from bribery.temporal.briber import GraphNotSubclassOfTemporalRatingGraphException
+from graph.temporal.action.actionType import ActionType
 
 
 class CustomerActionExecutedMultipleTimesException(Exception):
@@ -24,9 +24,13 @@ class CustomerAction(object):
                                                                  "TemporalRatingGraph")
         self.graph = graph
         self.actions: Dict[int, Tuple[ActionType, Any]] = {c: (ActionType.NONE, None)
-                                                            for c in self.graph.get_customers()}
+                                                           for c in self.graph.get_customers()}
         self.__time_step = self.graph.get_time_step()
         self.__performed = False
+
+    @classmethod
+    def empty_action(cls, graph):
+        return cls(graph)
 
     def get_time_step(self):
         return self.__time_step

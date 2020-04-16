@@ -40,6 +40,3 @@ class StaticGeneration(tk.Frame):
 
     def get_graph_type(self):
         return self.graph_type.get()
-
-
-

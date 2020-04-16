@@ -44,12 +44,16 @@ class WizardFrame(tk.Frame):
             tk.messagebox.showerror(message="Graph needs one or more bribers")
             return
 
-        for briber in bribers:
-            strat_type = briber[0]
-            briber_args = briber[1:]
-            self.controller.add_briber(strat_type, *briber_args)
+        try:
+            for briber in bribers:
+                strat_type = briber[0]
+                briber_args = briber[1:]
+                self.controller.add_briber(strat_type, *briber_args)
+            params = self.subframes[TemporalSettings.__name__].get_graph_params()
+            self.controller.add_graph(graph_type, graph_args, params)
+        except Exception as e:
+            tk.messagebox.showerror(message=f"{e.__class__.__name__}: {str(e)}")
+            self.controller.clear_graph()
+            return
 
-        params = self.subframes[TemporalSettings.__name__].get_graph_params()
-
-        self.controller.add_graph(graph_type, graph_args, params)
         self.controller.show_frame("GraphFrame")

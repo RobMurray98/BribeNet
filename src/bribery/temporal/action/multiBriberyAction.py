@@ -1,10 +1,10 @@
 import sys
 from typing import Dict, Optional, List
 
+from bribery.temporal.action import BribeMustBeGreaterThanZeroException, NodeDoesNotExistException, \
+    BriberDoesNotExistException, BriberyActionExceedsAvailableUtilityException
 from bribery.temporal.action.briberyAction import BriberyAction
 from bribery.temporal.action.singleBriberyAction import SingleBriberyAction
-from bribery.temporal.action import BribeMustBeGreaterThanZeroException, NodeDoesNotExistException,\
-    BriberDoesNotExistException, BriberyActionExceedsAvailableUtilityException
 from bribery.temporal.briber import GraphNotSubclassOfTemporalRatingGraphException
 
 
@@ -34,6 +34,10 @@ class MultiBriberyAction(BriberyAction):
                     if value < 0:
                         raise BribeMustBeGreaterThanZeroException()
         self._bribes: Dict[int, Dict[int, float]] = bribes or {}
+
+    @classmethod
+    def empty_action(cls, graph):
+        return cls(graph, None)
 
     @classmethod
     def make_multi_action_from_single_actions(cls, actions: List[SingleBriberyAction]):

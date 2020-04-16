@@ -1,5 +1,3 @@
-from bribery.briber import BriberyGraphNotSetException
-
 from bribery.static.briber import StaticBriber
 from helpers.override import override
 

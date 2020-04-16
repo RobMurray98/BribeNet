@@ -1,7 +1,7 @@
 import abc
 
+from graph.generation import GraphGeneratorAlgo
 from graph.generation.generator import GraphGenerator
-from graph.generation import GraphGeneratorAlgo, algo_to_constructor
 
 
 class WeightedGraphGenerator(GraphGenerator, abc.ABC):

@@ -4,7 +4,6 @@ from gui.apps.temporal.briber_wizard.strategies.strategy_frame import StrategyFr
 
 
 class RandomFrame(StrategyFrame):
-
     name = "Random"
 
     def __init__(self, parent):

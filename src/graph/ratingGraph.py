@@ -3,14 +3,12 @@ from abc import ABC
 from copy import deepcopy
 from typing import Tuple, Optional, List, Any, Set
 
-import networkit as nk
 import numpy as np
 
-from graph.ratingMethod import RatingMethod
-from graph.generation.unweightedGenerator import UnweightedGraphGenerator
 from graph.generation import GraphGeneratorAlgo
-from graph.generation.generator import GraphGenerator
 from graph.generation.flatWeightGenerator import FlatWeightedGraphGenerator
+from graph.generation.generator import GraphGenerator
+from graph.ratingMethod import RatingMethod
 
 DEFAULT_GEN = FlatWeightedGraphGenerator(GraphGeneratorAlgo.WATTS_STROGATZ, 30, 5, 0.3)
 

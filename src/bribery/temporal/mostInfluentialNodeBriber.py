@@ -1,7 +1,7 @@
-from bribery.temporal.briber import TemporalBriber
-from bribery.temporal.action.singleBriberyAction import SingleBriberyAction
-import random
 import sys
+
+from bribery.temporal.action.singleBriberyAction import SingleBriberyAction
+from bribery.temporal.briber import TemporalBriber
 
 
 class MostInfluentialNodeBriber(TemporalBriber):
