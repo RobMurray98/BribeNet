@@ -23,9 +23,9 @@ class TestCustomerAction(TestCase):
             for bribed_node in bribed_nodes:
                 bribery_action.add_bribe(bribed_node, 1.0)
             customer_action.set_bribed_from_bribery_action(bribery_action)
-            bribed_in_customer_action = [c[0] for c in customer_action._actions.items() if c[1][0] == ActionType.BRIBED]
+            bribed_in_customer_action = [c[0] for c in customer_action.actions.items() if c[1][0] == ActionType.BRIBED]
             self.assertEqual(set(bribed_in_customer_action), set(bribed_nodes))
-            not_bribed_in_customer_action = [c[0] for c in customer_action._actions.items()
+            not_bribed_in_customer_action = [c[0] for c in customer_action.actions.items()
                                              if c[1][0] != ActionType.BRIBED]
             self.assertEqual(set(not_bribed_in_customer_action) & set(bribed_nodes), set())
 

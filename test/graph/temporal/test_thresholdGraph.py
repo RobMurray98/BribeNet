@@ -29,8 +29,8 @@ class TestThresholdGraph(TestCase):
         self.rg.step()
         action = self.rg.get_last_customer_action()
         self.assertIsNotNone(action)
-        for k in action._actions:
-            self.assertNotEqual(action._actions[k], ActionType.SELECT)
+        for k in action.actions:
+            self.assertNotEqual(action.actions[k], ActionType.SELECT)
         self.assertTrue(action.get_performed())
 
     def test_customer_action_disconnected_graph_runs_successfully(self):
@@ -40,8 +40,8 @@ class TestThresholdGraph(TestCase):
         self.rg.step()
         action = self.rg.get_last_customer_action()
         self.assertIsNotNone(action)
-        for k in action._actions:
-            self.assertEqual(action._actions[k][0], ActionType.SELECT)
+        for k in action.actions:
+            self.assertEqual(action.actions[k][0], ActionType.SELECT)
         self.assertTrue(action.get_performed())
 
     def test_customer_action_no_votes_with_remove_no_vote(self):
@@ -51,6 +51,6 @@ class TestThresholdGraph(TestCase):
         self.rg.step()
         action = self.rg.get_last_customer_action()
         self.assertIsNotNone(action)
-        for k in action._actions:
-            self.assertNotEqual(action._actions[k][0], ActionType.SELECT)
+        for k in action.actions:
+            self.assertNotEqual(action.actions[k][0], ActionType.SELECT)
         self.assertTrue(action.get_performed())

@@ -25,7 +25,7 @@ class TestRandomBriber(BriberTestCase):
         graph = self.briber._g
         self.briber._previous_rating = 0
         graph.eval_graph = MagicMock(return_value=1)
-        graph.get_vote = MagicMock(return_value=0.5)
+        graph.get_vote = MagicMock(return_value=[0.5])
         self.briber._next_node = 0
         action = self.briber.next_action()
         self.assertDictEqual(action._bribes, {0: 0.5})

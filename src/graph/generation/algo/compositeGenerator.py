@@ -1,6 +1,8 @@
 from math import floor, log, ceil
 from random import gauss, sample, random
 
+import networkit as nk
+
 from networkit import Graph
 from networkit.generators import BarabasiAlbertGenerator, WattsStrogatzGenerator
 
@@ -20,7 +22,7 @@ class CompositeGenerator(object):
         self._probability_reduce = probability_reduce
 
     def _make_complete(self, n: int):
-        g = nk.Graph(n)
+        g = Graph(n)
         for i in g.iterNodes():
             for j in g.iterNodes():
                 if i < j:

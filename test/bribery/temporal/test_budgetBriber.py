@@ -24,7 +24,7 @@ class TestRandomBriber(BriberTestCase):
         graph = self.briber._g
         self.briber._previous_rating = 0
         graph.eval_graph = MagicMock(return_value=1)
-        graph.get_vote = MagicMock(return_value=0.5)
+        graph.get_vote = MagicMock(return_value=[0.5])
         self.briber._next_node = 0
         action = self.briber.next_action()
         self.assertDictEqual(action._bribes, {0: 0.5})
@@ -33,7 +33,7 @@ class TestRandomBriber(BriberTestCase):
         graph = self.briber._g
         self.briber._previous_rating = 1
         graph.eval_graph = MagicMock(return_value=1)  # will never be influential
-        graph.get_vote = MagicMock(return_value=1.0)  # will always be affordable
+        graph.get_vote = MagicMock(return_value=[1.0])  # will always be affordable
         prev_nodes = []
         for i in range(graph.customer_count()):
             action = self.briber.next_action()
@@ -44,7 +44,7 @@ class TestRandomBriber(BriberTestCase):
     def test_next_action_moves_on_if_not_in_budget(self):
         graph = self.briber._g
         graph.eval_graph = MagicMock(return_value=1)
-        graph.get_vote = MagicMock(return_value=0.0)  # will always be not in budget
+        graph.get_vote = MagicMock(return_value=[0.0])  # will always be not in budget
         prev_nodes = []
         for i in range(graph.customer_count()):
             self.briber._previous_rating = 0  # will always be influential
@@ -57,7 +57,7 @@ class TestRandomBriber(BriberTestCase):
         graph = self.briber._g
         self.briber._previous_rating = 1
         graph.eval_graph = MagicMock(return_value=1)  # will never be influential
-        graph.get_vote = MagicMock(return_value=1.0)  # will always be affordable
+        graph.get_vote = MagicMock(return_value=[1.0])  # will always be affordable
         prev_nodes = []
         for i in range(graph.customer_count() + 1):
             action = self.briber.next_action()
