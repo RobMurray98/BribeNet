@@ -1,6 +1,8 @@
 import abc
-from graph.generation import GraphGeneratorAlgo, algo_to_constructor
+
 import networkit as nk
+
+from graph.generation import GraphGeneratorAlgo, algo_to_constructor
 
 
 class GraphGenerator(abc.ABC):

@@ -1,6 +1,7 @@
 import random
-import numpy as np
 from typing import Tuple, Union, Any
+
+import numpy as np
 
 from graph.ratingGraph import RatingGraph, DEFAULT_GEN, BribersAreNotTupleException, NoBriberGivenException
 from helpers.override import override

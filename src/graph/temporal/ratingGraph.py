@@ -18,7 +18,8 @@ DEFAULT_PAY = 1.0
 DEFAULT_APATHY = 0.0
 DEFAULT_D = 2  # number of rounds in a cycle (D-1 bribes and then one customer round)
 DEFAULT_TRUE_AVERAGE = 0.5
-DEFAULT_TRUE_STDEV = 0.2
+DEFAULT_TRUE_STD_DEV = 0.2
+
 
 class BriberNotSubclassOfTemporalBriberException(Exception):
     pass
@@ -77,13 +78,13 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
             self._true_average: float = self.__tmp_kwargs["true_average"]
         else:
             self._true_average: float = DEFAULT_TRUE_AVERAGE
-        if "true_stdev" in self.__tmp_kwargs:
-            self._true_stdev: float = self.__tmp_kwargs["true_stdev"]
+        if "true_std_dev" in self.__tmp_kwargs:
+            self._true_std_dev: float = self.__tmp_kwargs["true_std_dev"]
         else:
-            self._true_stdev: float = DEFAULT_TRUE_STDEV
+            self._true_std_dev: float = DEFAULT_TRUE_STD_DEV
         community_weights = {}
         for b, _ in enumerate(self._bribers):
-            community_weights[b] = assign_traverse_averaged(self._g, self._true_average, self._true_stdev)
+            community_weights[b] = assign_traverse_averaged(self._g, self._true_average, self._true_std_dev)
         for n in self._g.iterNodes():
             for b, _ in enumerate(self._bribers):
                 rating = community_weights[b][n]

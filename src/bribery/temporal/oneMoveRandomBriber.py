@@ -1,9 +1,9 @@
 import random
+
 import numpy as np
 
-from bribery.briber import BriberyGraphNotSetException
-from bribery.temporal.briber import TemporalBriber
 from bribery.temporal.action.singleBriberyAction import SingleBriberyAction
+from bribery.temporal.briber import TemporalBriber
 
 
 class OneMoveRandomBriber(TemporalBriber):

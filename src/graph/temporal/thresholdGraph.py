@@ -1,12 +1,12 @@
+import random
 from typing import List
+
+import numpy as np
 
 from graph.ratingGraph import DEFAULT_GEN
 from graph.temporal.action.actionType import ActionType
 from graph.temporal.action.customerAction import CustomerAction
 from graph.temporal.ratingGraph import TemporalRatingGraph
-
-import numpy as np
-import random
 
 DEFAULT_THRESHOLD = 0.5
 

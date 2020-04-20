@@ -1,11 +1,12 @@
-from networkit.generators import BarabasiAlbertGenerator, WattsStrogatzGenerator
-from random import gauss, sample, random
 from math import floor, log, ceil
-from networkit import Graph
+from random import gauss, sample, random
+
 import networkit as nk
+from networkit import Graph
+from networkit.generators import BarabasiAlbertGenerator, WattsStrogatzGenerator
+
 
 class CompositeGenerator(object):
-
     """
     Pretend to extend inaccessible networkit._NetworKit.StaticGraphGenerator
     """
@@ -24,7 +25,7 @@ class CompositeGenerator(object):
         for i in g.iterNodes():
             for j in g.iterNodes():
                 if i < j:
-                    g.addEdge(i,j)
+                    g.addEdge(i, j)
         return g
 
     def generate(self):
@@ -39,7 +40,7 @@ class CompositeGenerator(object):
         for node in communities.iterNodes():
             local_size = gauss(community_size, community_size / 3)
             # Choose local_n such that all communities have size at least two.
-            local_n = min(round(local_size), self._n - (2*i))
+            local_n = min(round(local_size), self._n - (2 * i))
             # Cannot choose a local_n which is smaller than zero.
             if local_n <= 0:
                 local_n = 1
@@ -52,7 +53,7 @@ class CompositeGenerator(object):
             connectivity = max(self._small_world_neighbours, floor(log(local_n)))
             # However, we also require that 2k < n-1, since otherwise you end
             # up with double links.
-            connectivity = max(0, min(ceil((local_n-1) / 2) - 1, connectivity))
+            connectivity = max(0, min(ceil((local_n - 1) / 2) - 1, connectivity))
             if local_n > 3:
                 small_world_graphs[node] = WattsStrogatzGenerator(local_n, connectivity, self._rewiring).generate()
             else:

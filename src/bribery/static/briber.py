@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from bribery.briber import Briber, BriberyGraphAlreadySetException, BriberyGraphNotSetException
+from bribery.briber import Briber, BriberyGraphNotSetException
 
 
 class GraphNotSubclassOfStaticRatingGraphException(Exception):

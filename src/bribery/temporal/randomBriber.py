@@ -1,8 +1,7 @@
 import random
 
-from bribery.briber import BriberyGraphNotSetException
-from bribery.temporal.briber import TemporalBriber
 from bribery.temporal.action.singleBriberyAction import SingleBriberyAction
+from bribery.temporal.briber import TemporalBriber
 
 DELTA = 0.001  # ensures total bribes do not exceed budget
 
