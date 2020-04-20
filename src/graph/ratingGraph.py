@@ -161,14 +161,14 @@ class RatingGraph(ABC):
         Get the customer ids without knowledge of edges or ratings
         :return: the customer ids in the graph
         """
-        return list(self._g.nodes())
+        return list(self._g.iterNodes())
 
     def customer_count(self) -> int:
         """
         Get the number of customers
         :return: the number of nodes in the graph
         """
-        return len(self._g.nodes())
+        return self._g.numberOfNodes()
 
     def get_random_customer(self, excluding: Optional[Set[int]] = None) -> int:
         """
@@ -178,7 +178,7 @@ class RatingGraph(ABC):
         """
         if excluding is None:
             excluding = set()
-        return random.choice(tuple(set(self._g.nodes()) - excluding))
+        return random.choice(tuple(set(self._g.iterNodes()) - excluding))
 
     def get_vote(self, idx: int):
         """
@@ -246,7 +246,7 @@ class RatingGraph(ABC):
         :param briber_id: the id number of the briber
         :return: mean of all actual ratings
         """
-        ns = [n for n in self._g.nodes() if not np.isnan(self._votes[n][briber_id])]
+        ns = [n for n in self._g.iterNodes() if not np.isnan(self._votes[n][briber_id])]
         return sum(self.get_vote(n)[briber_id] for n in ns) / len(ns)
 
     def is_influential(self, node_id: int, k: float = 0.1, briber_id: int = 0,
@@ -296,7 +296,7 @@ class RatingGraph(ABC):
         :param briber_id: the briber being considered in the evaluation
         """
         return sum(self.get_rating(node_id=n, briber_id=briber_id, rating_method=rating_method, nan_default=0)
-                   for n in self._g.nodes())
+                   for n in self._g.iterNodes())
 
     def set_weight(self, node1_id: int, node2_id: int, weight: float):
         """

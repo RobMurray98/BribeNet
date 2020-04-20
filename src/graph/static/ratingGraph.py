@@ -47,14 +47,14 @@ class StaticRatingGraph(RatingGraph):
         from bribery.static.briber import StaticBriber
         self._bribers: Tuple[StaticBriber] = self.__tmp_bribers
         # noinspection PyTypeChecker
-        self._votes = np.zeros((len(self._g.nodes()), len(self._bribers)))
-        self._truths = np.zeros((len(self._g.nodes()), len(self._bribers)))
+        self._votes = np.zeros((self._g.numberOfNodes(), len(self._bribers)))
+        self._truths = np.zeros((self._g.numberOfNodes(), len(self._bribers)))
         # Generate random ratings network
         if "non_voter_proportion" in self.__tmp_kwargs:
             non_voter_proportion = self.__tmp_kwargs["non_voter_proportion"]
         else:
             non_voter_proportion = DEFAULT_NON_VOTER_PROPORTION
-        for n in self._g.nodes():
+        for n in self._g.iterNodes():
             for b, _ in enumerate(self._bribers):
                 rating = random.uniform(0, self._max_rating)
                 self._truths[n][b] = rating

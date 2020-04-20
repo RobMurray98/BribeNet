@@ -3,4 +3,4 @@
 
 from networkit.graphio import SNAPGraphReader
 
-facebook = SNAPGraphReader().read("../data/facebook/facebook_combined.txt")
+facebook = SNAPGraphReader().read("../data/facebook_combined.txt")
