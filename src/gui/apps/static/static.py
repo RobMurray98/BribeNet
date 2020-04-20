@@ -24,13 +24,13 @@ def switch_briber(argument):
     return switcher.get(argument)
 
 
-class StaticGUI(tk.Tk):
+class StaticGUI(tk.Toplevel):
     """
     Window for the static wizard and running environment
     """
 
     def __init__(self, controller, *args, **kwargs):
-        tk.Tk.__init__(self, *args, **kwargs)
+        super().__init__(controller, *args, **kwargs)
         self.title("Static Model")
         self.controller = controller
         self.grid_rowconfigure(0, weight=1)

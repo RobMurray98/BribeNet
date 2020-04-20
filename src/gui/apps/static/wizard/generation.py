@@ -12,6 +12,7 @@ class StaticGeneration(tk.Frame):
 
     def __init__(self, parent):
         super().__init__(parent)
+        self.parent = parent
         self.graph_type = tk.StringVar(self)
 
         self.subframes = tuple(c(self) for c in ALGO_SUBFRAMES)

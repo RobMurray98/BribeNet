@@ -28,7 +28,7 @@ class TemporalBriberWizardFrame(tk.Frame):
 
         self.strat_type.set(self.options[0])
         for f in self.subframes:
-            f.grid(row=1, column=0, sticky="nsew")
+            f.grid(row=1, column=0, sticky="nsew", pady=20)
 
         self.strat_type.trace('w', self.switch_frame)
 

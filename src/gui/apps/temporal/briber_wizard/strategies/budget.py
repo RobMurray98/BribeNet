@@ -15,8 +15,10 @@ class BudgetFrame(StrategyFrame):
             'b': tk.DoubleVar(self, value=0.5)
         }
 
-        for i, (name, var) in enumerate(self.params.items()):
-            label = tk.Label(self, text=name)
-            label.grid(row=i, column=0)
-            entry = tk.Entry(self, textvariable=var)
-            entry.grid(row=i, column=1)
+        self.descriptions = {
+            'u_0': 'starting budget',
+            'k': 'cost of information',
+            'b': 'threshold of minimum potential increase in rating to fully bribe'
+        }
+
+        self.grid_params()

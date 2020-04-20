@@ -18,8 +18,17 @@ class Composite(GeneratorAlgoFrame):
             'p_reduce': tk.DoubleVar(self, value=0.05)
         }
 
-        for i, (name, var) in enumerate(self.params.items()):
-            label = tk.Label(self, text=name)
-            label.grid(row=i, column=0)
-            entry = tk.Entry(self, textvariable=var)
-            entry.grid(row=i, column=1)
+        self.descriptions = {
+            'n_nodes': 'number of nodes in the graph',
+            'n_communities': 'how many small world networks the composite network should consist of',
+            'n_neighbours': 'how many neighbours each node should have at the start of small world generation (k from '
+                            'Watts-Strogatz)',
+            'p_rewiring': 'the probability of rewiring a given edge during small world network generation (p from '
+                          'Watts-Strogatz)',
+            'k': 'number of attachments per community (k for Barabasi-Albert for our parent graph)',
+            'p_reduce': "how much the probability of joining two nodes in two different communities is reduced by - "
+                        "once a successful connection is made, the probability of connecting two edges p' becomes p' "
+                        "* probability_reduce "
+        }
+
+        self.grid_params()

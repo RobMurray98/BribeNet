@@ -40,13 +40,13 @@ def switch_briber(strat_type, *args):
     return switcher.get(strat_type)(*args)
 
 
-class TemporalGUI(tk.Tk):
+class TemporalGUI(tk.Toplevel):
     """
     Window for the temporal wizard and running environment
     """
 
     def __init__(self, controller, *args, **kwargs):
-        tk.Tk.__init__(self, *args, **kwargs)
+        super().__init__(controller, *args, **kwargs)
         self.title("Temporal Model")
         self.controller = controller
 

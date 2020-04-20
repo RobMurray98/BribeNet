@@ -114,6 +114,8 @@ class GraphFrame(tk.Frame):
             with_labels=True
         )
 
+        # TODO (nathan): refactor this functionality into separate functions with additional calls such that it doesn't require optional kwargs
+
         if "briber" in kwargs:
 
             b = kwargs["briber"]
@@ -136,7 +138,7 @@ class GraphFrame(tk.Frame):
         # Show last bribe for bribers
         if "last" in kwargs:
 
-            for n, c in zip(kwargs["last"], bribe_colors):
+            for n, c in zip(kwargs["last"], bribe_colors):  # TODO (nathan): bribe_colors is undefined!
                 self.ax.add_artist(plt.Circle(
                     (self.pos[n][0], self.pos[n][1]), 0.1,
                     color=c,
@@ -145,33 +147,3 @@ class GraphFrame(tk.Frame):
                 ))
 
         self.canvas.draw()
-
-    # def show_influential(self):
-    #     cmap = plt.get_cmap("Purples")
-    #     colors = []
-    #
-    #     for c in self.graph.get_customers():
-    #         if self.graph.is_influential(c, charge_briber=False):
-    #             colors.append("yellow")
-    #         elif np.isnan(self.graph.get_vote(c)):
-    #             colors.append("gray")
-    #         else:
-    #             colors.append(rgb2hex(cmap(self.graph.get_vote(c)[0])[:3]))
-    #     self.ax.clear()
-    #
-    #     for c in self.graph.get_customers():
-    #         rating = ""
-    #         if np.isnan(self.graph.get_vote(c)):
-    #             rating = "None"
-    #         else:
-    #             rating = round(self.graph.get_vote(c)[0], 2)
-    #
-    #         self.ax.annotate(
-    #             str(c) + ":\n" +
-    #             "Rating: " + str(rating) + "\n" +
-    #             "PRating: " + str(round(self.graph.get_rating(c), 2)),
-    #             xy=(self.pos[c][0], self.pos[c][1]),
-    #             bbox=dict(boxstyle="round", fc="w", ec="0.5", alpha=0.9)
-    #         )
-    #     drawGraph(self.graph.graph(), node_size=500, node_color=colors, ax=self.ax, pos=self.pos)
-    #     self.canvas.draw()
