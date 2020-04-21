@@ -316,7 +316,7 @@ class RatingGraph(ABC):
         return self._g.weight(node1_id, node2_id)
 
     def get_edges(self) -> [(int, int)]:
-        return self._g.edges()
+        return list(self._g.iterEdges())
 
     def trust(self, node1_id: int, node2_id: int) -> float:
         """
