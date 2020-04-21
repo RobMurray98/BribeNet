@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 from bribery.static.influentialNodeBriber import InfluentialNodeBriber
 from bribery.static.mostInfluentialNodeBriber import MostInfluentialNodeBriber
 from bribery.static.randomBriber import RandomBriber

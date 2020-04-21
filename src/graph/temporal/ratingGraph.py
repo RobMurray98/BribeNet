@@ -9,6 +9,7 @@ from bribery.temporal.action.multiBriberyAction import MultiBriberyAction
 from graph.ratingGraph import DEFAULT_GEN, RatingGraph, BribersAreNotTupleException, NoBriberGivenException
 from graph.static.ratingGraph import DEFAULT_NON_VOTER_PROPORTION
 from graph.temporal.action.customerAction import CustomerAction
+from graph.temporal.weighting.traverseWeighting import assign_traverse_averaged
 from helpers.override import override
 
 DEFAULT_REMOVE_NO_VOTE = False
@@ -16,6 +17,8 @@ DEFAULT_Q = 0.5
 DEFAULT_PAY = 1.0
 DEFAULT_APATHY = 0.0
 DEFAULT_D = 2  # number of rounds in a cycle (D-1 bribes and then one customer round)
+DEFAULT_TRUE_AVERAGE = 0.5
+DEFAULT_TRUE_STD_DEV = 0.2
 
 
 class BriberNotSubclassOfTemporalBriberException(Exception):
@@ -44,8 +47,8 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
         super().__init__(bribers, generator, specifics=self.__specifics, **kwargs)
 
     def __specifics(self):
-        self._votes = np.zeros((len(self._g.nodes()), len(self._bribers)))
-        self._truths = np.zeros((len(self._g.nodes()), len(self._bribers)))
+        self._votes = np.zeros((self._g.numberOfNodes(), len(self._bribers)))
+        self._truths = np.zeros((self._g.numberOfNodes(), len(self._bribers)))
         # Generate random ratings network
         if "non_voter_proportion" in self.__tmp_kwargs:
             non_voter_proportion = self.__tmp_kwargs["non_voter_proportion"]
@@ -71,9 +74,20 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
             self._d: int = self.__tmp_kwargs["d"]
         else:
             self._d: int = DEFAULT_D
-        for n in self._g.nodes():
+        if "true_average" in self.__tmp_kwargs:
+            self._true_average: float = self.__tmp_kwargs["true_average"]
+        else:
+            self._true_average: float = DEFAULT_TRUE_AVERAGE
+        if "true_std_dev" in self.__tmp_kwargs:
+            self._true_std_dev: float = self.__tmp_kwargs["true_std_dev"]
+        else:
+            self._true_std_dev: float = DEFAULT_TRUE_STD_DEV
+        community_weights = {}
+        for b, _ in enumerate(self._bribers):
+            community_weights[b] = assign_traverse_averaged(self._g, self._true_average, self._true_std_dev)
+        for n in self._g.iterNodes():
             for b, _ in enumerate(self._bribers):
-                rating = random.uniform(0, self._max_rating)
+                rating = community_weights[b][n]
                 self._truths[n][b] = rating
                 if random.random() > non_voter_proportion:
                     self._votes[n][b] = rating

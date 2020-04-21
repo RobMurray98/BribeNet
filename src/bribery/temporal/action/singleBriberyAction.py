@@ -1,9 +1,9 @@
 import sys
 from typing import Dict, Optional
 
-from bribery.temporal.action.briberyAction import BriberyAction
-from bribery.temporal.action import BribeMustBeGreaterThanZeroException, NodeDoesNotExistException,\
+from bribery.temporal.action import BribeMustBeGreaterThanZeroException, NodeDoesNotExistException, \
     BriberyActionExceedsAvailableUtilityException
+from bribery.temporal.action.briberyAction import BriberyAction
 
 
 class SingleBriberyAction(BriberyAction):

@@ -1,12 +1,12 @@
+import random
 from typing import List
+
+import numpy as np
 
 from graph.ratingGraph import DEFAULT_GEN
 from graph.temporal.action.actionType import ActionType
 from graph.temporal.action.customerAction import CustomerAction
 from graph.temporal.ratingGraph import TemporalRatingGraph
-
-import numpy as np
-import random
 
 DEFAULT_THRESHOLD = 0.5
 
@@ -44,7 +44,7 @@ class ThresholdGraph(TemporalRatingGraph):
             action.set_bribed_from_bribery_action(self._last_bribery_action)
 
         # for each customer
-        for n in self._g.nodes():
+        for n in self._g.iterNodes():
             # get weightings for restaurants
             # 0 if below_threshold, q if no votes
             weights = np.zeros(len(self._bribers))

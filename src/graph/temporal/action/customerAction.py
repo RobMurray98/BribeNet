@@ -1,10 +1,10 @@
 from typing import Dict, Any, Tuple, List
 
-from bribery.temporal.action.briberyAction import BriberyAction
-from graph.temporal.action.actionType import ActionType
-from bribery.temporal.briber import GraphNotSubclassOfTemporalRatingGraphException
-
 import numpy as np
+
+from bribery.temporal.action.briberyAction import BriberyAction
+from bribery.temporal.briber import GraphNotSubclassOfTemporalRatingGraphException
+from graph.temporal.action.actionType import ActionType
 
 
 class CustomerActionExecutedMultipleTimesException(Exception):
