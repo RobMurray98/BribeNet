@@ -20,26 +20,41 @@ class GraphFrame(tk.Frame):
         self.fig = plt.figure(figsize=(8, 8))
         self.ax = self.fig.add_subplot(111)
         self.canvas = FigureCanvasTkAgg(self.fig, master=self)
+        self.grid_rowconfigure(1, weight=1)
         self.canvas.get_tk_widget().grid(row=1, column=0, rowspan=10)
         self.results = []
 
-        button3 = tk.Button(self, text="Next Step", command=self.controller.next_step)
-        button3.grid(row=3, column=2)
+        step_button = tk.Button(self, text="Next Step", command=self.controller.next_step)
+        step_button.grid(row=3, column=2)
 
-        button4 = tk.Button(self, text="Results", command=self.to_results)
-        button4.grid(row=4, column=2)
+        results_button = tk.Button(self, text="Results", command=self.to_results)
+        results_button.grid(row=4, column=2)
 
-        button1 = tk.Button(self, text="Exit", command=self.return_to_wizard)
-        button1.grid(row=7, column=2)
+        exit_button = tk.Button(self, text="Exit", command=self.return_to_wizard)
+        exit_button.grid(row=7, column=2)
 
-        slide = tk.Scale(self, from_=1, to=100, orient=tk.HORIZONTAL)
-        slide.grid(row=6, column=2)
-        button5 = tk.Button(self, text="Perform n steps", command=lambda: self.n_steps(slide.get()))
-        button5.grid(row=5, column=2)
+        steps_slide = tk.Scale(self, from_=1, to=100, orient=tk.HORIZONTAL)
+        steps_slide.grid(row=6, column=2)
+        n_steps_button = tk.Button(self, text="Perform n steps", command=lambda: self.n_steps(steps_slide.get()))
+        n_steps_button.grid(row=5, column=2)
 
         self.info = tk.StringVar(parent)
-        lbl = tk.Label(self, textvariable=self.info)
-        lbl.grid(row=1, column=1, columnspan=2)
+        round_desc_canvas = tk.Canvas(self)
+        round_desc_scroll = tk.Scrollbar(self, orient='vertical', command=round_desc_canvas.yview)
+        round_desc_frame = tk.Frame(self)
+        round_desc_frame.bind(
+            "<Configure>",
+            lambda e: round_desc_canvas.configure(
+                scrollregion=round_desc_canvas.bbox("all")
+            )
+        )
+        round_desc_canvas.create_window((0, 0), window=round_desc_frame, anchor="nw")
+        round_desc_canvas.config(yscrollcommand=round_desc_scroll.set)
+        round_desc_label = tk.Label(round_desc_frame, textvariable=self.info)
+        round_desc_label.pack(fill=tk.BOTH, expand=1)
+
+        round_desc_canvas.grid(row=1, column=1, columnspan=2, sticky='nsew')
+        round_desc_scroll.grid(row=1, column=2, sticky='nse')
         self.info.set("--")
 
     def return_to_wizard(self):

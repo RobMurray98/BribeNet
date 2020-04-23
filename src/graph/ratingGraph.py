@@ -283,7 +283,7 @@ class RatingGraph(ABC):
         :param b: the amount to bribe the node
         :param briber_id: the briber who's performing the briber
         """
-        if self._votes[node_id][briber_id]:
+        if not np.isnan(self._votes[node_id][briber_id]):
             self._votes[node_id][briber_id] = min(self._max_rating, self._votes[node_id][briber_id] + b)
         else:
             self._votes[node_id][briber_id] = min(self._max_rating, b)
