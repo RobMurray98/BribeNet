@@ -6,6 +6,8 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.colors import rgb2hex
 from networkit.viztasks import drawGraph
 
+from gui.apps.temporal.results_wizard.window import TemporalResultsWizardWindow
+
 
 class GraphFrame(tk.Frame):
     """
@@ -27,7 +29,7 @@ class GraphFrame(tk.Frame):
         step_button = tk.Button(self, text="Next Step", command=self.controller.next_step)
         step_button.grid(row=3, column=2)
 
-        results_button = tk.Button(self, text="Results", command=self.to_results)
+        results_button = tk.Button(self, text="Results", command=self.show_results_wizard)
         results_button.grid(row=4, column=2)
 
         exit_button = tk.Button(self, text="Exit", command=self.return_to_wizard)
@@ -89,9 +91,9 @@ class GraphFrame(tk.Frame):
                                                                      trust=1))
             bribe_bt.grid(row=(i + 4), column=1)
 
-    def to_results(self):
-        self.controller.plot_results()
-        self.controller.show_frame("ResultsFrame")
+    def show_results_wizard(self):
+        results_wizard = TemporalResultsWizardWindow(self.controller, self.controller.results)
+        results_wizard.lift()
 
     def draw_graph(self, graph, **kwargs):
 

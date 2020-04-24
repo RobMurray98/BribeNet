@@ -16,16 +16,18 @@ class ResultsFrame(tk.Frame):
         exit_button = tk.Button(self, text="Exit", command=self.exit)
         exit_button.pack()
 
-    def plot_results(self, results):
-        xs = [i for i in range(0, len(results))]
+    def plot_results(self, results, xlbl, ylbl):
         self.ax.clear()
         # for each briber
-        for b in range(0, len(results[0])):
-            ys = [r[b] for r in results]
+        for b in range(0, len(self.controller.briber_names)):
+            y_rs = results.get(ylbl)
+            x_rs = results.get(xlbl)
+            xs = [r[b] for r in x_rs]
+            ys = [r[b] for r in y_rs]
             self.ax.plot(xs, ys, label=self.controller.briber_names[b])
 
-        self.ax.set_xlabel("Moves over time")
-        self.ax.set_ylabel("Average P-rating")
+        self.ax.set_xlabel(xlbl)
+        self.ax.set_ylabel(ylbl)
         self.ax.legend()
         self.canvas.draw()
 

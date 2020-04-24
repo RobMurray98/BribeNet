@@ -24,9 +24,14 @@ from gui.apps.temporal.result import ResultsFrame
 from gui.apps.temporal.wizard.wizard import WizardFrame
 from helpers.override import override
 
+from gui.apps.temporal.results_wizard.results import ResultsStore
+
 FRAMES_CLASSES = (WizardFrame, GraphFrame, ResultsFrame)
 
 FRAMES_DICT = {i: c.__class__.__name__ for (i, c) in enumerate(FRAMES_CLASSES)}
+
+X_AXIS_OPTIONS = ["Utility Spent", "Time"]
+Y_AXIS_OPTIONS = ["Average P-rating", "Total Utility", "Trust"]
 
 
 def switch_briber(strat_type, *args):
@@ -67,13 +72,13 @@ class TemporalGUI(tk.Toplevel):
 
         self.show_frame(WizardFrame.__name__)
         self.bribers = []
-        self.results = []
+        self.results = ResultsStore(X_AXIS_OPTIONS, Y_AXIS_OPTIONS)
         self.briber_names = []
         self.g = None
 
     def clear_graph(self):
         self.bribers = []
-        self.results = []
+        self.results = ResultsStore(X_AXIS_OPTIONS, Y_AXIS_OPTIONS)
         self.briber_names = []
         self.g = None
 
@@ -105,7 +110,8 @@ class TemporalGUI(tk.Toplevel):
         )
 
         self.frames["GraphFrame"].set_pos(spring_layout(nk2nx(self.g.graph())))
-        self.results.append([self.g.eval_graph(briber_id=b) for b in range(0, len(self.bribers))])
+
+        self.update_results()
 
         for i in range(0, 10):
             print(f"{i}: --> {self.g.get_vote(i)}")
@@ -113,14 +119,24 @@ class TemporalGUI(tk.Toplevel):
         self.frames["GraphFrame"].add_briber_buttons(self.bribers)
         self.frames["GraphFrame"].draw_graph(self.g)
 
-    def plot_results(self):
-        self.frames["ResultsFrame"].plot_results(self.results)
-        self.results = []
+    def update_results(self):
+
+        self.results.add("Average P-rating", [self.g.eval_graph(briber_id=b) for b in range(0, len(self.bribers))])
+        self.results.add("Total Utility", [b.get_resources() for b in self.bribers])
+        # @TODO add trust to recorded results
+        # self.results.add("Trust", [self.g.eval_graph(briber_id=b) for b in range(0, len(self.bribers))])
+        self.results.add("Utility Spent", [self.g.eval_graph(briber_id=b) for b in range(0, len(self.bribers))])
+        self.results.add("Time", [self.g.get_time_step() for b in self.bribers])
+
+    def plot_results(self, xlbl, ylbl):
+        self.frames["ResultsFrame"].plot_results(self.results, xlbl, ylbl)
+        self.results = ResultsStore(X_AXIS_OPTIONS, Y_AXIS_OPTIONS)
+        self.show_frame("ResultsFrame")
 
     def next_step(self):
 
         self.g.step()
-        self.results.append([self.g.eval_graph(briber_id=b) for b in range(0, len(self.bribers))])
+        self.update_results()
 
         if self.g.get_time_step() % self.g.get_d() == self.g.get_d() - 1:
             info = "BRIBES\n"
