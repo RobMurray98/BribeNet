@@ -31,4 +31,4 @@ class Composite(ParamListFrame):
                         "* probability_reduce "
         }
 
-        self.grid_params()
+        self.grid_params(show_name=False)

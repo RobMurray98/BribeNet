@@ -15,15 +15,18 @@ class StaticGeneration(tk.Frame):
         self.parent = parent
         self.graph_type = tk.StringVar(self)
 
+        title_label = tk.Label(self, text='Graph Generation Algorithm')
+        title_label.grid(row=0, column=0, pady=10)
+
         self.subframes = tuple(c(self) for c in ALGO_SUBFRAMES)
         self.options = tuple(f.get_name() for f in self.subframes)
 
         self.dropdown = tk.OptionMenu(self, self.graph_type, *self.options)
-        self.dropdown.grid(row=0, column=0, pady=10, sticky='nsew')
+        self.dropdown.grid(row=1, column=0, pady=10, sticky='nsew')
 
         self.graph_type.set(self.options[0])
         for f in self.subframes:
-            f.grid(row=1, column=0, sticky="nsew")
+            f.grid(row=2, column=0, sticky="nsew")
 
         self.graph_type.trace('w', self.switch_frame)
 

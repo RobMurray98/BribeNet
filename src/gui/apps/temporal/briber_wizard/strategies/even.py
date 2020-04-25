@@ -17,4 +17,4 @@ class EvenFrame(ParamListFrame):
             'u_0': 'starting budget'
         }
 
-        self.grid_params()
+        self.grid_params(show_name=False)

@@ -4,6 +4,7 @@ from gui.classes.param_list_frame import ParamListFrame
 
 
 class TemporalSettings(ParamListFrame):
+    name = 'Model Parameters'
 
     def __init__(self, parent):
         super().__init__(parent)

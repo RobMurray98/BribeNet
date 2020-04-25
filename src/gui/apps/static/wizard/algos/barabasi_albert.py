@@ -21,5 +21,5 @@ class BarabasiAlbert(ParamListFrame):
             'n_0': 'number of connected nodes to begin with'
         }
 
-        self.grid_params()
+        self.grid_params(show_name=False)
 

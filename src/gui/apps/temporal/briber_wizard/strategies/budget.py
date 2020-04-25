@@ -21,4 +21,4 @@ class BudgetFrame(ParamListFrame):
             'b': 'threshold of minimum potential increase in rating to fully bribe'
         }
 
-        self.grid_params()
+        self.grid_params(show_name=False)

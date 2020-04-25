@@ -30,7 +30,7 @@ class WizardFrame(tk.Frame):
         self.subframes[TemporalGeneration.__name__].grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
 
         run_button = tk.Button(self, text="Run", command=self.on_button)
-        run_button.grid(row=2, column=1, padx=10, pady=10)
+        run_button.grid(row=1, column=1)
 
     def add_briber(self, b_type, u0):
         self.controller.add_briber(b_type, u0)
