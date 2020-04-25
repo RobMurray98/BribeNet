@@ -58,10 +58,7 @@ class ThresholdGraph(TemporalRatingGraph):
             for b in range(0, len(self._bribers)):
                 # Check for no votes
                 if not voted[n][b]:
-                    if self._remove_no_vote:
-                        weights[b] = 0
-                    else:
-                        weights[b] = self._q
+                    weights[b] = self._q
                 # P-rating below threshold
                 elif curr_ratings[n][b] < self._threshold:
                     weights[b] = 0

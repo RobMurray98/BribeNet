@@ -30,5 +30,4 @@ class ResultsFrame(tk.Frame):
         self.canvas.draw()
 
     def exit(self):
-        self.results = []
         self.controller.show_frame("GraphFrame")

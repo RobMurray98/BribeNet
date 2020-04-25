@@ -1,9 +1,9 @@
 import tkinter as tk
 
-from gui.apps.temporal.briber_wizard.strategies.strategy_frame import StrategyFrame
+from gui.classes.param_list_frame import ParamListFrame
 
 
-class BudgetFrame(StrategyFrame):
+class BudgetFrame(ParamListFrame):
     name = "Budget"
 
     def __init__(self, parent):

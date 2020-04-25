@@ -1,27 +1,31 @@
 import tkinter as tk
 
+from gui.classes.param_list_frame import ParamListFrame
 
-class TemporalSettings(tk.Frame):
+
+class TemporalSettings(ParamListFrame):
 
     def __init__(self, parent):
         super().__init__(parent)
-        graph_lbls = [
-            tk.Label(self, text="Threshold"),
-            tk.Label(self, text="D (num bribe rounds)"),
-            tk.Label(self, text="Q"),
-            tk.Label(self, text="Apathy"),
-        ]
-        self.graph_params = [
-            tk.DoubleVar(parent, value=0.5),
-            tk.IntVar(parent, value=2),
-            tk.DoubleVar(parent, value=0.5),
-            tk.DoubleVar(parent, value=0.0)
-        ]
-        for i, a in enumerate(graph_lbls):
-            a.grid(row=(i + 11), column=0)
-        for i, a in enumerate(self.graph_params):
-            entry = tk.Entry(self, textvariable=a)
-            entry.grid(row=(i + 11), column=1)
 
-    def get_graph_params(self):
-        return [x.get() for x in self.graph_params]
+        self.descriptions = {
+            'non_voter_proportion': 'the proportion of customers which start with no vote',
+            'threshold': 'the minimum rating for a customer to consider visiting a bribing actor',
+            'd': 'the period of non-bribery rounds (minimum 2)',
+            'q': 'the vote value to use in place of non-votes in rating calculations',
+            'apathy': 'the probability that a customer performs no action',
+            'true_average': 'the average around which ground truths are distributed',
+            'true_std_dev': 'the standard deviation by which ground truths are distributed'
+        }
+
+        self.params = {
+            'non_voter_proportion': tk.DoubleVar(self, value=0.2),
+            'threshold': tk.DoubleVar(self, value=0.5),
+            'd': tk.IntVar(self, value=2),
+            'q': tk.DoubleVar(self, value=0.5),
+            'apathy': tk.DoubleVar(self, value=0.0),
+            'true_average': tk.DoubleVar(self, value=0.5),
+            'true_std_dev': tk.DoubleVar(self, value=0.2)
+        }
+
+        self.grid_params()

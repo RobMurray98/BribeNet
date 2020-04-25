@@ -49,7 +49,7 @@ class WizardFrame(tk.Frame):
                 strat_type = briber[0]
                 briber_args = briber[1:]
                 self.controller.add_briber(strat_type, *briber_args)
-            params = self.subframes[TemporalSettings.__name__].get_graph_params()
+            params = self.subframes[TemporalSettings.__name__].get_args()
             self.controller.add_graph(graph_type, graph_args, params)
         except Exception as e:
             tk.messagebox.showerror(message=f"{e.__class__.__name__}: {str(e)}")

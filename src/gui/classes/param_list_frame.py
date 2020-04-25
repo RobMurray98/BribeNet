@@ -7,7 +7,7 @@ from PIL import ImageTk, Image
 from gui.classes.tooltip import ToolTip
 
 
-class StrategyFrame(tk.Frame, abc.ABC):
+class ParamListFrame(tk.Frame, abc.ABC):
     name = "ABC"
 
     def __init__(self, parent):

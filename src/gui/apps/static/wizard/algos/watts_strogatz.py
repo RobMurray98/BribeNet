@@ -1,9 +1,9 @@
 import tkinter as tk
 
-from gui.apps.static.wizard.algos.algo_frame import GeneratorAlgoFrame
+from gui.classes.param_list_frame import ParamListFrame
 
 
-class WattsStrogatz(GeneratorAlgoFrame):
+class WattsStrogatz(ParamListFrame):
     name = "Watts-Strogatz"
 
     def __init__(self, parent):
