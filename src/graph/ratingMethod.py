@@ -9,3 +9,5 @@ class RatingMethod(enum.Enum):
     SAMPLE_P_RATING = 3
     PK_RATING = 4
     WEIGHTED_P_RATING = 5
+    WEIGHTED_MEDIAN_P_RATING = 6
+    P_GAMMA_RATING = 7

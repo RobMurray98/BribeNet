@@ -2,6 +2,9 @@ import random
 from abc import ABC
 from copy import deepcopy
 from typing import Tuple, Optional, List, Any, Set
+from weightedstats import weighted_mean, weighted_median, mean, median
+
+import networkit as nk
 
 import numpy as np
 
@@ -112,13 +115,14 @@ class RatingGraph(ABC):
         self._rating_method = rating_method
 
     def get_rating(self, node_id: int = 0, briber_id: int = 0, rating_method: Optional[RatingMethod] = None,
-                   nan_default: Optional[int] = None):
+                   nan_default: Optional[int] = None, gamma: Optional[float] = None):
         """
         Get the rating for a certain node and briber, according to the set rating method
         :param node_id: the node to find the rating of (can be omitted for O-rating)
         :param briber_id: the briber to find the rating of (can be omitted in single-briber rating graphs)
         :param rating_method: a rating method to override the current set rating method if not None
         :param nan_default: optional default integer value to replace np.nan as default return
+        :param gamma: the gamma parameter for calculating P-gamma-rating.
         :return: the rating
         """
         rm = rating_method or self._rating_method
@@ -133,8 +137,10 @@ class RatingGraph(ABC):
             rating = self._sample_p_rating(node_id, briber_id)
         elif rm == RatingMethod.WEIGHTED_P_RATING:
             rating = self._p_rating_weighted(node_id, briber_id)
-        # elif rm == RatingMethod.PK_RATING:
-        #     return self._pk_rating(node_id, briber_id)
+        elif rm == RatingMethod.WEIGHTED_MEDIAN_P_RATING:
+            rating = self._median_p_rating_weighted(node_id, briber_id)
+        elif rm == RatingMethod.P_GAMMA_RATING:
+            rating = self._p_gamma_rating(node_id, briber_id, gamma)
         if np.isnan(rating) and nan_default:
             rating = nan_default
         return rating
@@ -198,7 +204,7 @@ class RatingGraph(ABC):
         ns = self._neighbours(node_id, briber_id)
         if len(ns) == 0:
             return np.nan
-        return sum(self.get_vote(n)[briber_id] for n in ns) / len(ns)
+        return mean([self.get_vote(n)[briber_id] for n in ns])
 
     def _p_rating_weighted(self, node_id: int, briber_id: int = 0):
         """
@@ -210,13 +216,9 @@ class RatingGraph(ABC):
         ns = self._neighbours(node_id, briber_id)
         if len(ns) == 0:
             return np.nan
-        dividing_factor = 0
-        contributions = 0
-        for n in ns:
-            weight = self.get_weight(n, node_id)
-            contributions += weight * self.get_vote(n)[briber_id]
-            dividing_factor += weight
-        return contributions / dividing_factor
+        weights = [self.get_weight(n, node_id) for n in ns]
+        votes = [self.get_vote(n)[briber_id] for n in ns]
+        return weighted_mean(votes, weights)
 
     def _median_p_rating(self, node_id: int, briber_id: int = 0):
         """
@@ -226,8 +228,23 @@ class RatingGraph(ABC):
         :return: median of actual rating of neighbouring voters
         """
         ns = self._neighbours(node_id, briber_id)
-        ns = sorted(ns, key=lambda x: self.get_vote(x)[briber_id])
-        return self.get_vote(ns[len(ns) // 2])[briber_id]
+        if len(ns) == 0:
+            return np.nan
+        return median([self.get_vote(n)[briber_id] for n in ns])
+    
+    def _median_p_rating_weighted(self, node_id: int, briber_id: int = 0):
+        """
+        Get the median-based P-rating for the node, weighted based on trust
+        :param node_id: the id of the node
+        :param briber_id: the id number of the briber
+        :return: median of actual rating of neighbouring voters
+        """
+        ns = self._neighbours(node_id, briber_id)
+        if len(ns) == 0:
+            return np.nan
+        weights = [self.get_weight(n, node_id) for n in ns]
+        votes = [self.get_vote(n)[briber_id] for n in ns]
+        return weighted_median(votes, weights)
 
     def _sample_p_rating(self, node_id: int, briber_id: int = 0):
         """
@@ -237,8 +254,10 @@ class RatingGraph(ABC):
         :return: mean of a sample of actual rating of neighbouring voters
         """
         ns = self._neighbours(node_id, briber_id)
+        if len(ns) == 0:
+            return np.nan
         sub = random.sample(ns, random.randint(1, len(ns)))
-        return sum(self.get_vote(n)[briber_id] for n in sub) / len(sub)
+        return mean([self.get_vote(n)[briber_id] for n in sub])
 
     def _o_rating(self, briber_id: int = 0):
         """
@@ -247,7 +266,23 @@ class RatingGraph(ABC):
         :return: mean of all actual ratings
         """
         ns = [n for n in self._g.iterNodes() if not np.isnan(self._votes[n][briber_id])]
-        return sum(self.get_vote(n)[briber_id] for n in ns) / len(ns)
+        if len(ns) == 0:
+            return np.nan
+        return mean([self.get_vote(n)[briber_id] for n in ns])
+    
+    def _p_gamma_rating(self, node_id: int, briber_id: int = 0, gamma : float = 0.05):
+        """
+        Get the P-gamma-rating for the node, which weights nodes based on the gamma factor:
+        The gamma factor is defined as gamma^(D(n,c) - 1), where n is our starting node, c
+        is the node we are considering and D(n,c) is the shortest distance.
+        :param briber_id: the id number of the briber
+        :return: weighted mean of all actual ratings based on the gamma factor
+        """
+        ns = [n for n in self._g.iterNodes() if (not np.isnan(self._votes[n][briber_id])) and n != node_id]
+        distances = nk.distance.BFS(nk.graphtools.toUnweighted(self._g), node_id)
+        weights = [gamma ** (distances[n] - 1) for n in ns]
+        votes = [self.get_vote(n)[briber_id] for n in ns]
+        return weighted_mean(votes, weights)
 
     def is_influential(self, node_id: int, k: float = 0.1, briber_id: int = 0,
                        rating_method: Optional[RatingMethod] = None, charge_briber: bool = True) -> float:
