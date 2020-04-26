@@ -279,7 +279,7 @@ class RatingGraph(ABC):
         :return: weighted mean of all actual ratings based on the gamma factor
         """
         ns = [n for n in self._g.iterNodes() if (not np.isnan(self._votes[n][briber_id])) and n != node_id]
-        distances = nk.distance.BFS(nk.graphtools.toUnweighted(self._g), node_id)
+        distances = nk.distance.BFS(nk.graphtools.toUnweighted(self._g), node_id).run().getDistances()
         weights = [gamma ** (distances[n] - 1) for n in ns]
         votes = [self.get_vote(n)[briber_id] for n in ns]
         return weighted_mean(votes, weights)
