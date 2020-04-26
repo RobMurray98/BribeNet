@@ -311,6 +311,17 @@ class RatingGraph(ABC):
                 return reward
         return 0.0
 
+    def _get_influence_weight(self, node_id: int, briber_id: Optional[int] = 0):
+        """
+        Get the influence weight of a node in the graph, as defined by Grandi
+        and Turrini.
+        :param node_id: the node to fetch the influence weight of
+        :param briber_id: the briber (determines which neighbours have voted)
+        :return: the influence weight of the node
+        """
+        neighbour_weights = [1.0/len(self._neighbours(n, briber_id)) for n in self._neighbours(node_id, briber_id)]
+        return sum(neighbour_weights)
+
     def bribe(self, node_id, b, briber_id=0):
         """
         Increase the rating of a node by an amount, capped at the max rating
