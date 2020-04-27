@@ -36,10 +36,16 @@ class TestSingleBriberRatingGraph(TestCase):
         for i in self.rg.get_customers():
             self.assertTrue(self.rg._p_gamma_rating(i) >= 0)
             self.assertAlmostEqual(self.rg._p_gamma_rating(i, gamma=0), self.rg._p_rating(i))
-            # NOTE: the below test doesn't actually work!
-            # P-rating doesn't use the node itself, while O-rating does.
-            # So these values will actually differ.
-            # self.assertAlmostEqual(self.rg._p_gamma_rating(i, gamma=1), self.rg._o_rating())
+
+    def test_weighted_p_rating(self):
+        for b in range(len(self.rg.get_bribers())):
+            for i in self.rg.get_customers():
+                self.assertTrue(self.rg._p_gamma_rating(i) >= 0)
+
+    def test_weighted_median_p_rating(self):
+        for b in range(len(self.rg.get_bribers())):
+            for i in self.rg.get_customers():
+                self.assertTrue(self.rg._p_gamma_rating(i) >= 0)
     
     def test_bribe(self):
         initial_value = self.rg.eval_graph()

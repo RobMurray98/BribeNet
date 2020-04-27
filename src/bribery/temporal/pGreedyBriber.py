@@ -10,13 +10,13 @@ This is for testing whether trust is powerful enough to beat P-greedy bribery
 even when the briber has perfect information.
 """
 
+
 class PGreedyBriber(TemporalBriber):
 
-    def __init__(self, u0: float, k: float = 0.1):
+    def __init__(self, u0: float):
         """
         Constructor
         :param u0: initial utility
-        :param k: cost of information
         """
         super().__init__(u0)
         self._targets = []
@@ -24,9 +24,10 @@ class PGreedyBriber(TemporalBriber):
 
     def _set_graph(self, g):
         super()._set_graph(g)
+        # noinspection PyProtectedMember
         influence_weights = [(n, g._get_influence_weight(n, self.get_briber_id())) for n in self._g.get_customers()]
         influence_weights = sorted(influence_weights, key=lambda x: x[1], reverse=True)
-        self._targets = [n for (n,w) in influence_weights if w >= 1]
+        self._targets = [n for (n, w) in influence_weights if w >= 1]
 
     def _next_action(self) -> SingleBriberyAction:
         """

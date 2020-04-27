@@ -36,6 +36,10 @@ class TruthsNotInstantiatedBySpecificsException(Exception):
     pass
 
 
+class GammaNotSetException(Exception):
+    pass
+
+
 class RatingGraph(ABC):
     """
     Representation of network graph which bribers interact with
@@ -140,6 +144,8 @@ class RatingGraph(ABC):
         elif rm == RatingMethod.WEIGHTED_MEDIAN_P_RATING:
             rating = self._median_p_rating_weighted(node_id, briber_id)
         elif rm == RatingMethod.P_GAMMA_RATING:
+            if gamma is None:
+                raise GammaNotSetException()
             rating = self._p_gamma_rating(node_id, briber_id, gamma)
         if np.isnan(rating) and nan_default:
             rating = nan_default
@@ -231,7 +237,7 @@ class RatingGraph(ABC):
         if len(ns) == 0:
             return np.nan
         return median([self.get_vote(n)[briber_id] for n in ns])
-    
+
     def _median_p_rating_weighted(self, node_id: int, briber_id: int = 0):
         """
         Get the median-based P-rating for the node, weighted based on trust
@@ -269,8 +275,8 @@ class RatingGraph(ABC):
         if len(ns) == 0:
             return np.nan
         return mean([self.get_vote(n)[briber_id] for n in ns])
-    
-    def _p_gamma_rating(self, node_id: int, briber_id: int = 0, gamma : float = 0.05):
+
+    def _p_gamma_rating(self, node_id: int, briber_id: int = 0, gamma: float = 0.05):
         """
         Get the P-gamma-rating for the node, which weights nodes based on the gamma factor:
         The gamma factor is defined as gamma^(D(n,c) - 1), where n is our starting node, c
@@ -279,7 +285,11 @@ class RatingGraph(ABC):
         :return: weighted mean of all actual ratings based on the gamma factor
         """
         ns = [n for n in self._g.iterNodes() if (not np.isnan(self._votes[n][briber_id])) and n != node_id]
-        distances = nk.distance.BFS(nk.graphtools.toUnweighted(self._g), node_id).run().getDistances()
+        # noinspection PyUnresolvedReferences
+        unweighted_g = nk.graphtools.toUnweighted(self._g)
+        # noinspection PyUnresolvedReferences
+        bfs_run = nk.distance.BFS(unweighted_g, node_id).run()
+        distances = bfs_run.getDistances()
         weights = [gamma ** (distances[n] - 1) for n in ns]
         votes = [self.get_vote(n)[briber_id] for n in ns]
         return weighted_mean(votes, weights)
@@ -319,7 +329,7 @@ class RatingGraph(ABC):
         :param briber_id: the briber (determines which neighbours have voted)
         :return: the influence weight of the node
         """
-        neighbour_weights = [1.0/len(self._neighbours(n, briber_id)) for n in self._neighbours(node_id, briber_id)]
+        neighbour_weights = [1.0 / len(self._neighbours(n, briber_id)) for n in self._neighbours(node_id, briber_id)]
         return sum(neighbour_weights)
 
     def bribe(self, node_id, b, briber_id=0):

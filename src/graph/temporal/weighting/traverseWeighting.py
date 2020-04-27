@@ -1,5 +1,6 @@
 from random import gauss
 
+# noinspection PyUnresolvedReferences
 from networkit import Graph
 from numpy import mean as average
 
