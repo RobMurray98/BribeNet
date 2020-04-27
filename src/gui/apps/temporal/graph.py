@@ -82,46 +82,47 @@ class GraphFrame(tk.Frame):
         lbl.grid(row=2, column=1)
         view_txt.set("View rating for briber")
 
-        none_bt = tk.Button(self, text="none", command=lambda: self.draw_graph(self.controller.g, trust=1))
+        none_bt = tk.Button(self, text="none", command=lambda: self.draw_basic_graph(self.controller.g))
         none_bt.grid(row=3, column=1)
 
         for i, c in enumerate(self.controller.bribers):
             bribe_bt = tk.Button(self, text=self.controller.briber_names[i],
-                                 command=lambda i=i: self.draw_graph(self.controller.g, briber=i,
-                                                                     trust=1))
+                                 command=lambda i=i: self.draw_briber_graph(self.controller.g, i))
             bribe_bt.grid(row=(i + 4), column=1)
+
+        trust_but = tk.Button(self, text="Show Trust", command=lambda: self.show_trust(self.controller.g))
+        trust_but.grid(row=len(self.controller.bribers)+4, column=1)
+
 
     def show_results_wizard(self):
         results_wizard = TemporalResultsWizardWindow(self.controller, self.controller.results)
         results_wizard.lift()
 
-    def draw_graph(self, graph, **kwargs):
+    def draw_basic_graph(self, graph):
+        colors = ["gray" for c in graph.get_customers()] # nodes
+        edge_colors = ["#000000" for e in graph.get_edges()] # edges
+        self._update_graph(graph, colors, edge_colors)
+        self.canvas.draw()
 
-        colors = ["gray" for c in graph.get_customers()]
-        if "briber" in kwargs:
-            b = kwargs["briber"]
+    def draw_briber_graph(self, graph, b):
 
-            # set colours for nodes
-            cmap = plt.get_cmap("Purples")
-            colors = []
-            for c in graph.get_customers():
-                if np.isnan(graph.get_vote(c)[b]):
-                    colors.append("gray")
-                else:
-                    colors.append(rgb2hex(cmap(graph.get_vote(c)[b])[:3]))
+        # node colors
+        cmap = plt.get_cmap("Purples")
+        colors = []
+        for c in graph.get_customers():
+            if np.isnan(graph.get_vote(c)[b]):
+                colors.append("gray")
+            else:
+                colors.append(rgb2hex(cmap(graph.get_vote(c)[b])[:3]))
+        edge_colors = ["#000000" for e in graph.get_edges()] # edges
 
-        # default edges black
-        edge_colors = ["#000000" for e in graph.get_edges()]
+        self._update_graph(graph, colors, edge_colors)
+        self._add_annotations(graph, b)
+        self.canvas.draw()
 
-        # set colours for edges proportional to trust
-        cmap2 = plt.get_cmap("Greys")
-        if "trust" in kwargs and kwargs["trust"]:
-            edge_colors = []
-            for (u, v) in graph.get_edges():
-                edge_colors.append(rgb2hex(cmap2(graph.get_weight(u, v))[:3]))
+    def _update_graph(self, graph, colors, edge_colors):
 
         self.ax.clear()
-
         drawGraph(
             graph.graph(),
             node_size=400,
@@ -131,36 +132,27 @@ class GraphFrame(tk.Frame):
             with_labels=True
         )
 
-        # TODO (nathan): refactor this functionality into separate functions with additional calls such that it doesn't require optional kwargs
+    def _add_annotations(self, graph, b):
+        for c in graph.get_customers():
+            if np.isnan(graph.get_vote(c)[b]):
+                rating = "None"
+            else:
+                rating = round(graph.get_vote(c)[b], 2)
 
-        if "briber" in kwargs:
+            self.ax.annotate(
+                str(c) + ":\n"
+                + "Vote: " + str(rating) + "\n"
+                + "PRating: " + str(round(graph.get_rating(c), 2)),
+                xy=(self.pos[c][0], self.pos[c][1]),
+                bbox=dict(boxstyle="round", fc="w", ec="0.5", alpha=0.9)
+            )
 
-            b = kwargs["briber"]
+    def show_trust(self, graph):
 
-            # annotate votes on graph
-            for c in graph.get_customers():
-                if np.isnan(graph.get_vote(c)[b]):
-                    rating = "None"
-                else:
-                    rating = round(graph.get_vote(c)[b], 2)
-
-                self.ax.annotate(
-                    str(c) + ":\n"
-                    + "Vote: " + str(rating) + "\n"
-                    + "PRating: " + str(round(graph.get_rating(c), 2)),
-                    xy=(self.pos[c][0], self.pos[c][1]),
-                    bbox=dict(boxstyle="round", fc="w", ec="0.5", alpha=0.9)
-                )
-
-        # Show last bribe for bribers
-        if "last" in kwargs:
-
-            for n, c in zip(kwargs["last"], bribe_colors):  # TODO (nathan): bribe_colors is undefined!
-                self.ax.add_artist(plt.Circle(
-                    (self.pos[n][0], self.pos[n][1]), 0.1,
-                    color=c,
-                    fill=False,
-                    linewidth=3.0
-                ))
-
+        colors = ["gray" for c in graph.get_customers()] # nodes
+        cmap = plt.get_cmap("Greys")
+        edge_colors = []
+        for (u, v) in graph.get_edges():
+            edge_colors.append(rgb2hex(cmap(graph.get_weight(u, v))[:3]))
+        self._update_graph(graph, colors, edge_colors)
         self.canvas.draw()

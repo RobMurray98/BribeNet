@@ -119,7 +119,7 @@ class TemporalGUI(tk.Toplevel):
             print(f"{i}: --> {self.g.get_vote(i)}")
 
         self.frames["GraphFrame"].add_briber_buttons(self.bribers)
-        self.frames["GraphFrame"].draw_graph(self.g)
+        self.frames["GraphFrame"].draw_basic_graph(self.g)
 
     def update_results(self):
 
@@ -156,7 +156,8 @@ class TemporalGUI(tk.Toplevel):
                     info += f"Customer {c}: Bribed to {a[1]}\n"
                 elif a[0] == ActionType.SELECT:
                     info += f"Customer {c}: Going to {a[1]}\n"
-        self.frames["GraphFrame"].draw_graph(self.g)
+                    
+        self.frames["GraphFrame"].draw_basic_graph(self.g)
         self.frames["GraphFrame"].set_info(info)
 
     @override
