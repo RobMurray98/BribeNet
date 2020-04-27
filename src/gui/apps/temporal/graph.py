@@ -26,6 +26,7 @@ class GraphFrame(tk.Frame):
         self.canvas.get_tk_widget().grid(row=1, column=0, rowspan=10)
         self.results = []
         self.pos = None
+        self.gamma = None
 
         step_button = tk.Button(self, text="Next Step", command=self.controller.next_step)
         step_button.grid(row=3, column=2)
@@ -78,61 +79,62 @@ class GraphFrame(tk.Frame):
 
     def add_briber_buttons(self):
 
-        view_txt = tk.StringVar(self)
-        lbl = tk.Label(self, textvariable=view_txt)
-        lbl.grid(row=2, column=1)
-        view_txt.set("View rating for briber")
+        view_title_label = tk.Label(self, text="View rating for briber")
+        view_title_label.grid(row=2, column=1)
 
         none_button = tk.Button(self, text="none", command=lambda: self.draw_basic_graph(self.controller.g))
         none_button.grid(row=3, column=1)
 
         for i, c in enumerate(self.controller.bribers):
-            bribe_bt = tk.Button(self, text=self.controller.briber_names[i],
-                                 command=lambda: self.draw_briber_graph(self.controller.g, i))
-            bribe_bt.grid(row=(i + 4), column=1)
+            bribe_button = tk.Button(self, text=self.controller.briber_names[i],
+                                     command=lambda: self.draw_briber_graph(i))
+            bribe_button.grid(row=(i + 4), column=1)
 
-        trust_but = tk.Button(self, text="Show Trust", command=lambda: self.show_trust(self.controller.g))
-        trust_but.grid(row=len(self.controller.bribers) + 4, column=1)
+        trust_button = tk.Button(self, text="Show Trust", command=lambda: self.show_trust(self.controller.g))
+        trust_button.grid(row=len(self.controller.bribers) + 4, column=1)
 
     def show_results_wizard(self):
         results_wizard = TemporalResultsWizardWindow(self.controller, self.controller.results)
         results_wizard.lift()
 
     def draw_basic_graph(self, graph):
-        colors = ["gray" for _ in graph.get_customers()]  # nodes
-        edge_colors = ["#000000" for _ in graph.get_edges()]  # edges
-        self._update_graph(graph, colors, edge_colors)
+        colours = ["gray" for _ in graph.get_customers()]  # nodes
+        edge_colours = ["#000000" for _ in graph.get_edges()]  # edges
+        self._update_graph(graph, colours, edge_colours)
         self.canvas.draw()
 
-    def draw_briber_graph(self, graph, b):
+    def draw_briber_graph(self, b):
 
-        # node colors
-        cmap = plt.get_cmap("Purples")
-        colors = []
+        # node colours
+        graph = self.controller.g
+
+        colour_map = plt.get_cmap("Purples")
+        colours = []
         for c in graph.get_customers():
             if np.isnan(graph.get_vote(c)[b]):
-                colors.append("gray")
+                colours.append("gray")
             else:
-                colors.append(rgb2hex(cmap(graph.get_vote(c)[b])[:3]))
-        edge_colors = ["#000000" for _ in graph.get_edges()]  # edges
+                colours.append(rgb2hex(colour_map(graph.get_vote(c)[b])[:3]))
+        edge_colours = ["#000000" for _ in graph.get_edges()]  # edges
 
-        self._update_graph(graph, colors, edge_colors)
-        self._add_annotations(graph, b)
+        self._update_graph(graph, colours, edge_colours)
+        self._add_annotations(b)
         self.canvas.draw()
 
-    def _update_graph(self, graph, colors, edge_colors):
+    def _update_graph(self, graph, colours, edge_colours):
 
         self.ax.clear()
         drawGraph(
             graph.get_graph(),
             node_size=400,
-            node_color=colors,
-            edge_color=edge_colors,
+            node_color=colours,
+            edge_color=edge_colours,
             ax=self.ax, pos=self.pos,
             with_labels=True
         )
 
-    def _add_annotations(self, graph, b):
+    def _add_annotations(self, b):
+        graph = self.controller.g
         for c in graph.get_customers():
             if np.isnan(graph.get_vote(c)[b]):
                 rating = "None"
@@ -142,17 +144,17 @@ class GraphFrame(tk.Frame):
             self.ax.annotate(
                 str(c) + ":\n"
                 + "Vote: " + str(rating) + "\n"
-                + "PRating: " + str(round(graph.get_rating(c), 2)),
+                + "Rating: " + str(round(graph.get_rating(c), 2)),
                 xy=(self.pos[c][0], self.pos[c][1]),
                 bbox=dict(boxstyle="round", fc="w", ec="0.5", alpha=0.9)
             )
 
     def show_trust(self, graph):
 
-        colors = ["gray" for _ in graph.get_customers()]  # nodes
+        colours = ["gray" for _ in graph.get_customers()]  # nodes
         colour_map = plt.get_cmap("Greys")
-        edge_colors = []
+        edge_colours = []
         for (u, v) in graph.get_edges():
-            edge_colors.append(rgb2hex(colour_map(graph.get_weight(u, v))[:3]))
-        self._update_graph(graph, colors, edge_colors)
+            edge_colours.append(rgb2hex(colour_map(graph.get_weight(u, v))[:3]))
+        self._update_graph(graph, colours, edge_colours)
         self.canvas.draw()

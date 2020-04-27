@@ -59,7 +59,8 @@ class WizardFrame(tk.Frame):
             self.controller.add_graph(graph_type, graph_args, params)
             self.controller.g.set_rating_method(rating_method)
             if rating_method == RatingMethod.P_GAMMA_RATING:
-                pass  # TODO
+                self.controller.g.set_gamma(rating_method_args[0])
+            self.controller.update_results()
         except Exception as e:
             # noinspection PyUnresolvedReferences
             tk.messagebox.showerror(message=f"{e.__class__.__name__}: {str(e)}")

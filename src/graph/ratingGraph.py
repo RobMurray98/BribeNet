@@ -75,6 +75,7 @@ class RatingGraph(ABC):
         self._votes: np.ndarray[Optional[float]] = None
         self._truths: np.ndarray[float] = None
         self._rating_method: RatingMethod = RatingMethod.P_RATING
+        self._gamma: Optional[float] = None
         if specifics is not None:
             specifics()
         self._finalise_init()
@@ -118,15 +119,21 @@ class RatingGraph(ABC):
         """
         self._rating_method = rating_method
 
+    def set_gamma(self, gamma: float):
+        """
+        Set gamma which is used as the dampening factor in P-gamma-rating
+        :param gamma: the dampening factor in P-gamma-rating
+        """
+        self._gamma = gamma
+
     def get_rating(self, node_id: int = 0, briber_id: int = 0, rating_method: Optional[RatingMethod] = None,
-                   nan_default: Optional[int] = None, gamma: Optional[float] = None):
+                   nan_default: Optional[int] = None):
         """
         Get the rating for a certain node and briber, according to the set rating method
         :param node_id: the node to find the rating of (can be omitted for O-rating)
         :param briber_id: the briber to find the rating of (can be omitted in single-briber rating graphs)
         :param rating_method: a rating method to override the current set rating method if not None
         :param nan_default: optional default integer value to replace np.nan as default return
-        :param gamma: the gamma parameter for calculating P-gamma-rating.
         :return: the rating
         """
         rm = rating_method or self._rating_method
@@ -144,9 +151,9 @@ class RatingGraph(ABC):
         elif rm == RatingMethod.WEIGHTED_MEDIAN_P_RATING:
             rating = self._median_p_rating_weighted(node_id, briber_id)
         elif rm == RatingMethod.P_GAMMA_RATING:
-            if gamma is None:
+            if self._gamma is None:
                 raise GammaNotSetException()
-            rating = self._p_gamma_rating(node_id, briber_id, gamma)
+            rating = self._p_gamma_rating(node_id, briber_id, self._gamma)
         if np.isnan(rating) and nan_default:
             rating = nan_default
         return rating
@@ -348,8 +355,8 @@ class RatingGraph(ABC):
         """
         Metric to determine overall rating of the graph
         :param rating_method: a rating method to override the current set rating method if not None
-        :return: the sum of the rating across the network
         :param briber_id: the briber being considered in the evaluation
+        :return: the sum of the rating across the network
         """
         return sum(self.get_rating(node_id=n, briber_id=briber_id, rating_method=rating_method, nan_default=0)
                    for n in self.get_graph().iterNodes())

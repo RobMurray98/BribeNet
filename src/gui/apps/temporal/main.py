@@ -32,7 +32,7 @@ FRAMES_CLASSES = (WizardFrame, GraphFrame, ResultsFrame)
 FRAMES_DICT = {i: c.__class__.__name__ for (i, c) in enumerate(FRAMES_CLASSES)}
 
 X_AXIS_OPTIONS = ("Time", "Utility Spent")
-Y_AXIS_OPTIONS = ("Average P-rating", "Total Utility", "Average Trust")
+Y_AXIS_OPTIONS = ("Average Rating", "Total Utility", "Average Trust")
 
 
 def switch_briber(strategy_type, *args):
@@ -117,27 +117,22 @@ class TemporalGUI(tk.Toplevel):
             true_std_dev=params[7]
         )
 
-        self.frames["GraphFrame"].set_pos(spring_layout(nk2nx(self.g.get_graph())))
+        self.frames[GraphFrame.__name__].set_pos(spring_layout(nk2nx(self.g.get_graph())))
 
-        self.update_results()
-
-        for i in range(0, 10):
-            print(f"{i}: --> {self.g.get_vote(i)}")
-
-        self.frames["GraphFrame"].add_briber_buttons()
-        self.frames["GraphFrame"].draw_basic_graph(self.g)
+        self.frames[GraphFrame.__name__].add_briber_buttons()
+        self.frames[GraphFrame.__name__].draw_basic_graph(self.g)
 
     def update_results(self):
 
-        self.results.add("Average P-rating", [self.g.eval_graph(briber_id=b) for b in range(0, len(self.bribers))])
+        self.results.add("Average Rating", [self.g.eval_graph(briber_id=b) for b in range(0, len(self.bribers))])
         self.results.add("Total Utility", [b.get_resources() for b in self.bribers])
         self.results.add("Average Trust", self.g.average_trust())
         self.results.add("Utility Spent", [self.bribers_spent[b] for b in range(0, len(self.bribers))])
         self.results.add("Time", self.g.get_time_step())
 
-    def plot_results(self, xlbl, ylbl):
-        self.frames["ResultsFrame"].plot_results(self.results, xlbl, ylbl)
-        self.show_frame("ResultsFrame")
+    def plot_results(self, x_label, y_label):
+        self.frames[ResultsFrame.__name__].plot_results(self.results, x_label, y_label)
+        self.show_frame(ResultsFrame.__name__)
 
     def next_step(self):
 
@@ -165,8 +160,8 @@ class TemporalGUI(tk.Toplevel):
                 elif a[0] == ActionType.SELECT:
                     info += f"Customer {c}: Going to {a[1]}\n"
 
-        self.frames["GraphFrame"].draw_basic_graph(self.g)
-        self.frames["GraphFrame"].set_info(info)
+        self.frames[GraphFrame.__name__].draw_basic_graph(self.g)
+        self.frames[GraphFrame.__name__].set_info(info)
 
     @override
     def destroy(self):
