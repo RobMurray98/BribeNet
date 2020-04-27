@@ -333,6 +333,15 @@ class RatingGraph(ABC):
         differences = np.square(differences)
         return np.sum(differences) / len(differences)
 
+    def average_trust(self):
+        """
+        Average trust value for all pairs of nodes
+        """
+        trusts = [self.get_weight(a, b)
+            for a in self.get_customers()
+                for b in self.get_customers() if a != b]
+        return np.mean(trusts)
+
     def __copy__(self):
         """
         copy operation.
