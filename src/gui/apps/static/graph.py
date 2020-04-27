@@ -42,7 +42,7 @@ class GraphFrame(tk.Frame):
 
     def set_graph(self, graph, briber):
         self.graph = graph
-        self.pos = spring_layout(nk2nx(self.graph.graph()))
+        self.pos = spring_layout(nk2nx(self.graph.get_graph()))
         self.briber = briber
         self.results.append(self.graph.eval_graph())
         self.display_graph()
@@ -65,7 +65,7 @@ class GraphFrame(tk.Frame):
 
         self.ax.clear()
 
-        drawGraph(self.graph.graph(), node_size=400, node_color=colors, ax=self.ax, pos=self.pos)
+        drawGraph(self.graph.get_graph(), node_size=400, node_color=colors, ax=self.ax, pos=self.pos)
         for c in self.graph.get_customers():
             if np.isnan(self.graph.get_vote(c)):
                 rating = "None"
@@ -127,5 +127,5 @@ class GraphFrame(tk.Frame):
                 xy=(self.pos[c][0], self.pos[c][1]),
                 bbox=dict(boxstyle="round", fc="w", ec="0.5", alpha=0.9)
             )
-        drawGraph(self.graph.graph(), node_size=500, node_color=colors, ax=self.ax, pos=self.pos)
+        drawGraph(self.graph.get_graph(), node_size=500, node_color=colors, ax=self.ax, pos=self.pos)
         self.canvas.draw()

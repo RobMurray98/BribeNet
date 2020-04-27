@@ -21,7 +21,7 @@ class TemporalBriber(Briber, ABC):
         super()._set_graph(g)
 
     def next_action(self) -> SingleBriberyAction:
-        if self._g is None:
+        if self.get_graph() is None:
             raise BriberyGraphNotSetException()
         return self._next_action()
 

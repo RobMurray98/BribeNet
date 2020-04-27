@@ -17,15 +17,15 @@ class MostInfluentialNodeBriber(StaticBriber):
     def _set_graph(self, g):
         super()._set_graph(g)
         # Make sure that k is set such that there are enough resources left to actually bribe people.
-        self._k = min(self._k, 0.5 * (self._u / self._g.customer_count()))
+        self._k = min(self._k, 0.5 * (self.get_resources() / self.get_graph().customer_count()))
 
     def _next_bribe(self):
         influencers = []
-        for c in self._g.get_customers():
-            reward = self._g.is_influential(c, k=self._k, briber_id=self.get_briber_id())
+        for c in self.get_graph().get_customers():
+            reward = self.get_graph().is_influential(c, k=self._k, briber_id=self.get_briber_id())
             if reward > 0:
                 influencers.append((reward, c))
         # Sort based on highest reward
         influencers = sorted(influencers, reverse=True)
         for (_, c) in influencers:
-            self.bribe(c, self._g.get_max_rating() - self._g.get_vote(c))
+            self.bribe(c, self.get_graph().get_max_rating() - self.get_graph().get_vote(c))

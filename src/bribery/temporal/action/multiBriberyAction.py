@@ -70,9 +70,10 @@ class MultiBriberyAction(BriberyAction):
     def _perform_action(self):
         bribers = self.graph.get_bribers()
         for briber_id, bribe in self._bribes.items():
-            if sum(bribe.values()) > bribers[briber_id].get_resources():
+            total_bribe_quantity = sum(bribe.values())
+            if total_bribe_quantity > bribers[briber_id].get_resources():
                 message = f"MultiBriberyAction exceeded resources available to briber {briber_id}: " \
-                          f"{str(bribers[briber_id])}"
+                          f"{str(bribers[briber_id])} - {total_bribe_quantity} > {bribers[briber_id].get_resources()}"
                 raise BriberyActionExceedsAvailableUtilityException(message)
         for briber_id, bribe in self._bribes.items():
             for customer, value in bribe.items():

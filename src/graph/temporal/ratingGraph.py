@@ -21,9 +21,9 @@ DEFAULT_D = 2  # number of rounds in a cycle (D-1 bribes and then one customer r
 DEFAULT_TRUE_AVERAGE = 0.5
 DEFAULT_TRUE_STD_DEV = 0.2
 
-KWARG_NAMES = ("non_voter_proportion", "remove_no_vote", "q", "pay", "apathy", "d")
-KWARG_LOWER_BOUNDS = dict(zip(KWARG_NAMES, (0, False, 0, 0, 0, 2)))
-KWARG_UPPER_BOUNDS = dict(zip(KWARG_NAMES, (1, True, 1, float('inf'), 1, maxsize)))
+KWARG_NAMES = ("non_voter_proportion", "remove_no_vote", "q", "pay", "apathy", "d", "true_average", "true_std_dev")
+KWARG_LOWER_BOUNDS = dict(zip(KWARG_NAMES, (0, False, 0, 0, 0, 2, 0, 0)))
+KWARG_UPPER_BOUNDS = dict(zip(KWARG_NAMES, (1, True, 1, float('inf'), 1, maxsize, 1, float('inf'))))
 
 
 class BriberNotSubclassOfTemporalBriberException(Exception):
@@ -66,8 +66,8 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
         return KWARG_LOWER_BOUNDS[k] <= v <= KWARG_UPPER_BOUNDS[k]
 
     def __specifics(self):
-        self._votes = np.zeros((self._g.numberOfNodes(), len(self._bribers)))
-        self._truths = np.zeros((self._g.numberOfNodes(), len(self._bribers)))
+        self._votes = np.zeros((self.get_graph().numberOfNodes(), len(self._bribers)))
+        self._truths = np.zeros((self.get_graph().numberOfNodes(), len(self._bribers)))
         for kwarg in KWARG_NAMES:
             if kwarg in self.__tmp_kwargs:
                 if not self.kwarg_in_bounds(kwarg, self.__tmp_kwargs[kwarg]):
@@ -105,8 +105,8 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
             self._true_std_dev: float = DEFAULT_TRUE_STD_DEV
         community_weights = {}
         for b, _ in enumerate(self._bribers):
-            community_weights[b] = assign_traverse_averaged(self._g, self._true_average, self._true_std_dev)
-        for n in self._g.iterNodes():
+            community_weights[b] = assign_traverse_averaged(self.get_graph(), self._true_average, self._true_std_dev)
+        for n in self.get_graph().iterNodes():
             for b, _ in enumerate(self._bribers):
                 rating = community_weights[b][n]
                 self._truths[n][b] = rating

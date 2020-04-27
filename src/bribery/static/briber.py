@@ -31,6 +31,6 @@ class StaticBriber(Briber, ABC):
         raise NotImplementedError
 
     def next_bribe(self):
-        if self._g is None:
+        if self.get_graph() is None:
             raise BriberyGraphNotSetException()
         self._next_bribe()

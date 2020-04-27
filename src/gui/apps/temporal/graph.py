@@ -124,7 +124,7 @@ class GraphFrame(tk.Frame):
 
         self.ax.clear()
         drawGraph(
-            graph.graph(),
+            graph.get_graph(),
             node_size=400,
             node_color=colors,
             edge_color=edge_colors,

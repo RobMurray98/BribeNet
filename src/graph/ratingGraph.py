@@ -139,7 +139,7 @@ class RatingGraph(ABC):
             rating = nan_default
         return rating
 
-    def graph(self):
+    def get_graph(self):
         """
         Return the NetworKit graph of the network
         Ensure this information isn't used by a briber to "cheat"
@@ -154,21 +154,21 @@ class RatingGraph(ABC):
         :param briber_id: the briber on which voting has been done
         :return: the voting neighbours of the node for the briber
         """
-        return [n for n in self._g.neighbors(node_id) if not np.isnan(self._votes[n][briber_id])]
+        return [n for n in self.get_graph().neighbors(node_id) if not np.isnan(self._votes[n][briber_id])]
 
     def get_customers(self) -> List[int]:
         """
         Get the customer ids without knowledge of edges or ratings
         :return: the customer ids in the graph
         """
-        return list(self._g.iterNodes())
+        return list(self.get_graph().iterNodes())
 
     def customer_count(self) -> int:
         """
         Get the number of customers
         :return: the number of nodes in the graph
         """
-        return self._g.numberOfNodes()
+        return self.get_graph().numberOfNodes()
 
     def get_random_customer(self, excluding: Optional[Set[int]] = None) -> int:
         """
@@ -178,7 +178,7 @@ class RatingGraph(ABC):
         """
         if excluding is None:
             excluding = set()
-        return random.choice(tuple(set(self._g.iterNodes()) - excluding))
+        return random.choice(tuple(set(self.get_graph().iterNodes()) - excluding))
 
     def get_vote(self, idx: int):
         """
@@ -246,7 +246,7 @@ class RatingGraph(ABC):
         :param briber_id: the id number of the briber
         :return: mean of all actual ratings
         """
-        ns = [n for n in self._g.iterNodes() if not np.isnan(self._votes[n][briber_id])]
+        ns = [n for n in self.get_graph().iterNodes() if not np.isnan(self._votes[n][briber_id])]
         return sum(self.get_vote(n)[briber_id] for n in ns) / len(ns)
 
     def is_influential(self, node_id: int, k: float = 0.1, briber_id: int = 0,
@@ -296,7 +296,7 @@ class RatingGraph(ABC):
         :param briber_id: the briber being considered in the evaluation
         """
         return sum(self.get_rating(node_id=n, briber_id=briber_id, rating_method=rating_method, nan_default=0)
-                   for n in self._g.iterNodes())
+                   for n in self.get_graph().iterNodes())
 
     def set_weight(self, node1_id: int, node2_id: int, weight: float):
         """
@@ -305,7 +305,7 @@ class RatingGraph(ABC):
         :param node2_id: the second node of the edge
         :param weight: the weight of the edge to set
         """
-        self._g.setWeight(node1_id, node2_id, weight)
+        self.get_graph().setWeight(node1_id, node2_id, weight)
 
     def get_weight(self, node1_id: int, node2_id: int) -> float:
         """
@@ -313,10 +313,10 @@ class RatingGraph(ABC):
         :param node1_id: the first node of the edge
         :param node2_id: the second node of the edge
         """
-        return self._g.weight(node1_id, node2_id)
+        return self.get_graph().weight(node1_id, node2_id)
 
     def get_edges(self) -> [(int, int)]:
-        return list(self._g.iterEdges())
+        return list(self.get_graph().iterEdges())
 
     def trust(self, node1_id: int, node2_id: int) -> float:
         """

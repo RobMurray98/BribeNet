@@ -9,13 +9,14 @@ from bribery.temporal.briber import TemporalBriber
 class OneMoveRandomBriber(TemporalBriber):
 
     def _next_action(self) -> SingleBriberyAction:
-        customers = self._g.get_customers()
+        customers = self.get_graph().get_customers()
         # pick random customer from list
         c = random.choice(customers)
-        max_rating = self._g.get_max_rating()
-        vote = self._g.get_vote(c)[self.get_briber_id()]
+        max_rating = self.get_graph().get_max_rating()
+        vote = self.get_graph().get_vote(c)[self.get_briber_id()]
+        resources = self.get_resources()
         if np.isnan(vote):
-            bribery_dict = {c: max_rating}
+            bribery_dict = {c: min(resources, max_rating)}
         else:
-            bribery_dict = {c: max_rating - vote}
+            bribery_dict = {c: min(resources, max_rating - vote)}
         return SingleBriberyAction(self, bribes=bribery_dict)
