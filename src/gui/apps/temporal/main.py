@@ -29,11 +29,11 @@ FRAMES_CLASSES = (WizardFrame, GraphFrame, ResultsFrame)
 
 FRAMES_DICT = {i: c.__class__.__name__ for (i, c) in enumerate(FRAMES_CLASSES)}
 
-X_AXIS_OPTIONS = ["Utility Spent", "Time"]
-Y_AXIS_OPTIONS = ["Average P-rating", "Total Utility", "Average Trust"]
+X_AXIS_OPTIONS = ("Utility Spent", "Time")
+Y_AXIS_OPTIONS = ("Average P-rating", "Total Utility", "Average Trust")
 
 
-def switch_briber(strat_type, *args):
+def switch_briber(strategy_type, *args):
     switcher = {
         RandomFrame.name: OneMoveRandomBriber,
         InfluentialFrame.name: MostInfluentialNodeBriber,
@@ -41,7 +41,7 @@ def switch_briber(strat_type, *args):
         EvenFrame.name: OneMoveEvenBriber,
         BudgetFrame.name: BudgetNodeBriber
     }
-    return switcher.get(strat_type)(*args)
+    return switcher.get(strategy_type)(*args)
 
 
 class TemporalGUI(tk.Toplevel):
@@ -120,7 +120,7 @@ class TemporalGUI(tk.Toplevel):
         for i in range(0, 10):
             print(f"{i}: --> {self.g.get_vote(i)}")
 
-        self.frames["GraphFrame"].add_briber_buttons(self.bribers)
+        self.frames["GraphFrame"].add_briber_buttons()
         self.frames["GraphFrame"].draw_basic_graph(self.g)
 
     def update_results(self):

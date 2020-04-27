@@ -22,11 +22,11 @@ class ResultsFrame(tk.Frame):
         exit_button = tk.Button(self, text="Exit", command=self.exit)
         exit_button.pack()
 
-    def plot_results(self, results, xlbl, ylbl):
+    def plot_results(self, results, x_label, y_label):
         self.ax.clear()
         # for each briber
-        xs = results.get(xlbl)
-        ys = results.get(ylbl)
+        xs = results.get(x_label)
+        ys = results.get(y_label)
 
         if not isinstance(xs[0], list) and not isinstance(ys[0], list):
             self.ax.plot(xs, ys)
@@ -39,8 +39,8 @@ class ResultsFrame(tk.Frame):
 
             self.ax.legend()
 
-        self.ax.set_xlabel(xlbl)
-        self.ax.set_ylabel(ylbl)
+        self.ax.set_xlabel(x_label)
+        self.ax.set_ylabel(y_label)
         self.canvas.draw()
 
     def replot(self):
