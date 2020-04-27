@@ -1,6 +1,8 @@
 import random
 
+# noinspection PyUnresolvedReferences
 from networkit import Graph
+# noinspection PyUnresolvedReferences
 from networkit.community import PLM
 
 
@@ -38,7 +40,7 @@ def assign_community_weights(graph: Graph, mean: float, std_dev: float = 0.05) -
     normally distributed random value with that mean and standard deviation
     proportional to community size.
     """
-    weights = [0 for i in graph.iterNodes()]
+    weights = [0 for _ in graph.iterNodes()]
     communities = get_communities(graph)
     print(communities)
     total_size = len(weights)

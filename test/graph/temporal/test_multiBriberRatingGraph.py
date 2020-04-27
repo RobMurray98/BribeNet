@@ -38,6 +38,22 @@ class TestMultiBriberRatingGraph(TestCase):
         for b in range(len(self.rg.get_bribers())):
             self.assertTrue(self.rg._o_rating(b) >= 0)
 
+    def test_p_gamma_rating(self):
+        for b in range(len(self.rg.get_bribers())):
+            for i in self.rg.get_customers():
+                self.assertTrue(self.rg._p_gamma_rating(i) >= 0)
+                self.assertAlmostEqual(self.rg._p_gamma_rating(i, gamma=0), self.rg._p_rating(i))
+
+    def test_weighted_p_rating(self):
+        for b in range(len(self.rg.get_bribers())):
+            for i in self.rg.get_customers():
+                self.assertTrue(self.rg._p_gamma_rating(i) >= 0)
+
+    def test_weighted_median_p_rating(self):
+        for b in range(len(self.rg.get_bribers())):
+            for i in self.rg.get_customers():
+                self.assertTrue(self.rg._p_gamma_rating(i) >= 0)
+
     def test_is_influential(self):
         for b in range(len(self.rg.get_bribers())):
             for i in self.rg.get_customers():
