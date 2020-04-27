@@ -46,8 +46,8 @@ class ThresholdGraph(TemporalRatingGraph):
                                    for n in self.get_customers()]
 
         action = CustomerAction(self)
-        if self._last_bribery_action is not None:
-            action.set_bribed_from_bribery_action(self._last_bribery_action)
+        for bribery_action in self._last_bribery_actions:
+            action.set_bribed_from_bribery_action(bribery_action)
 
         # for each customer
         for n in self.get_graph().iterNodes():

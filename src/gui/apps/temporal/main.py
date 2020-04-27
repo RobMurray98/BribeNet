@@ -4,6 +4,7 @@ from networkit.nxadapter import nk2nx
 from networkx import spring_layout
 
 from bribery.temporal.budgetNodeBriber import BudgetNodeBriber
+from bribery.temporal.influentialNodeBriber import InfluentialNodeBriber
 from bribery.temporal.mostInfluentialNodeBriber import MostInfluentialNodeBriber
 from bribery.temporal.nonBriber import NonBriber
 from bribery.temporal.oneMoveEvenBriber import OneMoveEvenBriber
@@ -17,6 +18,7 @@ from gui.apps.static.wizard.algos.composite import Composite
 from gui.apps.temporal.briber_wizard.strategies.budget import BudgetFrame
 from gui.apps.temporal.briber_wizard.strategies.even import EvenFrame
 from gui.apps.temporal.briber_wizard.strategies.influential import InfluentialFrame
+from gui.apps.temporal.briber_wizard.strategies.most_influential import MostInfluentialFrame
 from gui.apps.temporal.briber_wizard.strategies.non import NonFrame
 from gui.apps.temporal.briber_wizard.strategies.random import RandomFrame
 from gui.apps.temporal.graph import GraphFrame
@@ -36,7 +38,8 @@ Y_AXIS_OPTIONS = ("Average P-rating", "Total Utility", "Average Trust")
 def switch_briber(strategy_type, *args):
     switcher = {
         RandomFrame.name: OneMoveRandomBriber,
-        InfluentialFrame.name: MostInfluentialNodeBriber,
+        InfluentialFrame.name: InfluentialNodeBriber,
+        MostInfluentialFrame.name: MostInfluentialNodeBriber,
         NonFrame.name: NonBriber,
         EvenFrame.name: OneMoveEvenBriber,
         BudgetFrame.name: BudgetNodeBriber
@@ -138,16 +141,18 @@ class TemporalGUI(tk.Toplevel):
 
     def next_step(self):
 
+        last_round_was_bribery = self.g.is_bribery_round()
         self.g.step()
 
-        if self.g.get_time_step() % self.g.get_d() == self.g.get_d() - 1:
-            for bribers, bribe in self.g.get_last_bribery_action().get_bribes().items():
+        if last_round_was_bribery:
+            for bribers, bribe in self.g.get_last_bribery_actions()[-1].get_bribes().items():
                 self.bribers_spent[bribers] += sum(bribe.values())
+
         self.update_results()
 
-        if self.g.get_time_step() % self.g.get_d() == self.g.get_d() - 1:
+        if last_round_was_bribery:
             info = "BRIBES\n"
-            for bribers, bribe in self.g.get_last_bribery_action().get_bribes().items():
+            for bribers, bribe in self.g.get_last_bribery_actions()[-1].get_bribes().items():
                 for c, n in bribe.items():
                     info += f"Briber {bribers + 1}: {c} --> {n}\n"
         else:

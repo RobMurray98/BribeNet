@@ -1,7 +1,7 @@
 import abc
 import random
 from sys import maxsize
-from typing import Tuple, Union, Any, Optional
+from typing import Tuple, Union, Any, Optional, List
 
 import numpy as np
 
@@ -55,10 +55,10 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
         # must come after super().__init__() such that bribers[0] has graph set
         if len(bribers) == 1:
             from bribery.temporal.action.singleBriberyAction import SingleBriberyAction
-            self._last_bribery_action: Optional[BriberyAction] = SingleBriberyAction.empty_action(bribers[0])
+            self._last_bribery_actions: List[BriberyAction] = []
             self._last_customer_action: Optional[CustomerAction] = CustomerAction.empty_action(self)
         else:
-            self._last_bribery_action: Optional[BriberyAction] = MultiBriberyAction.empty_action(self)
+            self._last_bribery_actions: List[BriberyAction] = []
             self._last_customer_action: Optional[CustomerAction] = CustomerAction.empty_action(self)
 
     @staticmethod
@@ -135,8 +135,8 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
     def get_d(self):
         return self._d
 
-    def get_last_bribery_action(self):
-        return self._last_bribery_action
+    def get_last_bribery_actions(self):
+        return self._last_bribery_actions
 
     def get_last_customer_action(self):
         return self._last_customer_action
@@ -168,18 +168,22 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
         for (u, v) in self.get_edges():
             self.set_weight(u, v, new_weights[(u, v)])
 
+    def is_bribery_round(self):
+        return not (self._time_step % self._d == self._d - 1)
+
     def step(self):
         """
         Perform the next step, either bribery action or customer action and increment the time step
         We do d-1 bribery steps (self._time_step starts at 0) and then a customer step.
         """
-        if not self._time_step % self._d == self._d - 1:
+        if self.is_bribery_round():
             bribery_action = self._bribery_action()
             bribery_action.perform_action()
-            self._last_bribery_action = bribery_action
+            self._last_bribery_actions.append(bribery_action)
         else:
             customer_action = self._customer_action()
             customer_action.perform_action(pay=self._pay)
             self._last_customer_action = customer_action
+            self._last_bribery_actions = []
             self._update_trust()
         self._time_step += 1
