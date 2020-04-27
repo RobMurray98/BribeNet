@@ -22,4 +22,3 @@ class BarabasiAlbert(ParamListFrame):
         }
 
         self.grid_params(show_name=False)
-

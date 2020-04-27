@@ -34,7 +34,7 @@ class ParamListFrame(tk.Frame, abc.ABC):
             offset = 1
         for i, (name, var) in enumerate(self.params.items()):
             label = tk.Label(self, text=name)
-            label.grid(row=i+offset, column=0)
+            label.grid(row=i + offset, column=0)
             canvas_frame = tk.Frame(self)
             canvas = tk.Canvas(master=canvas_frame, width=16, height=16)
             self.tooltips.append(ToolTip(canvas_frame, self.descriptions[name]))
@@ -43,6 +43,5 @@ class ParamListFrame(tk.Frame, abc.ABC):
             self.images.append(canvas.create_image(0, 0, anchor=tk.NW, image=self.info_img))
             entry = tk.Entry(self, textvariable=var)
             canvas.pack()
-            canvas_frame.grid(row=i+offset, column=1, padx=30)
-            entry.grid(row=i+offset, column=2)
-
+            canvas_frame.grid(row=i + offset, column=1, padx=30)
+            entry.grid(row=i + offset, column=2)

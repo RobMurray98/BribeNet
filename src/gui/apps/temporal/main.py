@@ -21,6 +21,7 @@ from gui.apps.temporal.briber_wizard.strategies.non import NonFrame
 from gui.apps.temporal.briber_wizard.strategies.random import RandomFrame
 from gui.apps.temporal.graph import GraphFrame
 from gui.apps.temporal.result import ResultsFrame
+from gui.apps.temporal.results_wizard.results import ResultsStore
 from gui.apps.temporal.wizard.wizard import WizardFrame
 from helpers.override import override
 
@@ -28,8 +29,11 @@ FRAMES_CLASSES = (WizardFrame, GraphFrame, ResultsFrame)
 
 FRAMES_DICT = {i: c.__class__.__name__ for (i, c) in enumerate(FRAMES_CLASSES)}
 
+X_AXIS_OPTIONS = ("Utility Spent", "Time")
+Y_AXIS_OPTIONS = ("Average P-rating", "Total Utility", "Average Trust")
 
-def switch_briber(strat_type, *args):
+
+def switch_briber(strategy_type, *args):
     switcher = {
         RandomFrame.name: OneMoveRandomBriber,
         InfluentialFrame.name: MostInfluentialNodeBriber,
@@ -37,7 +41,7 @@ def switch_briber(strat_type, *args):
         EvenFrame.name: OneMoveEvenBriber,
         BudgetFrame.name: BudgetNodeBriber
     }
-    return switcher.get(strat_type)(*args)
+    return switcher.get(strategy_type)(*args)
 
 
 class TemporalGUI(tk.Toplevel):
@@ -67,13 +71,14 @@ class TemporalGUI(tk.Toplevel):
 
         self.show_frame(WizardFrame.__name__)
         self.bribers = []
-        self.results = []
+        self.bribers_spent = []
+        self.results = ResultsStore(X_AXIS_OPTIONS, Y_AXIS_OPTIONS)
         self.briber_names = []
         self.g = None
 
     def clear_graph(self):
         self.bribers = []
-        self.results = []
+        self.results = ResultsStore(X_AXIS_OPTIONS, Y_AXIS_OPTIONS)
         self.briber_names = []
         self.g = None
 
@@ -82,6 +87,7 @@ class TemporalGUI(tk.Toplevel):
 
     def add_briber(self, b, *args):
         self.bribers.append(switch_briber(b, *args))
+        self.bribers_spent.append(0)
         self.briber_names.append(f"Briber{len(self.bribers)}: {b}: u0={args[0]}")
 
     def add_graph(self, gtype, args, params):
@@ -108,21 +114,35 @@ class TemporalGUI(tk.Toplevel):
         )
 
         self.frames["GraphFrame"].set_pos(spring_layout(nk2nx(self.g.graph())))
-        self.results.append([self.g.eval_graph(briber_id=b) for b in range(0, len(self.bribers))])
+
+        self.update_results()
 
         for i in range(0, 10):
             print(f"{i}: --> {self.g.get_vote(i)}")
 
-        self.frames["GraphFrame"].add_briber_buttons(self.bribers)
-        self.frames["GraphFrame"].draw_graph(self.g)
+        self.frames["GraphFrame"].add_briber_buttons()
+        self.frames["GraphFrame"].draw_basic_graph(self.g)
 
-    def plot_results(self):
-        self.frames["ResultsFrame"].plot_results(self.results)
+    def update_results(self):
+
+        self.results.add("Average P-rating", [self.g.eval_graph(briber_id=b) for b in range(0, len(self.bribers))])
+        self.results.add("Total Utility", [b.get_resources() for b in self.bribers])
+        self.results.add("Average Trust", self.g.average_trust())
+        self.results.add("Utility Spent", [self.bribers_spent[b] for b in range(0, len(self.bribers))])
+        self.results.add("Time", self.g.get_time_step())
+
+    def plot_results(self, xlbl, ylbl):
+        self.frames["ResultsFrame"].plot_results(self.results, xlbl, ylbl)
+        self.show_frame("ResultsFrame")
 
     def next_step(self):
 
         self.g.step()
-        self.results.append([self.g.eval_graph(briber_id=b) for b in range(0, len(self.bribers))])
+
+        if self.g.get_time_step() % self.g.get_d() == self.g.get_d() - 1:
+            for bribers, bribe in self.g.get_last_bribery_action().get_bribes().items():
+                self.bribers_spent[bribers] += sum(bribe.values())
+        self.update_results()
 
         if self.g.get_time_step() % self.g.get_d() == self.g.get_d() - 1:
             info = "BRIBES\n"
@@ -138,7 +158,8 @@ class TemporalGUI(tk.Toplevel):
                     info += f"Customer {c}: Bribed to {a[1]}\n"
                 elif a[0] == ActionType.SELECT:
                     info += f"Customer {c}: Going to {a[1]}\n"
-        self.frames["GraphFrame"].draw_graph(self.g)
+
+        self.frames["GraphFrame"].draw_basic_graph(self.g)
         self.frames["GraphFrame"].set_info(info)
 
     @override
