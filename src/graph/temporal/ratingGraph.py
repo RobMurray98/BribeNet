@@ -79,10 +79,6 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
             non_voter_proportion = self.__tmp_kwargs["non_voter_proportion"]
         else:
             non_voter_proportion = DEFAULT_NON_VOTER_PROPORTION
-        if "remove_no_vote" in self.__tmp_kwargs:
-            self._remove_no_vote: bool = self.__tmp_kwargs["remove_no_vote"]
-        else:
-            self._remove_no_vote: bool = DEFAULT_REMOVE_NO_VOTE
         if "q" in self.__tmp_kwargs:
             self._q: float = self.__tmp_kwargs["q"] * self._max_rating
         else:

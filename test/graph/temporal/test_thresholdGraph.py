@@ -43,14 +43,3 @@ class TestThresholdGraph(TestCase):
         for k in action.actions:
             self.assertEqual(action.actions[k][0], ActionType.SELECT)
         self.assertTrue(action.get_performed())
-
-    def test_customer_action_no_votes_with_remove_no_vote(self):
-        self.rg.get_rating = MagicMock(return_value=0)
-        self.rg._remove_no_vote = True
-        self.rg.step()
-        self.rg.step()
-        action = self.rg.get_last_customer_action()
-        self.assertIsNotNone(action)
-        for k in action.actions:
-            self.assertNotEqual(action.actions[k][0], ActionType.SELECT)
-        self.assertTrue(action.get_performed())

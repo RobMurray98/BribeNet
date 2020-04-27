@@ -1,9 +1,9 @@
 import tkinter as tk
 
-from gui.apps.temporal.briber_wizard.strategies.strategy_frame import StrategyFrame
+from gui.classes.param_list_frame import ParamListFrame
 
 
-class EvenFrame(StrategyFrame):
+class EvenFrame(ParamListFrame):
     name = "Even"
 
     def __init__(self, parent):
@@ -17,4 +17,4 @@ class EvenFrame(StrategyFrame):
             'u_0': 'starting budget'
         }
 
-        self.grid_params()
+        self.grid_params(show_name=False)

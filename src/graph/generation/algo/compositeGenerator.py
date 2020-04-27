@@ -2,7 +2,6 @@ from math import floor, log, ceil
 from random import gauss, sample, random
 
 import networkit as nk
-
 from networkit import Graph
 from networkit.generators import BarabasiAlbertGenerator, WattsStrogatzGenerator
 

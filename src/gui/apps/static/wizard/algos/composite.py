@@ -1,9 +1,9 @@
 import tkinter as tk
 
-from gui.apps.static.wizard.algos.algo_frame import GeneratorAlgoFrame
+from gui.classes.param_list_frame import ParamListFrame
 
 
-class Composite(GeneratorAlgoFrame):
+class Composite(ParamListFrame):
     name = "Composite"
 
     def __init__(self, parent):
@@ -31,4 +31,4 @@ class Composite(GeneratorAlgoFrame):
                         "* probability_reduce "
         }
 
-        self.grid_params()
+        self.grid_params(show_name=False)

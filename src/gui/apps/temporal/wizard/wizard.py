@@ -30,7 +30,7 @@ class WizardFrame(tk.Frame):
         self.subframes[TemporalGeneration.__name__].grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
 
         run_button = tk.Button(self, text="Run", command=self.on_button)
-        run_button.grid(row=2, column=1, padx=10, pady=10)
+        run_button.grid(row=1, column=1)
 
     def add_briber(self, b_type, u0):
         self.controller.add_briber(b_type, u0)
@@ -49,7 +49,7 @@ class WizardFrame(tk.Frame):
                 strat_type = briber[0]
                 briber_args = briber[1:]
                 self.controller.add_briber(strat_type, *briber_args)
-            params = self.subframes[TemporalSettings.__name__].get_graph_params()
+            params = self.subframes[TemporalSettings.__name__].get_args()
             self.controller.add_graph(graph_type, graph_args, params)
         except Exception as e:
             tk.messagebox.showerror(message=f"{e.__class__.__name__}: {str(e)}")

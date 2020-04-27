@@ -50,13 +50,13 @@ class GraphFrame(tk.Frame):
                 scrollregion=round_desc_canvas.bbox("all")
             )
         )
-        round_desc_canvas.create_window((0, 0), window=round_desc_frame, anchor="nw")
+        round_desc_canvas.create_window((0, 0), window=round_desc_frame, anchor="n")
         round_desc_canvas.config(yscrollcommand=round_desc_scroll.set)
         round_desc_label = tk.Label(round_desc_frame, textvariable=self.info)
         round_desc_label.pack(fill=tk.BOTH, expand=1)
 
-        round_desc_canvas.grid(row=1, column=1, columnspan=2, sticky='nsew')
-        round_desc_scroll.grid(row=1, column=2, sticky='nse')
+        round_desc_canvas.grid(row=1, column=1, columnspan=2, pady=10, padx=10, sticky='nsew')
+        round_desc_scroll.grid(row=1, column=2, pady=10, sticky='nse')
         self.info.set("--")
 
     def return_to_wizard(self):

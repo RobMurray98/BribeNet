@@ -7,7 +7,7 @@ from PIL import ImageTk, Image
 from gui.classes.tooltip import ToolTip
 
 
-class StrategyFrame(tk.Frame, abc.ABC):
+class ParamListFrame(tk.Frame, abc.ABC):
     name = "ABC"
 
     def __init__(self, parent):
@@ -26,10 +26,15 @@ class StrategyFrame(tk.Frame, abc.ABC):
     def get_name(self):
         return self.name
 
-    def grid_params(self):
+    def grid_params(self, show_name=True):
+        offset = 0
+        if show_name:
+            name_label = tk.Label(self, text=self.name)
+            name_label.grid(row=0, column=0, columnspan=3, pady=10)
+            offset = 1
         for i, (name, var) in enumerate(self.params.items()):
             label = tk.Label(self, text=name)
-            label.grid(row=i, column=0)
+            label.grid(row=i+offset, column=0)
             canvas_frame = tk.Frame(self)
             canvas = tk.Canvas(master=canvas_frame, width=16, height=16)
             self.tooltips.append(ToolTip(canvas_frame, self.descriptions[name]))
@@ -38,6 +43,6 @@ class StrategyFrame(tk.Frame, abc.ABC):
             self.images.append(canvas.create_image(0, 0, anchor=tk.NW, image=self.info_img))
             entry = tk.Entry(self, textvariable=var)
             canvas.pack()
-            canvas_frame.grid(row=i, column=1, padx=30)
-            entry.grid(row=i, column=2)
+            canvas_frame.grid(row=i+offset, column=1, padx=30)
+            entry.grid(row=i+offset, column=2)
 

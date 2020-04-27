@@ -1,8 +1,9 @@
 import tkinter as tk
-from gui.apps.static.wizard.algos.algo_frame import GeneratorAlgoFrame
+
+from gui.classes.param_list_frame import ParamListFrame
 
 
-class BarabasiAlbert(GeneratorAlgoFrame):
+class BarabasiAlbert(ParamListFrame):
     name = "Barabási-Albert"
 
     def __init__(self, parent):
@@ -20,5 +21,5 @@ class BarabasiAlbert(GeneratorAlgoFrame):
             'n_0': 'number of connected nodes to begin with'
         }
 
-        self.grid_params()
+        self.grid_params(show_name=False)
 

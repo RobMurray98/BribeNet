@@ -103,10 +103,13 @@ class TemporalGUI(tk.Toplevel):
         self.g = ThresholdGraph(
             tuple(self.bribers),
             generator=gen,
-            threshold=params[0],
-            d=params[1],
-            q=params[2],
-            apathy=params[3]
+            non_voter_proportion=params[0],
+            threshold=params[1],
+            d=params[2],
+            q=params[3],
+            apathy=params[4],
+            true_average=params[5],
+            true_std_dev=params[6]
         )
 
         self.frames["GraphFrame"].set_pos(spring_layout(nk2nx(self.g.graph())))

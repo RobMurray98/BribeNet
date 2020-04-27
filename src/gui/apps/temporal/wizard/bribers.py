@@ -13,7 +13,7 @@ class TemporalBribers(tk.Frame):
         self.bribers_list = []
 
         bribers_title_label = tk.Label(self, text="Bribers")
-        bribers_title_label.grid(row=1, column=1)
+        bribers_title_label.grid(row=1, column=1, columnspan=2, pady=10)
 
         self.bribers_listbox = tk.Listbox(self)
         self.bribers_listbox.grid(row=2, column=1, rowspan=3)
