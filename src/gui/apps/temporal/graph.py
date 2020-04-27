@@ -91,16 +91,15 @@ class GraphFrame(tk.Frame):
             bribe_bt.grid(row=(i + 4), column=1)
 
         trust_but = tk.Button(self, text="Show Trust", command=lambda: self.show_trust(self.controller.g))
-        trust_but.grid(row=len(self.controller.bribers)+4, column=1)
-
+        trust_but.grid(row=len(self.controller.bribers) + 4, column=1)
 
     def show_results_wizard(self):
         results_wizard = TemporalResultsWizardWindow(self.controller, self.controller.results)
         results_wizard.lift()
 
     def draw_basic_graph(self, graph):
-        colors = ["gray" for c in graph.get_customers()] # nodes
-        edge_colors = ["#000000" for e in graph.get_edges()] # edges
+        colors = ["gray" for c in graph.get_customers()]  # nodes
+        edge_colors = ["#000000" for e in graph.get_edges()]  # edges
         self._update_graph(graph, colors, edge_colors)
         self.canvas.draw()
 
@@ -114,7 +113,7 @@ class GraphFrame(tk.Frame):
                 colors.append("gray")
             else:
                 colors.append(rgb2hex(cmap(graph.get_vote(c)[b])[:3]))
-        edge_colors = ["#000000" for e in graph.get_edges()] # edges
+        edge_colors = ["#000000" for e in graph.get_edges()]  # edges
 
         self._update_graph(graph, colors, edge_colors)
         self._add_annotations(graph, b)
@@ -149,7 +148,7 @@ class GraphFrame(tk.Frame):
 
     def show_trust(self, graph):
 
-        colors = ["gray" for c in graph.get_customers()] # nodes
+        colors = ["gray" for c in graph.get_customers()]  # nodes
         cmap = plt.get_cmap("Greys")
         edge_colors = []
         for (u, v) in graph.get_edges():

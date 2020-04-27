@@ -1,5 +1,6 @@
 import tkinter as tk
 
+
 class TemporalResultsWizardFrame(tk.Frame):
     """
     Frame for pop-up wizard for selecting results displayed
@@ -29,7 +30,6 @@ class TemporalResultsWizardFrame(tk.Frame):
 
         self.submit_button = tk.Button(self, text="Submit", command=self.submit)
         self.submit_button.grid(row=3, column=0)
-
 
     def submit(self):
         self.parent.controller.plot_results(self.x_ret.get(), self.y_ret.get())

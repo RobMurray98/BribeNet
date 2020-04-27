@@ -6,9 +6,9 @@ class ResultsStore:
     def __init__(self, xs, ys):
         self.xs = xs
         self.ys = ys
-        self.data =  {k:[] for k in (xs + ys)}
+        self.data = {k: [] for k in (xs + ys)}
 
-    def add(self,k, v):
+    def add(self, k, v):
         self.data[k].append(v)
 
     def get(self, k):

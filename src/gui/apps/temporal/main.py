@@ -21,10 +21,9 @@ from gui.apps.temporal.briber_wizard.strategies.non import NonFrame
 from gui.apps.temporal.briber_wizard.strategies.random import RandomFrame
 from gui.apps.temporal.graph import GraphFrame
 from gui.apps.temporal.result import ResultsFrame
+from gui.apps.temporal.results_wizard.results import ResultsStore
 from gui.apps.temporal.wizard.wizard import WizardFrame
 from helpers.override import override
-
-from gui.apps.temporal.results_wizard.results import ResultsStore
 
 FRAMES_CLASSES = (WizardFrame, GraphFrame, ResultsFrame)
 
@@ -159,7 +158,7 @@ class TemporalGUI(tk.Toplevel):
                     info += f"Customer {c}: Bribed to {a[1]}\n"
                 elif a[0] == ActionType.SELECT:
                     info += f"Customer {c}: Going to {a[1]}\n"
-                    
+
         self.frames["GraphFrame"].draw_basic_graph(self.g)
         self.frames["GraphFrame"].set_info(info)
 

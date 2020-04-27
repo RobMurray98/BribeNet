@@ -338,8 +338,8 @@ class RatingGraph(ABC):
         Average trust value for all pairs of nodes
         """
         trusts = [self.get_weight(a, b)
-            for a in self.get_customers()
-                for b in self.get_customers() if a != b]
+                  for a in self.get_customers()
+                  for b in self.get_customers() if a != b]
         return np.mean(trusts)
 
     def __copy__(self):

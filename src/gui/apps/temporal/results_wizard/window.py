@@ -2,6 +2,7 @@ import tkinter as tk
 
 from gui.apps.temporal.results_wizard.frame import TemporalResultsWizardFrame
 
+
 class TemporalResultsWizardWindow(tk.Toplevel):
     """
     Window for pop-up wizard for selecting results displayed

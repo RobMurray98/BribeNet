@@ -2,6 +2,7 @@ import tkinter as tk
 
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
 from gui.apps.temporal.results_wizard.window import TemporalResultsWizardWindow
 
 
