@@ -31,7 +31,7 @@ FRAMES_CLASSES = (WizardFrame, GraphFrame, ResultsFrame)
 
 FRAMES_DICT = {i: c.__class__.__name__ for (i, c) in enumerate(FRAMES_CLASSES)}
 
-X_AXIS_OPTIONS = ("Utility Spent", "Time")
+X_AXIS_OPTIONS = ("Time", "Utility Spent")
 Y_AXIS_OPTIONS = ("Average P-rating", "Total Utility", "Average Trust")
 
 
