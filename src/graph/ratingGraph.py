@@ -394,6 +394,7 @@ class RatingGraph(ABC):
         nans = np.isnan(differences)
         differences[nans] = 0
         differences = np.square(differences)
+        differences = 1 - differences
         return np.sum(differences) / len(differences)
 
     def average_trust(self):
