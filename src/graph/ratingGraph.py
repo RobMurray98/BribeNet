@@ -2,11 +2,10 @@ import random
 from abc import ABC
 from copy import deepcopy
 from typing import Tuple, Optional, List, Any, Set
-from weightedstats import weighted_mean, weighted_median, mean, median
 
 import networkit as nk
-
 import numpy as np
+from weightedstats import weighted_mean, weighted_median, mean, median
 
 from graph.generation import GraphGeneratorAlgo
 from graph.generation.flatWeightGenerator import FlatWeightedGraphGenerator

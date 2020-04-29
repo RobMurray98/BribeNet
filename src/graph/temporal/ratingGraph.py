@@ -54,7 +54,6 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
         super().__init__(bribers, generator, specifics=self.__specifics, **kwargs)
         # must come after super().__init__() such that bribers[0] has graph set
         if len(bribers) == 1:
-            from bribery.temporal.action.singleBriberyAction import SingleBriberyAction
             self._last_bribery_actions: List[BriberyAction] = []
             self._last_customer_action: Optional[CustomerAction] = CustomerAction.empty_action(self)
         else:
