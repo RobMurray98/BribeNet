@@ -119,7 +119,7 @@ class TemporalGUI(tk.Toplevel):
 
         self.frames[GraphFrame.__name__].set_pos(spring_layout(nk2nx(self.g.get_graph())))
 
-        self.frames[GraphFrame.__name__].add_briber_buttons()
+        self.frames[GraphFrame.__name__].add_briber_dropdown()
         self.frames[GraphFrame.__name__].draw_basic_graph(self.g)
 
     def update_results(self):

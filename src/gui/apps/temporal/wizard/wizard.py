@@ -29,11 +29,11 @@ class WizardFrame(tk.Frame):
 
         self.subframes[TemporalSettings.__name__].grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
         self.subframes[TemporalBribers.__name__].grid(row=0, column=1, rowspan=2, padx=10, pady=10, sticky="nsew")
-        self.subframes[TemporalGeneration.__name__].grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+        self.subframes[TemporalGeneration.__name__].grid(row=1, column=0, rowspan=2, padx=10, pady=10, sticky="nsew")
         self.subframes[TemporalRatingMethod.__name__].grid(row=1, column=1, padx=10, pady=10, sticky="nsew")
 
         run_button = tk.Button(self, text="Run", command=self.on_button)
-        run_button.grid(row=2, column=1, pady=20, sticky='se')
+        run_button.grid(row=2, column=1, pady=20, sticky='nesw')
 
     def add_briber(self, b_type, u0):
         self.controller.add_briber(b_type, u0)

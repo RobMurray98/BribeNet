@@ -27,20 +27,23 @@ class GraphFrame(tk.Frame):
         self.results = []
         self.pos = None
         self.gamma = None
+        self.briber_buttons = None
+        self.briber_name_to_index = None
+        self.rating_string_var = None
 
         step_button = tk.Button(self, text="Next Step", command=self.controller.next_step)
-        step_button.grid(row=3, column=2)
+        step_button.grid(row=3, column=2, sticky='nsew')
 
         results_button = tk.Button(self, text="Results", command=self.show_results_wizard)
-        results_button.grid(row=4, column=2)
+        results_button.grid(row=4, column=2, sticky='nsew')
 
         exit_button = tk.Button(self, text="Exit", command=self.return_to_wizard)
-        exit_button.grid(row=7, column=2)
+        exit_button.grid(row=7, column=2, sticky='nsew')
 
         steps_slide = tk.Scale(self, from_=1, to=100, orient=tk.HORIZONTAL)
-        steps_slide.grid(row=6, column=2)
+        steps_slide.grid(row=6, column=2, sticky='nsew')
         n_steps_button = tk.Button(self, text="Perform n steps", command=lambda: self.n_steps(steps_slide.get()))
-        n_steps_button.grid(row=5, column=2)
+        n_steps_button.grid(row=5, column=2, sticky='nsew')
 
         self.info = tk.StringVar(parent)
         round_desc_canvas = tk.Canvas(self)
@@ -77,21 +80,33 @@ class GraphFrame(tk.Frame):
         for i in range(0, n):
             self.controller.next_step()
 
-    def add_briber_buttons(self):
+    def add_briber_dropdown(self):
 
         view_title_label = tk.Label(self, text="View rating for briber")
-        view_title_label.grid(row=2, column=1)
+        view_title_label.grid(row=3, column=1)
 
-        none_button = tk.Button(self, text="none", command=lambda: self.draw_basic_graph(self.controller.g))
-        none_button.grid(row=3, column=1)
+        rating_choices = ['None'] + self.controller.briber_names
 
-        for i, c in enumerate(self.controller.bribers):
-            bribe_button = tk.Button(self, text=self.controller.briber_names[i],
-                                     command=lambda: self.draw_briber_graph(i))
-            bribe_button.grid(row=(i + 4), column=1)
+        self.briber_name_to_index = {v: k for k, v in enumerate(self.controller.briber_names)}
+        self.rating_string_var = tk.StringVar(self)
+        self.rating_string_var.set('None')
+
+        rating_dropdown = tk.OptionMenu(self, self.rating_string_var, *rating_choices)
+
+        # noinspection PyUnusedLocal
+        def change_dropdown(*args):
+            var_val = self.rating_string_var.get()
+            if var_val == 'None':
+                self.draw_basic_graph(self.controller.g)
+            else:
+                self.draw_briber_graph(self.briber_name_to_index[var_val])
+
+        self.rating_string_var.trace('w', change_dropdown)
+
+        rating_dropdown.grid(row=4, column=1, sticky='nsew')
 
         trust_button = tk.Button(self, text="Show Trust", command=lambda: self.show_trust(self.controller.g))
-        trust_button.grid(row=len(self.controller.bribers) + 4, column=1)
+        trust_button.grid(row=6, column=1, sticky='nsew')
 
     def show_results_wizard(self):
         results_wizard = TemporalResultsWizardWindow(self.controller, self.controller.results)

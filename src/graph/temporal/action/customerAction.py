@@ -67,7 +67,7 @@ class CustomerAction(object):
                 for c in self.actions:
                     if self.actions[c][0] == ActionType.SELECT:
                         selected = self.actions[c][1]
-                        if self.graph._votes[c][selected] == np.nan:  # no previous vote or bribe
+                        if np.isnan(self.graph._votes[c][selected]):  # no previous vote or bribe
                             self.graph._votes[c][selected] = self.graph._truths[c][selected]
                         self.graph._bribers[selected].add_resources(pay)
                 self.__performed = True

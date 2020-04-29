@@ -136,21 +136,21 @@ class RatingGraph(ABC):
         :param nan_default: optional default integer value to replace np.nan as default return
         :return: the rating
         """
-        rm = rating_method or self._rating_method
+        rating_method_used = rating_method or self._rating_method
         rating = np.nan
-        if rm == RatingMethod.O_RATING:
+        if rating_method_used == RatingMethod.O_RATING:
             rating = self._o_rating(briber_id)
-        elif rm == RatingMethod.P_RATING:
+        elif rating_method_used == RatingMethod.P_RATING:
             rating = self._p_rating(node_id, briber_id)
-        elif rm == RatingMethod.MEDIAN_P_RATING:
+        elif rating_method_used == RatingMethod.MEDIAN_P_RATING:
             rating = self._median_p_rating(node_id, briber_id)
-        elif rm == RatingMethod.SAMPLE_P_RATING:
+        elif rating_method_used == RatingMethod.SAMPLE_P_RATING:
             rating = self._sample_p_rating(node_id, briber_id)
-        elif rm == RatingMethod.WEIGHTED_P_RATING:
+        elif rating_method_used == RatingMethod.WEIGHTED_P_RATING:
             rating = self._p_rating_weighted(node_id, briber_id)
-        elif rm == RatingMethod.WEIGHTED_MEDIAN_P_RATING:
+        elif rating_method_used == RatingMethod.WEIGHTED_MEDIAN_P_RATING:
             rating = self._median_p_rating_weighted(node_id, briber_id)
-        elif rm == RatingMethod.P_GAMMA_RATING:
+        elif rating_method_used == RatingMethod.P_GAMMA_RATING:
             if self._gamma is None:
                 raise GammaNotSetException()
             rating = self._p_gamma_rating(node_id, briber_id, self._gamma)
