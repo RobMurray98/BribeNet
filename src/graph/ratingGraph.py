@@ -13,6 +13,7 @@ from graph.generation.generator import GraphGenerator
 from graph.ratingMethod import RatingMethod
 
 DEFAULT_GEN = FlatWeightedGraphGenerator(GraphGeneratorAlgo.WATTS_STROGATZ, 30, 5, 0.3)
+MAX_RATING = 1.0
 
 
 class BribersAreNotTupleException(Exception):
@@ -67,10 +68,7 @@ class RatingGraph(ABC):
             if not issubclass(b.__class__, Briber):
                 raise BriberNotSubclassOfBriberException(f"{b.__class__.__name__} is not a subclass of Briber")
         self._bribers = bribers
-        if "max_rating" in kwargs:
-            self._max_rating: float = kwargs["max_rating"]
-        else:
-            self._max_rating: float = 1.0
+        self._max_rating: float = MAX_RATING
         self._votes: np.ndarray[Optional[float]] = None
         self._truths: np.ndarray[float] = None
         self._rating_method: RatingMethod = RatingMethod.P_RATING

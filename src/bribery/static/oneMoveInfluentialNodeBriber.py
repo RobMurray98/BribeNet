@@ -32,7 +32,7 @@ class OneMoveInfluentialNodeBriber(StaticBriber):
     def _next_bribe(self):
         if self.get_graph() is None:
             raise BriberyGraphNotSetException()
-        self.get_graph().get_influencers()
+        self.influencers = self._get_influencers()
         if self.influencers:
             (r, c) = self.influencers[0]
             self.bribe(c, self.get_graph().get_max_rating() - self.get_graph().get_vote(c))

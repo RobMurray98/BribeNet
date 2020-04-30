@@ -88,4 +88,4 @@ class TestMultiBriberRatingGraph(TestCase):
                 if self.rg._g.hasEdge(c, n):
                     initial_trust = g_copy.get_weight(c, n)
                     updated_trust = g_copy_2.get_weight(c, n)
-                    self.assertGreater(initial_trust, updated_trust)
+                    self.assertGreaterEqual(initial_trust, updated_trust)
