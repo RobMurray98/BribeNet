@@ -47,6 +47,6 @@ class GUI(tk.Tk):
         super().destroy()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = GUI()
     app.mainloop()
