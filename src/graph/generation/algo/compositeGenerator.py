@@ -55,7 +55,16 @@ class CompositeGenerator(object):
             # up with double links.
             connectivity = max(0, min(ceil((local_n - 1) / 2) - 1, connectivity))
             if local_n > 3:
-                small_world_graphs[node] = WattsStrogatzGenerator(local_n, connectivity, self._rewiring).generate()
+                # Sometimes WattsStrogatzGenerators return unconnected graphs.
+                # This is due to the fact that 2k >> ln(n) is vague, and also
+                # bounded above by 2k < n-1.
+                # Therefore, we repeat the process until a connected graph is
+                # created. This shouldn't loop too many times.
+                is_connected = False
+                while not is_connected:
+                    small_world_graphs[node] = WattsStrogatzGenerator(local_n, connectivity, self._rewiring).generate()
+                    connected_components = nk.components.ConnectedComponents(small_world_graphs[node]).run()
+                    is_connected = connected_components.numberOfComponents() == 1
             else:
                 small_world_graphs[node] = self._make_complete(local_n)
             self._n -= local_n
