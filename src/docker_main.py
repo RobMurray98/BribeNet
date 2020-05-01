@@ -1,4 +1,4 @@
-from gui.main import GUI
+from BribeNet.gui.main import GUI
 from sys import exit
 
 """
