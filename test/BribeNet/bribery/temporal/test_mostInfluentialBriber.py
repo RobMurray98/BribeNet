@@ -1,6 +1,6 @@
 from BribeNet.bribery.temporal.mostInfluentialNodeBriber import MostInfluentialNodeBriber
 from BribeNet.graph.temporal.noCustomerActionGraph import NoCustomerActionGraph
-from test.bribery.temporal.briberTestCase import BriberTestCase
+from test.BribeNet.bribery.temporal.briberTestCase import BriberTestCase
 from unittest.mock import MagicMock
 
 TEST_I = 7

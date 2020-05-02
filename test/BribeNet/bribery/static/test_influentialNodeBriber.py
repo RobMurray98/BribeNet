@@ -1,14 +1,14 @@
 from copy import deepcopy
 
-from BribeNet.bribery.static.mostInfluentialNodeBriber import MostInfluentialNodeBriber
+from BribeNet.bribery.static.influentialNodeBriber import InfluentialNodeBriber
 from BribeNet.graph.static.ratingGraph import StaticRatingGraph
-from test.bribery.static.briberTestCase import BriberTestCase
+from test.BribeNet.bribery.static.briberTestCase import BriberTestCase
 
 
-class TestMostInfluentialNodeBriber(BriberTestCase):
+class TestInfluentialNodeBriber(BriberTestCase):
 
     def setUp(self) -> None:
-        self.briber = MostInfluentialNodeBriber(10)
+        self.briber = InfluentialNodeBriber(10)
         self.rg = StaticRatingGraph(self.briber)
 
     def test_next_bribe_increases_p_rating(self):

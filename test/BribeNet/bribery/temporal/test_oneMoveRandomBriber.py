@@ -1,6 +1,6 @@
 from BribeNet.bribery.temporal.oneMoveRandomBriber import OneMoveRandomBriber
 from BribeNet.graph.temporal.noCustomerActionGraph import NoCustomerActionGraph
-from test.bribery.temporal.briberTestCase import BriberTestCase
+from test.BribeNet.bribery.temporal.briberTestCase import BriberTestCase
 
 
 class TestOneMoveInfluentialNodeBriber(BriberTestCase):

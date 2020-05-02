@@ -1,6 +1,6 @@
 import random
 
-from test.bribery.static.briberTestCase import BriberTestCase
+from test.BribeNet.bribery.static.briberTestCase import BriberTestCase
 from BribeNet.bribery.briber import BriberyGraphAlreadySetException, BriberyGraphNotSetException
 from BribeNet.bribery.static.nonBriber import NonBriber
 

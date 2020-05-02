@@ -2,7 +2,7 @@ from copy import deepcopy
 
 from BribeNet.bribery.static.oneMoveRandomBriber import OneMoveRandomBriber
 from BribeNet.graph.static.ratingGraph import StaticRatingGraph
-from test.bribery.static.briberTestCase import BriberTestCase
+from test.BribeNet.bribery.static.briberTestCase import BriberTestCase
 
 
 class TestOneMoveInfluentialNodeBriber(BriberTestCase):

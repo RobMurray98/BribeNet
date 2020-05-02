@@ -1,6 +1,6 @@
 from BribeNet.bribery.static.randomBriber import RandomBriber
 from BribeNet.graph.static.ratingGraph import StaticRatingGraph
-from test.bribery.static.briberTestCase import BriberTestCase
+from test.BribeNet.bribery.static.briberTestCase import BriberTestCase
 
 
 class TestRandomBriber(BriberTestCase):

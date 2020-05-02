@@ -1,13 +1,13 @@
-from BribeNet.bribery.temporal.influentialNodeBriber import InfluentialNodeBriber
+from BribeNet.bribery.temporal.budgetNodeBriber import BudgetNodeBriber
 from BribeNet.graph.temporal.noCustomerActionGraph import NoCustomerActionGraph
-from test.bribery.temporal.briberTestCase import BriberTestCase
+from test.BribeNet.bribery.temporal.briberTestCase import BriberTestCase
 from unittest.mock import MagicMock
 
 
 class TestRandomBriber(BriberTestCase):
 
     def setUp(self) -> None:
-        self.briber = InfluentialNodeBriber(10)
+        self.briber = BudgetNodeBriber(10, b=0.5)
         self.rg = NoCustomerActionGraph(self.briber)
 
     def test_next_action_increases_p_rating(self):
@@ -15,7 +15,6 @@ class TestRandomBriber(BriberTestCase):
         action = self.briber.next_action()
         briber_id = self.briber.get_briber_id()
         prev_eval = graph.eval_graph(briber_id=briber_id)
-
         action.perform_action()
         self.assertGreaterEqual(graph.eval_graph(briber_id=briber_id), prev_eval)
 
@@ -32,8 +31,21 @@ class TestRandomBriber(BriberTestCase):
         graph = self.briber._g
         self.briber._previous_rating = 1
         graph.eval_graph = MagicMock(return_value=1)  # will never be influential
+        graph.get_vote = MagicMock(return_value=[1.0])  # will always be affordable
         prev_nodes = []
         for i in range(graph.customer_count()):
+            action = self.briber.next_action()
+            for prev_node in prev_nodes:
+                self.assertNotIn(prev_node, action._bribes)
+            prev_nodes.append(self.briber._next_node)
+
+    def test_next_action_moves_on_if_not_in_budget(self):
+        graph = self.briber._g
+        graph.eval_graph = MagicMock(return_value=1)
+        graph.get_vote = MagicMock(return_value=[0.0])  # will always be not in budget
+        prev_nodes = []
+        for i in range(graph.customer_count()):
+            self.briber._previous_rating = 0  # will always be influential
             action = self.briber.next_action()
             for prev_node in prev_nodes:
                 self.assertNotIn(prev_node, action._bribes)
@@ -43,10 +55,10 @@ class TestRandomBriber(BriberTestCase):
         graph = self.briber._g
         self.briber._previous_rating = 1
         graph.eval_graph = MagicMock(return_value=1)  # will never be influential
+        graph.get_vote = MagicMock(return_value=[1.0])  # will always be affordable
         prev_nodes = []
         for i in range(graph.customer_count() + 1):
             action = self.briber.next_action()
             for prev_node in prev_nodes:
                 self.assertNotIn(prev_node, action._bribes)
             prev_nodes.append(self.briber._next_node)
-

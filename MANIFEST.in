@@ -1,3 +1,7 @@
-prune test
-recursive-include BribeNet
-include docker_main.py main.py
+include *.py
+include LICENSE
+include *.md
+include *.sh
+include Dockerfile
+include *.cfg
+recursive-include test *
