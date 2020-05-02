@@ -1,6 +1,6 @@
 include *.py
 include src/*.py
-include LICENSE.txt
+include *.txt
 include *.md
 include *.sh
 include Dockerfile
