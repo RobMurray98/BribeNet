@@ -1,1 +1,3 @@
-exclude test
+prune test
+recursive-include BribeNet
+include docker_main.py main.py
