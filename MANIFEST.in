@@ -1,7 +1,9 @@
 include *.py
-include LICENSE
+include src/*.py
+include LICENSE.txt
 include *.md
 include *.sh
 include Dockerfile
 include *.cfg
 recursive-include test *
+include src/BribeNet/gui/classes/*.png

@@ -25,6 +25,7 @@ setuptools.setup(
         'pillow==7.0.0',
         'weightedstats==0.4.1'
     ],
+    package_data={'': ['*.png']},
     include_package_data=True,
     package_dir={'': 'src'},
     packages=setuptools.find_packages(where='src'),
