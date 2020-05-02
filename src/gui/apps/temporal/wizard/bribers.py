@@ -25,16 +25,26 @@ class TemporalBribers(tk.Frame):
         self.bribers_listbox.config(yscrollcommand=scrollbar.set)
 
         self.add_briber_button = tk.Button(self, text="Add", command=self.open_briber_wizard)
-        self.add_briber_button.grid(row=2, column=3)
+        self.add_briber_button.grid(row=2, column=3, sticky='nsew')
+
+        self.duplicate_briber_button = tk.Button(self, text="Duplicate", command=self.duplicate_selected_briber)
+        self.duplicate_briber_button.grid(row=3, column=3, sticky='nsew')
 
         self.delete_briber_button = tk.Button(self, text="Delete", command=self.delete_selected_briber)
-        self.delete_briber_button.grid(row=3, column=3)
+        self.delete_briber_button.grid(row=4, column=3, sticky='nsew')
 
     def open_briber_wizard(self):
         if self.briber_wizard is None:
             self.briber_wizard = TemporalBriberWizardWindow(self)
         else:
             self.briber_wizard.lift()
+
+    def duplicate_selected_briber(self):
+        cur_sel = self.bribers_listbox.curselection()
+        if not cur_sel:
+            return
+        self.bribers_list.append(self.bribers_list[cur_sel[0]])
+        self.bribers_listbox.insert(tk.END, self.bribers_list[cur_sel[0]][0])
 
     def delete_selected_briber(self):
         cur_sel = self.bribers_listbox.curselection()
