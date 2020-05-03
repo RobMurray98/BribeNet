@@ -17,7 +17,8 @@ class TemporalSettings(ParamListFrame):
             'pay': 'the amount of utility given to a bribing actor each time a customer chooses them',
             'apathy': 'the probability that a customer performs no action',
             'true_average': 'the average around which ground truths are distributed',
-            'true_std_dev': 'the standard deviation by which ground truths are distributed'
+            'true_std_dev': 'the standard deviation by which ground truths are distributed',
+            'learning_rate': 'how quickly the edge weights are updated by trust'
         }
 
         self.params = {
@@ -28,7 +29,8 @@ class TemporalSettings(ParamListFrame):
             'pay': tk.DoubleVar(self, value=1.0),
             'apathy': tk.DoubleVar(self, value=0.0),
             'true_average': tk.DoubleVar(self, value=0.5),
-            'true_std_dev': tk.DoubleVar(self, value=0.2)
+            'true_std_dev': tk.DoubleVar(self, value=0.2),
+            'learning_rate': tk.DoubleVar(self, value=0.1),
         }
 
         self.grid_params()
