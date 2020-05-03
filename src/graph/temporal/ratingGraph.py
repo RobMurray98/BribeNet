@@ -107,7 +107,6 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
             self._learning_rate: float = self.__tmp_kwargs["learning_rate"]
         else:
             self._learning_rate: float = DEFAULT_LEARNING_RATE
-        print(self._learning_rate)
         community_weights = {}
         for b, _ in enumerate(self._bribers):
             community_weights[b] = assign_traverse_averaged(self.get_graph(), self._true_average, self._true_std_dev)
