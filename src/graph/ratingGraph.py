@@ -151,7 +151,7 @@ class RatingGraph(ABC):
             if self._gamma is None:
                 raise GammaNotSetException()
             rating = self._p_gamma_rating(node_id, briber_id, self._gamma)
-        if np.isnan(rating) and nan_default:
+        if np.isnan(rating) and not nan_default is None:
             rating = nan_default
         return rating
 
@@ -359,7 +359,8 @@ class RatingGraph(ABC):
                    for n in self.get_graph().iterNodes())
 
     def average_rating(self, briber_id=0, rating_method=None):
-        return self.eval_graph(briber_id, rating_method) / self.customer_count()
+        voting_customers = [c for c in self.get_graph().iterNodes() if not np.isnan(self.get_vote(c))[briber_id]]
+        return self.eval_graph(briber_id, rating_method) / len(voting_customers)
 
     def set_weight(self, node1_id: int, node2_id: int, weight: float):
         """

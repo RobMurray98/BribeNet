@@ -1,4 +1,6 @@
 import tkinter as tk
+import random
+import networkit as nk
 
 from networkit.nxadapter import nk2nx
 from networkx import spring_layout
@@ -94,6 +96,8 @@ class TemporalGUI(tk.Toplevel):
         self.briber_names.append(f"Briber{len(self.bribers)}: {b}: u0={args[0]}")
 
     def add_graph(self, gtype, args, params):
+        random.seed(12)
+        nk.setSeed(12, True)
         if not self.bribers:
             raise RuntimeError("No Bribers added to graph")  # TODO replace with better error
 
