@@ -125,7 +125,7 @@ class TemporalGUI(tk.Toplevel):
 
     def update_results(self):
 
-        self.results.add("Average Rating", [self.g.eval_graph(briber_id=b) for b in range(0, len(self.bribers))])
+        self.results.add("Average Rating", [self.g.average_rating(briber_id=b) for b in range(0, len(self.bribers))])
         self.results.add("Total Utility", [b.get_resources() for b in self.bribers])
         self.results.add("Average Trust", self.g.average_trust())
         self.results.add("Utility Spent", [self.bribers_spent[b] for b in range(0, len(self.bribers))])

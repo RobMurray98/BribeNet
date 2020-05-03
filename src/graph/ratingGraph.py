@@ -358,6 +358,9 @@ class RatingGraph(ABC):
         return sum(self.get_rating(node_id=n, briber_id=briber_id, rating_method=rating_method, nan_default=0)
                    for n in self.get_graph().iterNodes())
 
+    def average_rating(self, briber_id=0, rating_method=None):
+        return self.eval_graph(briber_id, rating_method) / self.customer_count()
+
     def set_weight(self, node1_id: int, node2_id: int, weight: float):
         """
         Sets a weight for a given edge, thus allowing for trust metrics to affect graph structure.
