@@ -14,7 +14,7 @@ from graph.ratingMethod import RatingMethod
 
 DEFAULT_GEN = FlatWeightedGraphGenerator(GraphGeneratorAlgo.WATTS_STROGATZ, 30, 5, 0.3)
 MAX_RATING = 1.0
-
+MAX_DIFF = 0.6
 
 class BribersAreNotTupleException(Exception):
     pass
@@ -394,8 +394,8 @@ class RatingGraph(ABC):
         nans = np.isnan(differences)
         differences[nans] = 0
         differences = np.square(differences)
-        differences = 1 - differences
-        return np.sum(differences) / len(differences)
+        trust = 1 - (np.sum(differences) / (len(differences) * MAX_DIFF**2))
+        return max(0, min(1, trust))
 
     def average_trust(self):
         """
