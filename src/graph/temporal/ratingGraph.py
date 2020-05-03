@@ -20,10 +20,11 @@ DEFAULT_APATHY = 0.0
 DEFAULT_D = 2  # number of rounds in a cycle (D-1 bribes and then one customer round)
 DEFAULT_TRUE_AVERAGE = 0.5
 DEFAULT_TRUE_STD_DEV = 0.2
+DEFAULT_LEARNING_RATE = 0.1
 
-KWARG_NAMES = ("non_voter_proportion", "remove_no_vote", "q", "pay", "apathy", "d", "true_average", "true_std_dev")
-KWARG_LOWER_BOUNDS = dict(zip(KWARG_NAMES, (0, False, 0, 0, 0, 2, 0, 0)))
-KWARG_UPPER_BOUNDS = dict(zip(KWARG_NAMES, (1, True, 1, float('inf'), 1, maxsize, 1, float('inf'))))
+KWARG_NAMES = ("non_voter_proportion", "remove_no_vote", "q", "pay", "apathy", "d", "true_average", "true_std_dev", "learning_rate")
+KWARG_LOWER_BOUNDS = dict(zip(KWARG_NAMES, (0, False, 0, 0, 0, 2, 0, 0, 0)))
+KWARG_UPPER_BOUNDS = dict(zip(KWARG_NAMES, (1, True, 1, float('inf'), 1, maxsize, 1, float('inf'), 1)))
 
 
 class BriberNotSubclassOfTemporalBriberException(Exception):
@@ -102,6 +103,10 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
             self._true_std_dev: float = self.__tmp_kwargs["true_std_dev"]
         else:
             self._true_std_dev: float = DEFAULT_TRUE_STD_DEV
+        if "learning_rate" in self.__tmp_kwargs:
+            self._learning_rate: float = self.__tmp_kwargs["learning_rate"]
+        else:
+            self._learning_rate: float = DEFAULT_LEARNING_RATE
         community_weights = {}
         for b, _ in enumerate(self._bribers):
             community_weights[b] = assign_traverse_averaged(self.get_graph(), self._true_average, self._true_std_dev)
@@ -151,7 +156,7 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
         actions = [b.next_action() for b in self._bribers]
         return MultiBriberyAction.make_multi_action_from_single_actions(actions)
 
-    def _update_trust(self, learning_rate: float = 0.1):
+    def _update_trust(self):
         """
         Update the weights of the graph based on the trust between nodes.
         :param learning_rate The learning rate at which we adjust our edge weights
@@ -160,7 +165,7 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
         new_weights = {}
         for (u, v) in self.get_edges():
             prev_weight = self.get_weight(u, v)
-            new_weight = prev_weight + learning_rate * (self.trust(u, v) - prev_weight)
+            new_weight = prev_weight + self._learning_rate * (self.trust(u, v) - prev_weight)
             new_weights[(u, v)] = new_weight
         # Then set them, as some ratings systems could give different values
         # if the weights are modified during the calculations.
