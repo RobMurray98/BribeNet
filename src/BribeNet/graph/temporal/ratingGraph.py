@@ -26,6 +26,11 @@ KWARG_NAMES = ("non_voter_proportion", "remove_no_vote", "q", "pay", "apathy", "
 KWARG_LOWER_BOUNDS = dict(zip(KWARG_NAMES, (0, False, 0, 0, 0, 2, 0)))
 KWARG_UPPER_BOUNDS = dict(zip(KWARG_NAMES, (1, True, 1, float('inf'), 1, maxsize, 1)))
 
+MIN_TRUE_AVERAGE = 0.0
+MAX_TRUE_AVERAGE = 1.0
+MIN_TRUE_STD_DEV = 0.0
+MAX_TRUE_STD_DEV = float('inf')
+
 
 class BriberNotSubclassOfTemporalBriberException(Exception):
     pass
@@ -107,6 +112,10 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
             true_averages = self.__tmp_kwargs["true_averages"]
             if true_averages.shape[0] != len(self._bribers):
                 raise TrueAverageIncorrectShapeException(f"{true_averages.shape[0]} != {len(self._bribers)}")
+            if not np.all(true_averages >= MIN_TRUE_AVERAGE):
+                raise BriberKeywordArgumentOutOfBoundsException(f"All true averages must be >= {MIN_TRUE_AVERAGE}")
+            if not np.all(true_averages <= MAX_TRUE_AVERAGE):
+                raise BriberKeywordArgumentOutOfBoundsException(f"All true averages must be <= {MAX_TRUE_AVERAGE}")
             self._true_averages: np.ndarray[float] = true_averages
         else:
             self._true_averages: np.ndarray[float] = np.repeat(DEFAULT_TRUE_AVERAGE, len(self._bribers))
@@ -114,6 +123,10 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
             true_std_devs = self.__tmp_kwargs["true_std_devs"]
             if true_std_devs.shape[0] != len(self._bribers):
                 raise TrueStdDevIncorrectShapeException(f"{true_std_devs.shape[0]} != {len(self._bribers)}")
+            if not np.all(true_std_devs >= MIN_TRUE_STD_DEV):
+                raise BriberKeywordArgumentOutOfBoundsException(f"All true std devs must be >= {MIN_TRUE_STD_DEV}")
+            if not np.all(true_std_devs <= MAX_TRUE_STD_DEV):
+                raise BriberKeywordArgumentOutOfBoundsException(f"All true std devs must be <= {MAX_TRUE_STD_DEV}")
             self._true_std_devs: np.ndarray[float] = true_std_devs
         else:
             self._true_std_devs: np.ndarray[float] = np.repeat(DEFAULT_TRUE_STD_DEV, len(self._bribers))
