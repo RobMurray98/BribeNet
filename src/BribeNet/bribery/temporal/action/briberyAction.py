@@ -1,12 +1,14 @@
 from abc import ABC, abstractmethod
 from typing import List
 
+from BribeNet.helpers.bribeNetException import BribeNetException
 
-class BriberyActionExecutedMultipleTimesException(Exception):
+
+class BriberyActionExecutedMultipleTimesException(BribeNetException):
     pass
 
 
-class BriberyActionTimeNotCorrectException(Exception):
+class BriberyActionTimeNotCorrectException(BribeNetException):
     pass
 
 

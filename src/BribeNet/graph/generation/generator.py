@@ -1,6 +1,7 @@
 import abc
 
-import networkit as nk
+# noinspection PyUnresolvedReferences
+from networkit import Graph
 
 from BribeNet.graph.generation import GraphGeneratorAlgo, algo_to_constructor
 
@@ -20,7 +21,7 @@ class GraphGenerator(abc.ABC):
         self._generator = algo_to_constructor(self._algo)(*args, **kwargs)
 
     @abc.abstractmethod
-    def generate(self) -> nk.Graph:
+    def generate(self) -> Graph:
         """
         Call generate on the generator defined by this class and perform any additional actions
         :return: a NetworKit Graph

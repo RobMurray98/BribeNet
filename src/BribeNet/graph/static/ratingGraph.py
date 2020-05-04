@@ -4,12 +4,13 @@ from typing import Tuple, Union, Any
 import numpy as np
 
 from BribeNet.graph.ratingGraph import RatingGraph, DEFAULT_GEN, BribersAreNotTupleException, NoBriberGivenException
+from BribeNet.helpers.bribeNetException import BribeNetException
 from BribeNet.helpers.override import override
 
 DEFAULT_NON_VOTER_PROPORTION = 0.2
 
 
-class BriberNotSubclassOfStaticBriberException(Exception):
+class BriberNotSubclassOfStaticBriberException(BribeNetException):
     pass
 
 

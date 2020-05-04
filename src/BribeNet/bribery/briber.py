@@ -1,20 +1,22 @@
 from abc import ABC
 from typing import Optional
 
+from BribeNet.helpers.bribeNetException import BribeNetException
 
-class BriberyGraphNotSetException(Exception):
+
+class BriberyGraphNotSetException(BribeNetException):
     pass
 
 
-class BriberyGraphAlreadySetException(Exception):
+class BriberyGraphAlreadySetException(BribeNetException):
     pass
 
 
-class BriberNotRegisteredOnGraphException(Exception):
+class BriberNotRegisteredOnGraphException(BribeNetException):
     pass
 
 
-class GraphNotSubclassOfRatingGraphException(Exception):
+class GraphNotSubclassOfRatingGraphException(BribeNetException):
     pass
 
 

@@ -47,7 +47,7 @@ class RatingGraphBuilder(object):
         self.generator = DEFAULT_GEN
 
     def add_briber(self, briber: BriberType, u0: int = 0, *args, **kwargs):
-        self.bribers.append(BriberType.get_briber_constructor(briber)(u0, *args, **kwargs))
+        self.bribers.append(BriberType.get_briber_constructor(briber, *args, **kwargs)(u0))
         return self
 
     def set_generator(self, generator):

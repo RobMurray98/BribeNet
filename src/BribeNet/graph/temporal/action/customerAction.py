@@ -5,13 +5,14 @@ import numpy as np
 from BribeNet.bribery.temporal.action.briberyAction import BriberyAction
 from BribeNet.bribery.temporal.briber import GraphNotSubclassOfTemporalRatingGraphException
 from BribeNet.graph.temporal.action.actionType import ActionType
+from BribeNet.helpers.bribeNetException import BribeNetException
 
 
-class CustomerActionExecutedMultipleTimesException(Exception):
+class CustomerActionExecutedMultipleTimesException(BribeNetException):
     pass
 
 
-class CustomerActionTimeNotCorrectException(Exception):
+class CustomerActionTimeNotCorrectException(BribeNetException):
     pass
 
 

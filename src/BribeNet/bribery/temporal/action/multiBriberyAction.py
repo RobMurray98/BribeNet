@@ -6,17 +6,18 @@ from BribeNet.bribery.temporal.action import BribeMustBeGreaterThanZeroException
 from BribeNet.bribery.temporal.action.briberyAction import BriberyAction
 from BribeNet.bribery.temporal.action.singleBriberyAction import SingleBriberyAction
 from BribeNet.bribery.temporal.briber import GraphNotSubclassOfTemporalRatingGraphException
+from BribeNet.helpers.bribeNetException import BribeNetException
 
 
-class NoActionsToFormMultiActionException(Exception):
+class NoActionsToFormMultiActionException(BribeNetException):
     pass
 
 
-class BriberyActionsOnDifferentGraphsException(Exception):
+class BriberyActionsOnDifferentGraphsException(BribeNetException):
     pass
 
 
-class BriberyActionsAtDifferentTimesException(Exception):
+class BriberyActionsAtDifferentTimesException(BribeNetException):
     pass
 
 
@@ -49,7 +50,7 @@ class MultiBriberyAction(BriberyAction):
         time_step = actions[0].get_time_step()
         if not all(b.get_time_step() == time_step for b in actions):
             raise BriberyActionsAtDifferentTimesException()
-        return cls(graph=graph, bribes={b.briber.get_briber_id(): b._bribes for b in actions})
+        return cls(graph=graph, bribes={b.briber.get_briber_id(): b.get_bribes() for b in actions})
 
     def add_bribe(self, briber_id: int, node_id: int, bribe: float):
         if bribe <= 0:

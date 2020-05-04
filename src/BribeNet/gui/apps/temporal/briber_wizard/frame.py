@@ -5,9 +5,10 @@ from BribeNet.gui.apps.temporal.briber_wizard.strategies.even import EvenFrame
 from BribeNet.gui.apps.temporal.briber_wizard.strategies.influential import InfluentialFrame
 from BribeNet.gui.apps.temporal.briber_wizard.strategies.most_influential import MostInfluentialFrame
 from BribeNet.gui.apps.temporal.briber_wizard.strategies.non import NonFrame
+from BribeNet.gui.apps.temporal.briber_wizard.strategies.p_greedy import PGreedyFrame
 from BribeNet.gui.apps.temporal.briber_wizard.strategies.random import RandomFrame
 
-STRAT_SUBFRAMES = (NonFrame, RandomFrame, InfluentialFrame, MostInfluentialFrame, EvenFrame, BudgetFrame)
+STRAT_SUBFRAMES = (NonFrame, RandomFrame, InfluentialFrame, MostInfluentialFrame, EvenFrame, BudgetFrame, PGreedyFrame)
 STRAT_DICT = {v: k for k, v in enumerate([a.name for a in STRAT_SUBFRAMES])}
 
 

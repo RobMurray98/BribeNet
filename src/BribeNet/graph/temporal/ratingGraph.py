@@ -11,6 +11,7 @@ from BribeNet.graph.ratingGraph import DEFAULT_GEN, RatingGraph, BribersAreNotTu
 from BribeNet.graph.static.ratingGraph import DEFAULT_NON_VOTER_PROPORTION  # (0.2)
 from BribeNet.graph.temporal.action.customerAction import CustomerAction
 from BribeNet.graph.temporal.weighting.traverseWeighting import assign_traverse_averaged
+from BribeNet.helpers.bribeNetException import BribeNetException
 from BribeNet.helpers.override import override
 
 DEFAULT_REMOVE_NO_VOTE = False
@@ -32,19 +33,19 @@ MIN_TRUE_STD_DEV = 0.0
 MAX_TRUE_STD_DEV = float('inf')
 
 
-class BriberNotSubclassOfTemporalBriberException(Exception):
+class BriberNotSubclassOfTemporalBriberException(BribeNetException):
     pass
 
 
-class BriberKeywordArgumentOutOfBoundsException(Exception):
+class BriberKeywordArgumentOutOfBoundsException(BribeNetException):
     pass
 
 
-class TrueAverageIncorrectShapeException(Exception):
+class TrueAverageIncorrectShapeException(BribeNetException):
     pass
 
 
-class TrueStdDevIncorrectShapeException(Exception):
+class TrueStdDevIncorrectShapeException(BribeNetException):
     pass
 
 
