@@ -97,8 +97,9 @@ class TemporalGUI(tk.Toplevel):
 
     def add_graph(self, gtype, args, params):
         # TEMPORARY: Set the random seed so we can get repeatable results.
-        random.seed(13)
-        nk.setSeed(13, True)
+        seed_ = 20
+        random.seed(seed_)
+        nk.setSeed(seed_, True)
 
         if not self.bribers:
             raise RuntimeError("No Bribers added to graph")  # TODO replace with better error
