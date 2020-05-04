@@ -22,10 +22,9 @@ DEFAULT_TRUE_AVERAGE = 0.5
 DEFAULT_TRUE_STD_DEV = 0.2
 DEFAULT_LEARNING_RATE = 0.1
 
-KWARG_NAMES = (
-"non_voter_proportion", "remove_no_vote", "q", "pay", "apathy", "d", "true_average", "true_std_dev", "learning_rate")
-KWARG_LOWER_BOUNDS = dict(zip(KWARG_NAMES, (0, False, 0, 0, 0, 2, 0, 0, 0)))
-KWARG_UPPER_BOUNDS = dict(zip(KWARG_NAMES, (1, True, 1, float('inf'), 1, maxsize, 1, float('inf'), 1)))
+KWARG_NAMES = ("non_voter_proportion", "remove_no_vote", "q", "pay", "apathy", "d", "learning_rate")
+KWARG_LOWER_BOUNDS = dict(zip(KWARG_NAMES, (0, False, 0, 0, 0, 2, 0)))
+KWARG_UPPER_BOUNDS = dict(zip(KWARG_NAMES, (1, True, 1, float('inf'), 1, maxsize, 1)))
 
 
 class BriberNotSubclassOfTemporalBriberException(Exception):
@@ -33,6 +32,14 @@ class BriberNotSubclassOfTemporalBriberException(Exception):
 
 
 class BriberKeywordArgumentOutOfBoundsException(Exception):
+    pass
+
+
+class TrueAverageIncorrectShapeException(Exception):
+    pass
+
+
+class TrueStdDevIncorrectShapeException(Exception):
     pass
 
 
@@ -96,21 +103,28 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
             self._d: int = self.__tmp_kwargs["d"]
         else:
             self._d: int = DEFAULT_D
-        if "true_average" in self.__tmp_kwargs:
-            self._true_average: float = self.__tmp_kwargs["true_average"]
+        if "true_averages" in self.__tmp_kwargs:
+            true_averages = self.__tmp_kwargs["true_averages"]
+            if true_averages.shape[0] != len(self._bribers):
+                raise TrueAverageIncorrectShapeException(f"{true_averages.shape[0]} != {len(self._bribers)}")
+            self._true_averages: np.ndarray[float] = true_averages
         else:
-            self._true_average: float = DEFAULT_TRUE_AVERAGE
-        if "true_std_dev" in self.__tmp_kwargs:
-            self._true_std_dev: float = self.__tmp_kwargs["true_std_dev"]
+            self._true_averages: np.ndarray[float] = np.repeat(DEFAULT_TRUE_AVERAGE, len(self._bribers))
+        if "true_std_devs" in self.__tmp_kwargs:
+            true_std_devs = self.__tmp_kwargs["true_std_devs"]
+            if true_std_devs.shape[0] != len(self._bribers):
+                raise TrueStdDevIncorrectShapeException(f"{true_std_devs.shape[0]} != {len(self._bribers)}")
+            self._true_std_devs: np.ndarray[float] = true_std_devs
         else:
-            self._true_std_dev: float = DEFAULT_TRUE_STD_DEV
+            self._true_std_devs: np.ndarray[float] = np.repeat(DEFAULT_TRUE_STD_DEV, len(self._bribers))
         if "learning_rate" in self.__tmp_kwargs:
             self._learning_rate: float = self.__tmp_kwargs["learning_rate"]
         else:
             self._learning_rate: float = DEFAULT_LEARNING_RATE
         community_weights = {}
         for b, _ in enumerate(self._bribers):
-            community_weights[b] = assign_traverse_averaged(self.get_graph(), self._true_average, self._true_std_dev)
+            community_weights[b] = assign_traverse_averaged(self.get_graph(), self._true_averages[b],
+                                                            self._true_std_devs[b])
         for n in self.get_graph().iterNodes():
             for b, _ in enumerate(self._bribers):
                 rating = community_weights[b][n]
@@ -160,7 +174,6 @@ class TemporalRatingGraph(RatingGraph, abc.ABC):
     def _update_trust(self):
         """
         Update the weights of the graph based on the trust between nodes.
-        :param learning_rate The learning rate at which we adjust our edge weights
         """
         # Get the weights and calculate the new weights first.
         new_weights = {}

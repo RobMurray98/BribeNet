@@ -113,9 +113,9 @@ class TemporalGUI(tk.Toplevel):
             q=params[3],
             pay=params[4],
             apathy=params[5],
-            true_average=params[6],
-            true_std_dev=params[7],
-            learning_rate=params[8],
+            learning_rate=params[6],
+            true_averages=params[7],
+            true_std_devs=params[8]
         )
 
         self.frames[GraphFrame.__name__].set_pos(spring_layout(nk2nx(self.g.get_graph())))

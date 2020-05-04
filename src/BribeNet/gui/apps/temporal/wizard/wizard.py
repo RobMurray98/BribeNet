@@ -1,5 +1,7 @@
 import tkinter as tk
 
+import numpy as np
+
 from BribeNet.graph.ratingMethod import RatingMethod
 from BribeNet.gui.apps.temporal.wizard.bribers import TemporalBribers
 from BribeNet.gui.apps.temporal.wizard.generation import TemporalGeneration
@@ -54,8 +56,10 @@ class WizardFrame(tk.Frame):
             for briber in bribers:
                 strat_type = briber[0]
                 briber_args = briber[1:]
-                self.controller.add_briber(strat_type, *briber_args)
-            params = self.subframes[TemporalSettings.__name__].get_args()
+                self.controller.add_briber(strat_type, *(briber_args[:-2]))
+            true_averages = np.asarray([args[-2] for args in bribers])
+            true_std_devs = np.asarray([args[-1] for args in bribers])
+            params = self.subframes[TemporalSettings.__name__].get_args() + (true_averages, true_std_devs)
             self.controller.add_graph(graph_type, graph_args, params)
             self.controller.g.set_rating_method(rating_method)
             if rating_method == RatingMethod.P_GAMMA_RATING:
