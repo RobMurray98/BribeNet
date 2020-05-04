@@ -33,7 +33,6 @@ class InfluentialNodeBriber(TemporalBriber):
         :return: SingleBriberyAction for the briber to take in the next temporal time step
         """
         self._current_rating = self.get_graph().eval_graph(self.get_briber_id())
-        print(self._current_rating, self._previous_rating)
         next_act = SingleBriberyAction(self)
         if self._current_rating > self._previous_rating:
             next_act.add_bribe(self._next_node,
