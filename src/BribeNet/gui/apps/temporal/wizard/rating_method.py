@@ -25,12 +25,15 @@ class TemporalRatingMethod(tk.Frame):
         self.subframes = tuple(c(self) for c in METHOD_SUBFRAMES)
         self.options = tuple(f.get_name() for f in self.subframes)
 
+        name_label = tk.Label(self, text="Rating Method")
+        name_label.grid(row=0, column=0, pady=10)
+
         self.dropdown = tk.OptionMenu(self, self.method_type, *self.options)
-        self.dropdown.grid(row=0, column=0)
+        self.dropdown.grid(row=1, column=0, pady=10)
 
         self.method_type.set(self.options[0])
         for f in self.subframes:
-            f.grid(row=1, column=0, sticky="nsew", pady=20)
+            f.grid(row=2, column=0, sticky="nsew", pady=20)
 
         self.method_type.trace('w', self.switch_frame)
 

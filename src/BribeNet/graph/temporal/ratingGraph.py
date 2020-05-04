@@ -22,7 +22,8 @@ DEFAULT_TRUE_AVERAGE = 0.5
 DEFAULT_TRUE_STD_DEV = 0.2
 DEFAULT_LEARNING_RATE = 0.1
 
-KWARG_NAMES = ("non_voter_proportion", "remove_no_vote", "q", "pay", "apathy", "d", "true_average", "true_std_dev", "learning_rate")
+KWARG_NAMES = (
+"non_voter_proportion", "remove_no_vote", "q", "pay", "apathy", "d", "true_average", "true_std_dev", "learning_rate")
 KWARG_LOWER_BOUNDS = dict(zip(KWARG_NAMES, (0, False, 0, 0, 0, 2, 0, 0, 0)))
 KWARG_UPPER_BOUNDS = dict(zip(KWARG_NAMES, (1, True, 1, float('inf'), 1, maxsize, 1, float('inf'), 1)))
 

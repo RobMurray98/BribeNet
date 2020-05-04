@@ -1,6 +1,4 @@
 import tkinter as tk
-import random, os
-import networkit as nk
 
 from networkit.nxadapter import nk2nx
 from networkx import spring_layout
@@ -124,7 +122,6 @@ class TemporalGUI(tk.Toplevel):
 
         self.frames[GraphFrame.__name__].add_briber_dropdown()
         self.frames[GraphFrame.__name__].draw_basic_graph(self.g)
-
 
     def update_results(self):
 

@@ -16,6 +16,7 @@ DEFAULT_GEN = FlatWeightedGraphGenerator(GraphGeneratorAlgo.WATTS_STROGATZ, 30, 
 MAX_RATING = 1.0
 MAX_DIFF = 0.6
 
+
 class BribersAreNotTupleException(Exception):
     pass
 
@@ -395,7 +396,7 @@ class RatingGraph(ABC):
         nans = np.isnan(differences)
         differences[nans] = 0
         differences = np.square(differences)
-        trust = 1 - (np.sum(differences) / (len(differences) * MAX_DIFF**2))
+        trust = 1 - (np.sum(differences) / (len(differences) * MAX_DIFF ** 2))
         return max(0, min(1, trust))
 
     def average_trust(self):
@@ -403,7 +404,7 @@ class RatingGraph(ABC):
         Average trust value for all pairs of nodes
         """
         trusts = [self.get_weight(a, b)
-                  for (a,b) in self.get_graph().iterEdges()]
+                  for (a, b) in self.get_graph().iterEdges()]
         return np.mean(trusts)
 
     def __copy__(self):
