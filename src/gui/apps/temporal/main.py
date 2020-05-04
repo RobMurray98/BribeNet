@@ -96,6 +96,10 @@ class TemporalGUI(tk.Toplevel):
         self.briber_names.append(f"Briber{len(self.bribers)}: {b}: u0={args[0]}")
 
     def add_graph(self, gtype, args, params):
+        # TEMPORARY: Set the random seed so we can get repeatable results.
+        random.seed(13)
+        nk.setSeed(13, True)
+
         if not self.bribers:
             raise RuntimeError("No Bribers added to graph")  # TODO replace with better error
 
@@ -125,6 +129,9 @@ class TemporalGUI(tk.Toplevel):
         self.frames[GraphFrame.__name__].add_briber_dropdown()
         self.frames[GraphFrame.__name__].draw_basic_graph(self.g)
 
+        # Revert random seed changes.
+        random.seed(None)
+        nk.setSeed(os.times()[1], True)
 
     def update_results(self):
 
