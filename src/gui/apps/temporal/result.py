@@ -35,6 +35,9 @@ class ResultsFrame(tk.Frame):
                 x_plot = [r[b] for r in xs] if isinstance(xs[0], list) else xs
                 y_plot = [r[b] for r in ys] if isinstance(ys[0], list) else ys
 
+                print(x_plot)
+                print(y_plot)
+
                 self.ax.plot(x_plot, y_plot, label=self.controller.briber_names[b])
 
             self.ax.legend()
