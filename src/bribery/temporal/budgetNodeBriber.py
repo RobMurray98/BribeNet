@@ -15,8 +15,8 @@ class BudgetNodeBriber(TemporalBriber):
         """
         super().__init__(u0)
         self._k = k
-        self._current_rating = 0
-        self._previous_rating = 0
+        self._current_rating = None
+        self._previous_rating = None
         self._next_node = 0
         self._budget = b
         self._info_gained = set()
@@ -26,8 +26,6 @@ class BudgetNodeBriber(TemporalBriber):
         super()._set_graph(g)
         # Make sure that k is set such that there are enough resources left to actually bribe people.
         self._k = min(self._k, 0.5 * (self.get_resources() / self.get_graph().customer_count()))
-        self._current_rating = self.get_graph().eval_graph(self.get_briber_id())
-        self._previous_rating = self._current_rating
 
     def _next_action(self) -> SingleBriberyAction:
         """
@@ -35,6 +33,8 @@ class BudgetNodeBriber(TemporalBriber):
         :return: SingleBriberyAction for the briber to take in the next temporal time step
         """
         self._current_rating = self.get_graph().eval_graph(self.get_briber_id())
+        if self._previous_rating is None:
+            self._previous_rating = self._current_rating
         next_act = SingleBriberyAction(self)
         maximum_bribe = (self.get_graph().get_max_rating()
                          - self.get_graph().get_vote(self._next_node)[self.get_briber_id()])
