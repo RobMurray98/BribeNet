@@ -14,7 +14,7 @@ from BribeNet.graph.ratingMethod import RatingMethod
 
 DEFAULT_GEN = FlatWeightedGraphGenerator(GraphGeneratorAlgo.WATTS_STROGATZ, 30, 5, 0.3)
 MAX_RATING = 1.0
-
+MAX_DIFF = 0.6
 
 class BribersAreNotTupleException(Exception):
     pass
@@ -151,7 +151,7 @@ class RatingGraph(ABC):
             if self._gamma is None:
                 raise GammaNotSetException()
             rating = self._p_gamma_rating(node_id, briber_id, self._gamma)
-        if np.isnan(rating) and nan_default:
+        if np.isnan(rating) and not nan_default is None:
             rating = nan_default
         return rating
 
@@ -358,6 +358,10 @@ class RatingGraph(ABC):
         return sum(self.get_rating(node_id=n, briber_id=briber_id, rating_method=rating_method, nan_default=0)
                    for n in self.get_graph().iterNodes())
 
+    def average_rating(self, briber_id=0, rating_method=None):
+        voting_customers = [c for c in self.get_graph().iterNodes() if not np.isnan(self.get_vote(c))[briber_id]]
+        return self.eval_graph(briber_id, rating_method) / len(voting_customers)
+
     def set_weight(self, node1_id: int, node2_id: int, weight: float):
         """
         Sets a weight for a given edge, thus allowing for trust metrics to affect graph structure.
@@ -391,8 +395,8 @@ class RatingGraph(ABC):
         nans = np.isnan(differences)
         differences[nans] = 0
         differences = np.square(differences)
-        differences = 1 - differences
-        return np.sum(differences) / len(differences)
+        trust = 1 - (np.sum(differences) / (len(differences) * MAX_DIFF**2))
+        return max(0, min(1, trust))
 
     def average_trust(self):
         """

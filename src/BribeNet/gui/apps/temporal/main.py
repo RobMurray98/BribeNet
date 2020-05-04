@@ -1,4 +1,6 @@
 import tkinter as tk
+import random, os
+import networkit as nk
 
 from networkit.nxadapter import nk2nx
 from networkx import spring_layout
@@ -123,9 +125,10 @@ class TemporalGUI(tk.Toplevel):
         self.frames[GraphFrame.__name__].add_briber_dropdown()
         self.frames[GraphFrame.__name__].draw_basic_graph(self.g)
 
+
     def update_results(self):
 
-        self.results.add("Average Rating", [self.g.eval_graph(briber_id=b) for b in range(0, len(self.bribers))])
+        self.results.add("Average Rating", [self.g.average_rating(briber_id=b) for b in range(0, len(self.bribers))])
         self.results.add("Total Utility", [b.get_resources() for b in self.bribers])
         self.results.add("Average Trust", self.g.average_trust())
         self.results.add("Utility Spent", [self.bribers_spent[b] for b in range(0, len(self.bribers))])

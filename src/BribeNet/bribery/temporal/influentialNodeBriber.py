@@ -14,8 +14,8 @@ class InfluentialNodeBriber(TemporalBriber):
         """
         super().__init__(u0)
         self._k = k
-        self._current_rating = 0
-        self._previous_rating = 0
+        self._current_rating = None
+        self._previous_rating = None
         self._next_node = 0
         self._info_gained = set()
         self._bribed = set()
@@ -24,8 +24,6 @@ class InfluentialNodeBriber(TemporalBriber):
         super()._set_graph(g)
         # Make sure that k is set such that there are enough resources left to actually bribe people.
         self._k = min(self._k, 0.5 * (self.get_resources() / self.get_graph().customer_count()))
-        self._current_rating = self.get_graph().eval_graph(self.get_briber_id())
-        self._previous_rating = self._current_rating
 
     def _next_action(self) -> SingleBriberyAction:
         """
@@ -33,6 +31,9 @@ class InfluentialNodeBriber(TemporalBriber):
         :return: SingleBriberyAction for the briber to take in the next temporal time step
         """
         self._current_rating = self.get_graph().eval_graph(self.get_briber_id())
+        if self._previous_rating is None:
+            # Default case for the first step.
+            self._previous_rating = self._current_rating
         next_act = SingleBriberyAction(self)
         if self._current_rating > self._previous_rating:
             next_act.add_bribe(self._next_node,
