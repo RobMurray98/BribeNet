@@ -335,7 +335,8 @@ class RatingGraph(ABC):
         :param briber_id: the briber (determines which neighbours have voted)
         :return: the influence weight of the node
         """
-        neighbour_weights = [1.0 / len(self._neighbours(n, briber_id)) for n in self._neighbours(node_id, briber_id)]
+        neighbourhood_sizes = [len(self._neighbours(n, briber_id)) for n in self._neighbours(node_id, briber_id)]
+        neighbour_weights = [1.0 / n for n in neighbourhood_sizes if n > 0]  # discard size 0 neighbourhoods
         return sum(neighbour_weights)
 
     def bribe(self, node_id, b, briber_id=0):
