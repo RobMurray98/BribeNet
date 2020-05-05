@@ -1,5 +1,6 @@
-from gui.main import GUI
 from sys import exit
+
+from BribeNet.gui.main import GUI
 
 """
 Due to a bug where app.mainloop() will not exit on closing of the root Tk instance if a Toplevel was at any stage

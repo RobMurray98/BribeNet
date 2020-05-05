@@ -1,0 +1,9 @@
+include *.py
+include src/*.py
+include *.txt
+include *.md
+include *.sh
+include Dockerfile
+include *.cfg
+recursive-include test *
+include src/BribeNet/gui/classes/*.png

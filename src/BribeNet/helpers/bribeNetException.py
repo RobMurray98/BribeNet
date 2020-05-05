@@ -1,0 +1,2 @@
+class BribeNetException(Exception):
+    pass
