@@ -3,7 +3,7 @@ from BribeNet.graph.temporal.noCustomerActionGraph import NoCustomerActionGraph
 from test.BribeNet.bribery.temporal.briberTestCase import BriberTestCase
 
 
-class TestOneMoveInfluentialNodeBriber(BriberTestCase):
+class TestOneMoveRandomBriber(BriberTestCase):
 
     def setUp(self) -> None:
         self.briber = OneMoveRandomBriber(10)
