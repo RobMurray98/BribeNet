@@ -48,10 +48,11 @@ class MostInfluentialNodeBriber(TemporalBriber):
         if self._current_rating - self._previous_rating > self._max_rating_increase:
             self._best_node = self._last_node
             self._max_rating_increase = self._current_rating - self._previous_rating
-        if self._c >= self._i and self._best_node is not None:
-            next_act.add_bribe(self._best_node, min(self.get_resources(),
-                                                    self.get_graph().get_max_rating()
-                                                    - self.get_graph().get_vote(self._best_node)[self.get_briber_id()]))
+        maximum_bribe = min(self.get_resources(),
+                         self.get_graph().get_max_rating()
+                         - self.get_graph().get_vote(self._best_node)[self.get_briber_id()])
+        if self._c >= self._i and self._best_node is not None and maximum_bribe > 0:
+            next_act.add_bribe(self._best_node, maximum_bribe)
             self._bribed.add(self._best_node)
             self._info_gained = set()
             self._c = 0
@@ -62,7 +63,7 @@ class MostInfluentialNodeBriber(TemporalBriber):
                 print(f"WARNING: {self.__class__.__name__} has not found an influential node in {self._c} tries "
                       f"(intended maximum tries {self._i}), continuing search...",
                       file=sys.stderr)
-            next_act.add_bribe(self._next_node, min(self.get_resources(), self._k))
+            next_act.add_bribe(self._next_node, min(maximum_bribe, min(self.get_resources(), self._k)))
             self._info_gained.add(self._next_node)
             self._c = self._c + 1
         self._last_node = self._next_node

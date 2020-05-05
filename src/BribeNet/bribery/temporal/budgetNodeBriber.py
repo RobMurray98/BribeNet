@@ -39,7 +39,7 @@ class BudgetNodeBriber(TemporalBriber):
         maximum_bribe = (self.get_graph().get_max_rating()
                          - self.get_graph().get_vote(self._next_node)[self.get_briber_id()])
         if self._current_rating > self._previous_rating and min(self.get_resources(), maximum_bribe) <= self._budget \
-                and self._next_node not in self._bribed:
+                and self._next_node not in self._bribed and maximum_bribe > 0:
             next_act.add_bribe(self._next_node, min(self.get_resources(), maximum_bribe))
             self._bribed.add(self._next_node)
             self._info_gained = set()
@@ -49,7 +49,7 @@ class BudgetNodeBriber(TemporalBriber):
             except IndexError:
                 print(f"WARNING: {self.__class__.__name__} found no influential nodes, not acting...", file=sys.stderr)
                 return next_act
-            next_act.add_bribe(self._next_node, min(self.get_resources(), self._k))
+            next_act.add_bribe(self._next_node, min(maximum_bribe, min(self.get_resources(), self._k)))
             self._info_gained.add(self._next_node)
         self._previous_rating = self._current_rating
         return next_act

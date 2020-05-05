@@ -35,10 +35,10 @@ class InfluentialNodeBriber(TemporalBriber):
             # Default case for the first step.
             self._previous_rating = self._current_rating
         next_act = SingleBriberyAction(self)
-        if self._current_rating > self._previous_rating:
-            next_act.add_bribe(self._next_node,
-                               min(self.get_resources(), self.get_graph().get_max_rating()
-                                   - self.get_graph().get_vote(self._next_node)[self.get_briber_id()]))
+        maximum_bribe = min(self.get_resources(), self.get_graph().get_max_rating()
+                         - self.get_graph().get_vote(self._next_node)[self.get_briber_id()])
+        if self._current_rating > self._previous_rating and maximum_bribe > 0:
+            next_act.add_bribe(self._next_node, maximum_bribe)
             self._bribed.add(self._next_node)
             self._info_gained = set()
         else:
@@ -47,7 +47,10 @@ class InfluentialNodeBriber(TemporalBriber):
             except IndexError:
                 print(f"WARNING: {self.__class__.__name__} found no influential nodes, not acting...", file=sys.stderr)
                 return next_act
-            next_act.add_bribe(self._next_node, min(self.get_resources(), self._k))
+            # Bid an information gaining bribe, which is at most k, but is
+            # smaller if you need to bribe less to get to the full bribe
+            # or don't have enough money to bid k.
+            next_act.add_bribe(self._next_node, min(maximum_bribe, min(self.get_resources(), self._k)))
             self._info_gained.add(self._next_node)
         self._previous_rating = self._current_rating
         return next_act
