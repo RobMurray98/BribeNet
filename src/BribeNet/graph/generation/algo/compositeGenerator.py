@@ -2,8 +2,18 @@ from math import floor, log, ceil
 from random import gauss, sample, random
 
 import networkit as nk
+# noinspection PyUnresolvedReferences
 from networkit import Graph
 from networkit.generators import BarabasiAlbertGenerator, WattsStrogatzGenerator
+
+
+def _make_complete(n: int):
+    g_ = Graph(n)
+    for i in g_.iterNodes():
+        for j in g_.iterNodes():
+            if i < j:
+                g_.addEdge(i, j)
+    return g_
 
 
 class CompositeGenerator(object):
@@ -19,14 +29,6 @@ class CompositeGenerator(object):
         self._rewiring = rewiring
         self._scale_free_k = scale_free_k
         self._probability_reduce = probability_reduce
-
-    def _make_complete(self, n: int):
-        g = Graph(n)
-        for i in g.iterNodes():
-            for j in g.iterNodes():
-                if i < j:
-                    g.addEdge(i, j)
-        return g
 
     def generate(self):
         # First, generate a scale free network, which acts as our community network.
@@ -60,10 +62,11 @@ class CompositeGenerator(object):
                 is_connected = False
                 while not is_connected:
                     small_world_graphs[node] = WattsStrogatzGenerator(local_n, connectivity, self._rewiring).generate()
+                    # noinspection PyUnresolvedReferences
                     connected_components = nk.components.ConnectedComponents(small_world_graphs[node]).run()
                     is_connected = connected_components.numberOfComponents() == 1
             else:
-                small_world_graphs[node] = self._make_complete(local_n)
+                small_world_graphs[node] = _make_complete(local_n)
             self._n -= local_n
             i -= 1
         # Build a merged graph.
@@ -75,6 +78,7 @@ class CompositeGenerator(object):
         for n in range(len(neighbours)):
             neighbours[n] = list(filter(lambda x: x < n, neighbours[n]))
         for graph in small_world_graphs.values():
+            # noinspection PyUnresolvedReferences
             nk.graphtools.append(big_graph, graph)
             ranges.append(big_graph.numberOfNodes())
             partition.append(list(range(ranges[-2], ranges[-1])))

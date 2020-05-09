@@ -3,9 +3,10 @@ import enum
 from networkit.generators import WattsStrogatzGenerator, BarabasiAlbertGenerator
 
 from BribeNet.graph.generation.algo.compositeGenerator import CompositeGenerator
+from BribeNet.helpers.bribeNetException import BribeNetException
 
 
-class GraphGenerationAlgoNotDefinedException(Exception):
+class GraphGenerationAlgoNotDefinedException(BribeNetException):
     pass
 
 

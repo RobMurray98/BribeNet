@@ -4,7 +4,7 @@ from test.BribeNet.bribery.temporal.briberTestCase import BriberTestCase
 from unittest.mock import MagicMock
 
 
-class TestRandomBriber(BriberTestCase):
+class TestInfluentialBriber(BriberTestCase):
 
     def setUp(self) -> None:
         self.briber = InfluentialNodeBriber(10)

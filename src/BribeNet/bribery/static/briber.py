@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 
 from BribeNet.bribery.briber import Briber, BriberyGraphNotSetException
+from BribeNet.helpers.bribeNetException import BribeNetException
 
 
-class GraphNotSubclassOfStaticRatingGraphException(Exception):
+class GraphNotSubclassOfStaticRatingGraphException(BribeNetException):
     pass
 
 

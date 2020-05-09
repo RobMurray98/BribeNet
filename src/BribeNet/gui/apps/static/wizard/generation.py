@@ -36,6 +36,7 @@ class StaticGeneration(tk.Frame):
         frame = self.subframes[page_no]
         frame.tkraise()
 
+    # noinspection PyUnusedLocal
     def switch_frame(self, *args):
         self.show_subframe(ALGO_DICT[self.graph_type.get()])
 

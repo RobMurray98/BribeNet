@@ -22,6 +22,9 @@ class GraphFrame(tk.Frame):
         self.canvas = FigureCanvasTkAgg(self.fig, master=self)
         self.canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
         self.results = []
+        self.graph = None
+        self.pos = None
+        self.briber = None
 
         button1 = tk.Button(self, text="Exit", command=lambda: self.master.show_frame("WizardFrame"))
         button1.pack()
@@ -114,7 +117,6 @@ class GraphFrame(tk.Frame):
         self.ax.clear()
 
         for c in self.graph.get_customers():
-            rating = ""
             if np.isnan(self.graph.get_vote(c)):
                 rating = "None"
             else:

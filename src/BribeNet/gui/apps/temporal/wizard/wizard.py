@@ -1,10 +1,13 @@
 import tkinter as tk
 
+import numpy as np
+
 from BribeNet.graph.ratingMethod import RatingMethod
 from BribeNet.gui.apps.temporal.wizard.bribers import TemporalBribers
 from BribeNet.gui.apps.temporal.wizard.generation import TemporalGeneration
 from BribeNet.gui.apps.temporal.wizard.rating_method import TemporalRatingMethod
 from BribeNet.gui.apps.temporal.wizard.settings import TemporalSettings
+from BribeNet.helpers.bribeNetException import BribeNetException
 
 SUBFRAME_CLASSES = (TemporalSettings, TemporalBribers, TemporalGeneration, TemporalRatingMethod)
 SUBFRAME_DICT = {i: c.__class__.__name__ for (i, c) in enumerate(SUBFRAME_CLASSES)}
@@ -54,17 +57,22 @@ class WizardFrame(tk.Frame):
             for briber in bribers:
                 strat_type = briber[0]
                 briber_args = briber[1:]
-                self.controller.add_briber(strat_type, *briber_args)
-            params = self.subframes[TemporalSettings.__name__].get_args()
+                self.controller.add_briber(strat_type, *(briber_args[:-2]))
+            true_averages = np.asarray([args[-2] for args in bribers])
+            true_std_devs = np.asarray([args[-1] for args in bribers])
+            params = self.subframes[TemporalSettings.__name__].get_args() + (true_averages, true_std_devs)
             self.controller.add_graph(graph_type, graph_args, params)
             self.controller.g.set_rating_method(rating_method)
             if rating_method == RatingMethod.P_GAMMA_RATING:
                 self.controller.g.set_gamma(rating_method_args[0])
             self.controller.update_results()
         except Exception as e:
-            # noinspection PyUnresolvedReferences
-            tk.messagebox.showerror(message=f"{e.__class__.__name__}: {str(e)}")
+            if issubclass(e.__class__, BribeNetException):
+                # noinspection PyUnresolvedReferences
+                tk.messagebox.showerror(message=f"{e.__class__.__name__}: {str(e)}")
+                self.controller.clear_graph()
+                return
             self.controller.clear_graph()
-            return
+            raise e
 
         self.controller.show_frame("GraphFrame")

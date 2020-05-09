@@ -9,7 +9,7 @@ def override(method):
     """
 
     stack = inspect.stack()
-    base_classes = re.search(r'class.+\((.+)\)\s*\:', stack[2][4][0]).group(1)
+    base_classes = re.search(r'class.+\((.+)\)\s*:', stack[2][4][0]).group(1)
 
     # handle multiple inheritance
     base_classes = [s.strip() for s in base_classes.split(',')]

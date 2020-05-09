@@ -1,4 +1,5 @@
 import sys
+import numpy as np
 
 from BribeNet.bribery.temporal.action.singleBriberyAction import SingleBriberyAction
 from BribeNet.bribery.temporal.briber import TemporalBriber
@@ -24,6 +25,11 @@ class InfluentialNodeBriber(TemporalBriber):
         super()._set_graph(g)
         # Make sure that k is set such that there are enough resources left to actually bribe people.
         self._k = min(self._k, 0.5 * (self.get_resources() / self.get_graph().customer_count()))
+    
+    def _bribe_to_max(self):
+        bribe_to_max = self.get_graph().get_max_rating() - self.get_graph().get_vote(self._next_node)[self.get_briber_id()]
+        if np.isnan(bribe_to_max): bribe_to_max = 1.0
+        return bribe_to_max
 
     def _next_action(self) -> SingleBriberyAction:
         """
@@ -34,11 +40,12 @@ class InfluentialNodeBriber(TemporalBriber):
         if self._previous_rating is None:
             # Default case for the first step.
             self._previous_rating = self._current_rating
+
         next_act = SingleBriberyAction(self)
-        if self._current_rating > self._previous_rating:
-            next_act.add_bribe(self._next_node,
-                               min(self.get_resources(), self.get_graph().get_max_rating()
-                                   - self.get_graph().get_vote(self._next_node)[self.get_briber_id()]))
+        maximum_bribe = min(self.get_resources(), self._bribe_to_max())
+
+        if self._current_rating > self._previous_rating and maximum_bribe > 0:
+            next_act.add_bribe(self._next_node, maximum_bribe)
             self._bribed.add(self._next_node)
             self._info_gained = set()
         else:
@@ -47,7 +54,10 @@ class InfluentialNodeBriber(TemporalBriber):
             except IndexError:
                 print(f"WARNING: {self.__class__.__name__} found no influential nodes, not acting...", file=sys.stderr)
                 return next_act
-            next_act.add_bribe(self._next_node, min(self.get_resources(), self._k))
+            # Bid an information gaining bribe, which is at most k, but is
+            # smaller if you need to bribe less to get to the full bribe
+            # or don't have enough money to bid k.
+            next_act.add_bribe(self._next_node, min(self._bribe_to_max(), min(self.get_resources(), self._k)))
             self._info_gained.add(self._next_node)
         self._previous_rating = self._current_rating
         return next_act

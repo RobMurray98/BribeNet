@@ -1,14 +1,17 @@
-class BribeMustBeGreaterThanZeroException(Exception):
+from BribeNet.helpers.bribeNetException import BribeNetException
+
+
+class BribeMustBeGreaterThanZeroException(BribeNetException):
     pass
 
 
-class NodeDoesNotExistException(Exception):
+class NodeDoesNotExistException(BribeNetException):
     pass
 
 
-class BriberDoesNotExistException(Exception):
+class BriberDoesNotExistException(BribeNetException):
     pass
 
 
-class BriberyActionExceedsAvailableUtilityException(Exception):
+class BriberyActionExceedsAvailableUtilityException(BribeNetException):
     pass

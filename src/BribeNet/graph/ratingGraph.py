@@ -11,33 +11,34 @@ from BribeNet.graph.generation import GraphGeneratorAlgo
 from BribeNet.graph.generation.flatWeightGenerator import FlatWeightedGraphGenerator
 from BribeNet.graph.generation.generator import GraphGenerator
 from BribeNet.graph.ratingMethod import RatingMethod
+from BribeNet.helpers.bribeNetException import BribeNetException
 
 DEFAULT_GEN = FlatWeightedGraphGenerator(GraphGeneratorAlgo.WATTS_STROGATZ, 30, 5, 0.3)
 MAX_RATING = 1.0
 MAX_DIFF = 0.6
 
 
-class BribersAreNotTupleException(Exception):
+class BribersAreNotTupleException(BribeNetException):
     pass
 
 
-class NoBriberGivenException(Exception):
+class NoBriberGivenException(BribeNetException):
     pass
 
 
-class BriberNotSubclassOfBriberException(Exception):
+class BriberNotSubclassOfBriberException(BribeNetException):
     pass
 
 
-class VotesNotInstantiatedBySpecificsException(Exception):
+class VotesNotInstantiatedBySpecificsException(BribeNetException):
     pass
 
 
-class TruthsNotInstantiatedBySpecificsException(Exception):
+class TruthsNotInstantiatedBySpecificsException(BribeNetException):
     pass
 
 
-class GammaNotSetException(Exception):
+class GammaNotSetException(BribeNetException):
     pass
 
 
@@ -152,7 +153,7 @@ class RatingGraph(ABC):
             if self._gamma is None:
                 raise GammaNotSetException()
             rating = self._p_gamma_rating(node_id, briber_id, self._gamma)
-        if np.isnan(rating) and not nan_default is None:
+        if np.isnan(rating) and nan_default is not None:
             rating = nan_default
         return rating
 
@@ -334,7 +335,8 @@ class RatingGraph(ABC):
         :param briber_id: the briber (determines which neighbours have voted)
         :return: the influence weight of the node
         """
-        neighbour_weights = [1.0 / len(self._neighbours(n, briber_id)) for n in self._neighbours(node_id, briber_id)]
+        neighbourhood_sizes = [len(self._neighbours(n, briber_id)) for n in self._neighbours(node_id, briber_id)]
+        neighbour_weights = [1.0 / n for n in neighbourhood_sizes if n > 0]  # discard size 0 neighbourhoods
         return sum(neighbour_weights)
 
     def bribe(self, node_id, b, briber_id=0):

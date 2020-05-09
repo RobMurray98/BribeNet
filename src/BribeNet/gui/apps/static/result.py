@@ -18,6 +18,7 @@ class ResultsFrame(tk.Frame):
         self.canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
         button1 = tk.Button(self, text="Exit", command=self.exit)
         button1.pack()
+        self.results = []
 
     def plot_results(self, results):
         xs = [i for i in range(0, len(results))]

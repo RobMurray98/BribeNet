@@ -1,4 +1,6 @@
+# noinspection PyUnresolvedReferences
 from networkit.centrality import LocalClusteringCoefficient
+# noinspection PyUnresolvedReferences
 from networkit.distance import APSP
 from networkit.generators import WattsStrogatzGenerator
 from numpy import logspace

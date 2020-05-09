@@ -1,4 +1,5 @@
 import tkinter as tk
+import os
 
 from networkit.nxadapter import nk2nx
 from networkx import spring_layout
@@ -9,6 +10,7 @@ from BribeNet.bribery.temporal.mostInfluentialNodeBriber import MostInfluentialN
 from BribeNet.bribery.temporal.nonBriber import NonBriber
 from BribeNet.bribery.temporal.oneMoveEvenBriber import OneMoveEvenBriber
 from BribeNet.bribery.temporal.oneMoveRandomBriber import OneMoveRandomBriber
+from BribeNet.bribery.temporal.pGreedyBriber import PGreedyBriber
 from BribeNet.graph.generation import GraphGeneratorAlgo
 from BribeNet.graph.generation.flatWeightGenerator import FlatWeightedGraphGenerator
 from BribeNet.graph.temporal.action.actionType import ActionType
@@ -20,6 +22,7 @@ from BribeNet.gui.apps.temporal.briber_wizard.strategies.even import EvenFrame
 from BribeNet.gui.apps.temporal.briber_wizard.strategies.influential import InfluentialFrame
 from BribeNet.gui.apps.temporal.briber_wizard.strategies.most_influential import MostInfluentialFrame
 from BribeNet.gui.apps.temporal.briber_wizard.strategies.non import NonFrame
+from BribeNet.gui.apps.temporal.briber_wizard.strategies.p_greedy import PGreedyFrame
 from BribeNet.gui.apps.temporal.briber_wizard.strategies.random import RandomFrame
 from BribeNet.gui.apps.temporal.graph import GraphFrame
 from BribeNet.gui.apps.temporal.result import ResultsFrame
@@ -42,7 +45,8 @@ def switch_briber(strategy_type, *args):
         MostInfluentialFrame.name: MostInfluentialNodeBriber,
         NonFrame.name: NonBriber,
         EvenFrame.name: OneMoveEvenBriber,
-        BudgetFrame.name: BudgetNodeBriber
+        BudgetFrame.name: BudgetNodeBriber,
+        PGreedyFrame.name: PGreedyBriber
     }
     return switcher.get(strategy_type)(*args)
 
@@ -81,6 +85,7 @@ class TemporalGUI(tk.Toplevel):
 
     def clear_graph(self):
         self.bribers = []
+        self.bribers_spent = []
         self.results = ResultsStore(X_AXIS_OPTIONS, Y_AXIS_OPTIONS)
         self.briber_names = []
         self.g = None
@@ -113,9 +118,9 @@ class TemporalGUI(tk.Toplevel):
             q=params[3],
             pay=params[4],
             apathy=params[5],
-            true_average=params[6],
-            true_std_dev=params[7],
-            learning_rate=params[8],
+            learning_rate=params[6],
+            true_averages=params[7],
+            true_std_devs=params[8]
         )
 
         self.frames[GraphFrame.__name__].set_pos(spring_layout(nk2nx(self.g.get_graph())))

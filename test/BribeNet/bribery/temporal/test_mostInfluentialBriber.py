@@ -6,7 +6,7 @@ from unittest.mock import MagicMock
 TEST_I = 7
 
 
-class TestRandomBriber(BriberTestCase):
+class TestMostInfluentialBriber(BriberTestCase):
 
     def setUp(self) -> None:
         self.briber = MostInfluentialNodeBriber(10, i=TEST_I)
