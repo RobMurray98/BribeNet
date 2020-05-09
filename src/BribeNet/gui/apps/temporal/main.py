@@ -1,6 +1,5 @@
 import tkinter as tk
-import random, os
-import networkit as nk
+import os
 
 from networkit.nxadapter import nk2nx
 from networkx import spring_layout
@@ -99,11 +98,6 @@ class TemporalGUI(tk.Toplevel):
         self.briber_names.append(f"Briber{len(self.bribers)}: {b}: u0={args[0]}")
 
     def add_graph(self, gtype, args, params):
-        # TEMPORARY: Set the random seed so we can get repeatable results.
-        seed_ = 20
-        random.seed(seed_)
-        nk.setSeed(seed_, True)
-
         if not self.bribers:
             raise RuntimeError("No Bribers added to graph")
 
@@ -132,10 +126,6 @@ class TemporalGUI(tk.Toplevel):
 
         self.frames[GraphFrame.__name__].add_briber_dropdown()
         self.frames[GraphFrame.__name__].draw_basic_graph(self.g)
-
-        # Revert random seed changes.
-        random.seed(None)
-        nk.setSeed(os.times()[1], True)
 
     def update_results(self):
 
