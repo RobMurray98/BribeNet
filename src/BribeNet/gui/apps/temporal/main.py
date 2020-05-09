@@ -85,6 +85,7 @@ class TemporalGUI(tk.Toplevel):
 
     def clear_graph(self):
         self.bribers = []
+        self.bribers_spent = []
         self.results = ResultsStore(X_AXIS_OPTIONS, Y_AXIS_OPTIONS)
         self.briber_names = []
         self.g = None
