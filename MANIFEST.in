@@ -3,6 +3,7 @@ include src/*.py
 include *.txt
 include *.md
 include *.sh
+include MANIFEST.in
 include Dockerfile
 include *.cfg
 recursive-include test *
